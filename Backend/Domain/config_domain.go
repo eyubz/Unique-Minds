@@ -5,4 +5,7 @@ type Config struct {
 	DBName         string
 	DatabasePort   string
 	UserCollection string
+	Port 		   int
+	ContextTimeout int
+	UserCollection string
 }
