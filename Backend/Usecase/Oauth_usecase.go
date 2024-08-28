@@ -1,93 +1,93 @@
 package usecases
 
-import (
-	"context"
-	"strings"
-	"time"
-	domain "unique-minds/Domain"
+// import (
+// 	"context"
+// 	"strings"
+// 	"time"
+// 	domain "unique-minds/Domain"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	oauth2Service "google.golang.org/api/oauth2/v2"
-	"google.golang.org/api/option"
-)
+// 	"go.mongodb.org/mongo-driver/bson/primitive"
+// 	oauth2Service "google.golang.org/api/oauth2/v2"
+// 	"google.golang.org/api/option"
+// )
 
-type OauthUseCase struct {
-	userRepository domain.UserRepositoryInterface
-	contextTimeout   time.Duration
-	oauthService     domain.OauthConfig
-}
+// type OauthUseCase struct {
+// 	userRepository domain.UserRepositoryInterface
+// 	contextTimeout   time.Duration
+// 	oauthService     domain.OauthConfig
+// }
 
-func NewOauthUseCase(userRepository  domain.UserRepositoryInterface, timeout time.Duration, oauth domain.OauthConfig) domain.OauthUseCase {
-	return &OauthUseCase{
-		userRepository: userRepository,
-		contextTimeout:   timeout,
-		oauthService:     oauth}
-}
+// func NewOauthUseCase(userRepository  domain.UserRepositoryInterface, timeout time.Duration, oauth domain.OauthConfig) domain.OauthUseCase {
+// 	return &OauthUseCase{
+// 		userRepository: userRepository,
+// 		contextTimeout:   timeout,
+// 		oauthService:     oauth}
+// }
 
-func (u *OauthUseCase) OauthService() interface{} {
+// func (u *OauthUseCase) OauthService() interface{} {
 
-	credentials, err := u.oauthService.InitialConfig()
-	if err != nil {
-		return &domain.ErrorResponse{Message: "Error generating OAuth configuration", Status: 500}
-	}
+// 	credentials, err := u.oauthService.InitialConfig()
+// 	if err != nil {
+// 		return &domain.ErrorResponse{Message: "Error generating OAuth configuration", Status: 500}
+// 	}
 
-	// Generate the AuthCode URL
-	url := credentials.AuthCodeURL("oauthStateString")
-	return &domain.URL{URL: url}
-}
+// 	// Generate the AuthCode URL
+// 	url := credentials.AuthCodeURL("oauthStateString")
+// 	return &domain.URL{URL: url}
+// }
 
-func (u *OauthUseCase) OauthCallback(c context.Context, query string) interface{} {
-	credentials, err := u.oauthService.InitialConfig()
+// func (u *OauthUseCase) OauthCallback(c context.Context, query string) interface{} {
+// 	credentials, err := u.oauthService.InitialConfig()
 
-	if err != nil {
-		return &domain.ErrorResponse{Message: "Error generating OAuth configuration", Status: 500}
-	}
+// 	if err != nil {
+// 		return &domain.ErrorResponse{Message: "Error generating OAuth configuration", Status: 500}
+// 	}
 
-	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
-	defer cancel()
-	token, err := credentials.Exchange(ctx, query)
+// 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
+// 	defer cancel()
+// 	token, err := credentials.Exchange(ctx, query)
 
-	if err != nil {
-		return &domain.ErrorResponse{Message: "Error exchanging token", Status: 500}
-	}
+// 	if err != nil {
+// 		return &domain.ErrorResponse{Message: "Error exchanging token", Status: 500}
+// 	}
 
-	client := credentials.Client(ctx, token)
+// 	client := credentials.Client(ctx, token)
 
-	oauth2Service, err := oauth2Service.NewService(ctx, option.WithHTTPClient(client))
+// 	oauth2Service, err := oauth2Service.NewService(ctx, option.WithHTTPClient(client))
 
-	if err != nil {
-		return &domain.ErrorResponse{Message: "Error creating OAuth2 service", Status: 500}
-	}
+// 	if err != nil {
+// 		return &domain.ErrorResponse{Message: "Error creating OAuth2 service", Status: 500}
+// 	}
 
-	userinfo, err := oauth2Service.Userinfo.V2.Me.Get().Do()
+// 	userinfo, err := oauth2Service.Userinfo.V2.Me.Get().Do()
 
-	if err != nil {
-		return &domain.ErrorResponse{Message: "Error getting user info", Status: 500}
-	}
+// 	if err != nil {
+// 		return &domain.ErrorResponse{Message: "Error getting user info", Status: 500}
+// 	}
 
-	existingUser, err := u.userRepository.FindUserByEmail(userinfo.Email)
+// 	existingUser, err := u.userRepository.FindUserByEmail(userinfo.Email)
 
-	if err != nil {
-		var userData domain.User
+// 	if err != nil {
+// 		var userData domain.User
 
-		userData.Email = userinfo.Email
-		userData.GoogleID = userinfo.Id
-		userData.IsVerified = true
-		userData.Role = "user"
-		userData.Created_At = time.Now()
-		userData.ID = primitive.NewObjectID()
+// 		userData.Email = userinfo.Email
+// 		userData.GoogleID = userinfo.Id
+// 		userData.IsVerified = true
+// 		userData.Role = "user"
+// 		userData.Created_At = time.Now()
+// 		userData.ID = primitive.NewObjectID()
 
-		userData.User_Name = userinfo.Email[:strings.Index(userinfo.Email, "@")]
+// 		userData.User_Name = userinfo.Email[:strings.Index(userinfo.Email, "@")]
 
-		err := u.userRepository.RegisterUser(userData)
-		if err != nil {
-			return &domain.ErrorResponse{Message: "Error creating user", Status: 500}
+// 		err := u.userRepository.RegisterUser(userData)
+// 		if err != nil {
+// 			return &domain.ErrorResponse{Message: "Error creating user", Status: 500}
 
-		}
-		return userData
-	}
-	if existingUser.GoogleID != "" {
-		return existingUser
-	}
-	return &domain.ErrorResponse{Message: "User already exists", Status: 400}
-}
+// 		}
+// 		return userData
+// 	}
+// 	if existingUser.GoogleID != "" {
+// 		return existingUser
+// 	}
+// 	return &domain.ErrorResponse{Message: "User already exists", Status: 400}
+// }

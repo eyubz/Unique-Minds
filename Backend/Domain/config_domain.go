@@ -7,5 +7,4 @@ type Config struct {
 	UserCollection string
 	Port           int
 	ContextTimeout int
-	UserCollection string
 }

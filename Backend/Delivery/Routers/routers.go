@@ -44,13 +44,9 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
 	// OauthRoute.GET("/auth/callback", oauthcontroller.GoogleCallback)
 
 
-
-
-
-
 	
 	authMiddleWare := infrastructure.NewAuthMiddleware(*config).AuthenticationMiddleware()
-
+	
 	nonAuth := serverGroup.Group("auth")
 	nonAuth.POST("/signup", userControllers.RegisterUser)
 	nonAuth.GET("/verify-email", userControllers.VerifyEmail)

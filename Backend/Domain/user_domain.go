@@ -8,7 +8,7 @@ import (
 
 type User struct {
 	ID                   primitive.ObjectID   `bson:"_id,omitempity" json:"id" `
-	User_Name            string               `bson:"user_name"  json:"user_name"`
+	UserName            string                `bson:"username"  json:"username"`
 	Email 				 string 			  `bson:"email" validate:"required,email" json:"email"`
     Password             string               `bson:"password" json:"password" validate:"required"`
     Contact              string               `bson:"contact" json:"contact"`
@@ -20,7 +20,9 @@ type User struct {
 	VerificationExpires  time.Time            `bson:"verification_expires" json:"verification_expires"`
 	Role 			   	 string               `bson:"role" json:"role"`
 	GoogleID			 string				  `bson:"google_id" json:"google_id"`
+	UserType        	 string 			  `bson:"user_type" json:"user_type" validate:"required"`
 }
+
 
 
 type UserUseCaseInterface interface {

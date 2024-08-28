@@ -1,7 +1,6 @@
-package controllers
+package Controllers
 
 import (
-	"fmt"
 	domain "unique-minds/Domain"
 
 	"github.com/gin-gonic/gin"
@@ -44,7 +43,6 @@ func (uc *UserControllers) RegisterUser(c *gin.Context){
 
 	err = uc.userUserCase.RegisterUser(user)
 	if err != nil{
-		fmt.Println(err.Error())
 		c.JSON(400, domain.ErrorResponse{
 			Message: err.Error(),
 			Status:  400,
