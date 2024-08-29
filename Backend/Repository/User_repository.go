@@ -58,11 +58,11 @@ func (ur *UserRepository) RegisterUser(user domain.User) error {
 	return nil
 }
 
-func (ur *UserRepository) UpdateUser(user domain.User) error {
+func (ur *UserRepository) UpdateUser(id string, user domain.User) error {
 	context, _ := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
-	filter := bson.M{"email": user.Email}
-	update := bson.M{"$set": user}
-	_, err := ur.collection.UpdateOne(context, filter, update)
+	user_id, _ := primitive.ObjectIDFromHex(id)
+	filter := bson.M{"_id": user_id}
+	_, err := ur.collection.UpdateOne(context, filter, bson.M{"$set": user})
 	if err != nil {
 		return err
 	}
@@ -80,6 +80,7 @@ func (ur *UserRepository) FindUserByID(id string)(domain.User, error){
 	}
 	return user, nil
 }
+
 
 func (ur *UserRepository) SaveAsActiveUser(user domain.ActiveUser, refreshToken string) error {
 	_, err := ur.FindActiveUser(user.ID.Hex(), user.UserAgent)
@@ -119,3 +120,5 @@ func (ur *UserRepository) FindActiveUser(ids string, user_agent string) (domain.
 	err = ur.activeUserCollection.FindOne(context, bson.M{"id": id, "user_agent": user_agent}).Decode(&au)
 	return au, err
 }
+
+

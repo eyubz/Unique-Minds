@@ -22,9 +22,41 @@ function Signup() {
     setAccountType(type);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    const data = {
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+      confirm_password: formData.confirmPassword,
+      user_type: accountType,
+    };
+
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        alert("SignUp successful!");
+      } else {
+        const errorData = await response.json();
+        alert(`SignUp failed: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+      alert("An error occurred. Please try again.");
+    }
   };
 
   return (

@@ -44,17 +44,17 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
 	// OauthRoute.GET("/auth/callback", oauthcontroller.GoogleCallback)
 
 
+	corsMiddleware := infrastructure.NewCorsMiddleware().CORSMiddleware()
 
-
-
-
-	
 	authMiddleWare := infrastructure.NewAuthMiddleware(*config).AuthenticationMiddleware()
 
+	serverGroup.Use(corsMiddleware)
 	nonAuth := serverGroup.Group("auth")
 	nonAuth.POST("/signup", userControllers.RegisterUser)
 	nonAuth.GET("/verify-email", userControllers.VerifyEmail)
 	nonAuth.POST("/login", userControllers.Login)
+
+	
 
 
 	// adminRoute := server.Group("admin")
@@ -67,6 +67,7 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
 	auth.POST("/forgot-password", userControllers.ResetPassword)
 	auth.POST("/reset-password", userControllers.ResetPasswordVerify)
 	auth.GET("/logout", userControllers.Logout)
+	auth.GET("users/:id", userControllers.GetUserProfile)
 
 	tokenGroup := serverGroup.Group("token")
 	tokenGroup.POST("/refresh", authMiddleWare, userControllers.RefreshToken)

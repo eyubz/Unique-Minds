@@ -1,7 +1,7 @@
-package controllers
+package Controllers
 
 import (
-	"fmt"
+	"net/http"
 	domain "unique-minds/Domain"
 
 	"github.com/gin-gonic/gin"
@@ -44,7 +44,6 @@ func (uc *UserControllers) RegisterUser(c *gin.Context){
 
 	err = uc.userUserCase.RegisterUser(user)
 	if err != nil{
-		fmt.Println(err.Error())
 		c.JSON(400, domain.ErrorResponse{
 			Message: err.Error(),
 			Status:  400,
@@ -273,3 +272,22 @@ func (uc *UserControllers) Logout(c *gin.Context) {
 		Status:  200,
 	})
 }
+
+func (uc *UserControllers) UpdateUser(c *gin.Context) {
+	var user domain.UserProfile
+	if err := c.BindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	id := c.Param("id")
+	err := uc.userUserCase.UpdateUser(id, user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
+}
+
+
