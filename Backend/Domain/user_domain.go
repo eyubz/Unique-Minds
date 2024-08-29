@@ -35,6 +35,7 @@ type Address struct {
 }
 
 
+
 type UserUseCaseInterface interface {
 	RegisterUser(user User) error
 	VerifyEmail(email string, token string) error

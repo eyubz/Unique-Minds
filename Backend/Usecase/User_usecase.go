@@ -26,6 +26,7 @@ func NewUserUseCase(userRepo domain.UserRepositoryInterface, passwordService inf
 
 func (uc *UserUseCase) RegisterUser(user domain.User) error {
 	if user.Email == "" || user.UserName== "" || user.Password == "" {
+	if user.Email == "" || user.UserName== "" || user.Password == "" {
 		return errors.New("all fields are required")
 	}
 	if infrastructure.ValidateEmail(user.Email) != nil {
@@ -99,6 +100,8 @@ func (uc *UserUseCase) Login(user domain.User, user_agent string)(domain.LoginRe
 	}
 	if user.Email != ""{
 		newUser, err = uc.UserRepo.FindUserByEmail(user.Email)	
+	}else if user.UserName != ""{
+		newUser, err = uc.UserRepo.FindUserByUserName(user.UserName)
 	}else if user.UserName != ""{
 		newUser, err = uc.UserRepo.FindUserByUserName(user.UserName)
 	}

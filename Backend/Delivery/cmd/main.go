@@ -16,7 +16,13 @@ func main(){
 	}
 	timeout := time.Duration(config.ContextTimeout) * time.Second
 	
+	timeout := time.Duration(config.ContextTimeout) * time.Second
+	corsMiddleware := infrastructure.NewCorsMiddleware(*config)
+
 	server := gin.Default()
+	serverGroup := server.Group("/api")
+	router.Router(serverGroup, config, timeout)
+	server.Use(corsMiddleware.CORSMiddleware())
 	serverGroup := server.Group("/api")
 	router.Router(serverGroup, config, timeout)
 	server.Run(fmt.Sprintf(":%d", config.Port))
