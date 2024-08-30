@@ -2,14 +2,23 @@ import React, { useEffect, useState } from "react";
 import CourseCard from "../Components/CourseCard";
 
 const Courses = () => {
-  const [courses, setCourses] = useState([]);
+  const [courses, setCourses] = useState([
+    { id: 1, title: "Introduction to AI" },
+    { id: 2, title: "Web Development Bootcamp" },
+    { id: 3, title: "Data Science Fundamentals" },
+    { id: 1, title: "Introduction to AI" },
+    { id: 2, title: "Web Development Bootcamp" },
+    { id: 3, title: "Data Science Fundamentals" },
+    { id: 1, title: "Introduction to AI" },
+    { id: 2, title: "Web Development Bootcamp" },
+    { id: 3, title: "Data Science Fundamentals" },
+  ]);
 
-  useEffect(() => {
-    // Fetch courses from the backend API
-    fetch("/api/courses")
-      .then((res) => res.json())
-      .then((data) => setCourses(data));
-  }, []);
+  // useEffect(() => {
+  //   fetch("/api/courses")
+  //     .then((res) => res.json())
+  //     .then((data) => setCourses(data));
+  // }, []);
 
   return (
     <div className="container mx-auto my-8">

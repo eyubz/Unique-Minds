@@ -48,19 +48,20 @@ type UserUseCaseInterface interface {
 	ResetPasswordVerify(email string, token string, user_id string, password string) error
 	Logout(user_id string, user_agent string) error
 	UpdateUser(id string, user UserProfile) error
+	
 }
 
 
 type UserRepositoryInterface interface {
 	RegisterUser(user User) error
 	FindUserByEmail(email string) (User, error)
-	UpdateUser(user User) error
 	FindUserByUserName(username string) (User, error)
 	FindUserByID(id string)(User, error)
 	SaveAsActiveUser(user ActiveUser, refreshToken string) error
 	CreateActiveUser(au ActiveUser) error
 	DeleteActiveUser(ids string, user_agent string) error
 	FindActiveUser(ids string, user_agent string) (ActiveUser, error)
+	UpdateUser(id string, user User) error
 }
 
 

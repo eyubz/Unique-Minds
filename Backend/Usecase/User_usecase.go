@@ -26,7 +26,6 @@ func NewUserUseCase(userRepo domain.UserRepositoryInterface, passwordService inf
 
 func (uc *UserUseCase) RegisterUser(user domain.User) error {
 	if user.Email == "" || user.UserName== "" || user.Password == "" {
-	if user.Email == "" || user.UserName== "" || user.Password == "" {
 		return errors.New("all fields are required")
 	}
 	if infrastructure.ValidateEmail(user.Email) != nil {
@@ -69,6 +68,7 @@ func (uc *UserUseCase) RegisterUser(user domain.User) error {
 }
 
 
+
 func (uc *UserUseCase) VerifyEmail(email string, token string)error{
 	user, err := uc.UserRepo.FindUserByEmail(email)
 	if err != nil {
@@ -85,7 +85,7 @@ func (uc *UserUseCase) VerifyEmail(email string, token string)error{
 	user.IsVerified = true
 	user.VerificationToken = ""
 	user.VerificationExpires = time.Time{}
-	err = uc.UserRepo.UpdateUser(user)
+	err = uc.UserRepo.UpdateUser(user.ID.Hex(), user)
 	if err != nil {
 		return errors.New("error verifying user")
 	}
@@ -232,13 +232,12 @@ func (uc *UserUseCase) ResetPassword(email string, user_id string) error{
 
 	user.ResetPasswordToken = token
 	user.ResetPasswordExpires = time.Now().Add(time.Hour * 24)
-	err = uc.UserRepo.UpdateUser(user)
+	err = uc.UserRepo.UpdateUser(user_id, user)
 	if err != nil {
 		return errors.New("error updating user")
 	}
 	return nil
 }
-
 
 func (uc *UserUseCase) ResetPasswordVerify(email string, token string, user_id string, password string) error{
 	user, err := uc.UserRepo.FindUserByEmail(email)
@@ -267,7 +266,7 @@ func (uc *UserUseCase) ResetPasswordVerify(email string, token string, user_id s
 	user.ResetPasswordToken = ""
 	user.ResetPasswordExpires = time.Time{}
 
-	err = uc.UserRepo.UpdateUser(user)
+	err = uc.UserRepo.UpdateUser(user_id, user)
 	if err != nil{
 		return errors.New("can not reset password")
 	}
@@ -301,5 +300,5 @@ func (uc *UserUseCase) UpdateUser(id string, user domain.UserProfile) error {
 	if user.Address != (domain.Address{}){
 		newUser.Address = user.Address
 	}	
-	return uc.UserRepo.UpdateUser(newUser)
+	return uc.UserRepo.UpdateUser(id, newUser)
 }

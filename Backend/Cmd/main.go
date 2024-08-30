@@ -17,6 +17,10 @@ func main() {
 		fmt.Print("Error in env.load")
 	}
 	db := infrastructure.NewDatabase()
+	coreMiddleWare := infrastructure.NewCorsMiddleware().CORSMiddleware()
+	
+	server.Use(coreMiddleWare)
+	
 	serverGroup := server.Group("api")
 	routers.Routers(serverGroup, db, config)
 

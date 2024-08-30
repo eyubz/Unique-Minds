@@ -1,5 +1,4 @@
 package Controllers
-package Controllers
 
 import (
 	"net/http"
@@ -290,5 +289,3 @@ func (uc *UserControllers) UpdateUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
 }
-
-

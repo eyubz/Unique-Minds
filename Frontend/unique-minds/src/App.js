@@ -21,6 +21,9 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/forgot-password" element={<VerifyOTP />} />
+        <Route path="/courses" element={<VerifyOTP />} />
+
+        {/* to="/courses" */}
         {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
       </Routes>
       <Footer />
