@@ -1,6 +1,7 @@
 package Controllers
 
 import (
+	"fmt"
 	"net/http"
 	domain "unique-minds/Domain"
 
@@ -24,6 +25,7 @@ func (uc *UserControllers) RegisterUser(c *gin.Context){
 	var user domain.User
 
 	err := c.BindJSON(&signUp)
+	fmt.Println(err.Error())
 	if err != nil {
 		c.JSON(400, domain.ErrorResponse{
 			Message: "Invalid request",
