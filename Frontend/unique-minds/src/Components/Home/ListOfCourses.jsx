@@ -1,5 +1,5 @@
 import React from "react";
-import img2 from "../Assets/image0_0.jpg";
+//import img2 from "../Assets/image0_0.jpg";
 import { useState, useEffect } from "react";
 
 const CoursesSection = () => {

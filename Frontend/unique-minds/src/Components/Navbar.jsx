@@ -44,8 +44,12 @@ const Navbar = () => {
             </button>
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2">
-                <Link
+                {/* <Link
                   to="/dashboard"
+                  className="block px-4 py-2 text-blue-500 hover:bg-blue-100"
+                > */}
+                <Link
+                  to="/educator_dashboard"
                   className="block px-4 py-2 text-blue-500 hover:bg-blue-100"
                 >
                   Dashboard

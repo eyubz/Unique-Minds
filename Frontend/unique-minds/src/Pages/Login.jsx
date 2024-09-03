@@ -9,7 +9,6 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Perform login operation
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
@@ -19,10 +18,11 @@ const Login = () => {
     });
 
     if (response.ok) {
-      // Redirect to the dashboard after successful login
-      navigate("/dashboard");
+      const data = await response.json();
+      document.cookie = `accessToken=${data.accessToken}; path=/;`;
+      document.cookie = `refreshToken=${data.refreshToken}; path=/;`;
+      navigate("/");
     } else {
-      // Handle login failure
       alert("Login failed");
     }
   };

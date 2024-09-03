@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Profile from "../Components/Profile";
-import Courses from "../Components/Courses";
-import Schedule from "../Components/Schedule";
-import Progress from "../Components/Progress";
+import Profile from "../Components/Student/Profile";
+import Courses from "../Components/Student/Courses";
+import Schedule from "../Components/Student/Schedule";
+import Progress from "../Components/Student/Progress";
 
 function StudentProfile() {
   const [currentTab, setCurrentTab] = useState(0);

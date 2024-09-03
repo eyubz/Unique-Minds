@@ -1,5 +1,5 @@
 import React from "react";
-import imgEducator1 from "../Assets/teacher1.jpg";
+import imgEducator1 from "../../Assets/teacher1.jpg";
 
 const educators = [
   {

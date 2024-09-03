@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 
 function Signup() {
@@ -10,6 +10,7 @@ function Signup() {
     password: "",
     confirmPassword: "",
   });
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleChange = (e) => {
     setFormData({
@@ -48,7 +49,14 @@ function Signup() {
       });
 
       if (response.ok) {
-        alert("SignUp successful!");
+        setFormData({
+          username: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+        });
+        // Redirect to verification page
+        navigate("/verification");
       } else {
         const errorData = await response.json();
         alert(`SignUp failed: ${errorData.message}`);

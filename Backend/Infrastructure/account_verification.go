@@ -30,7 +30,7 @@ func GenerateVerificationToken() (string, error) {
 
 // Sends the password reset email
 func SendVerificationEmail(to, token string) error {
-	verificationLink := fmt.Sprintf("%s/users/verify-email?token=%s&email=%s", ServerHost, token, to)
+	verificationLink := fmt.Sprintf("%s/api/auth/verify-email?token=%s&email=%s", ServerHost, token, to)
     body := fmt.Sprintf(`
         Hi,
 		Please Verify Your Account by clicking the link below:

@@ -1,5 +1,5 @@
 import React from "react";
-import imgFeature from "../Assets/img.jpg";
+import imgFeature from "../../Assets/img.jpg";
 
 const FeatureSection = () => {
   return (

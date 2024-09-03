@@ -1,7 +1,6 @@
 package Controllers
 
 import (
-	"fmt"
 	"net/http"
 	domain "unique-minds/Domain"
 
@@ -25,7 +24,7 @@ func (uc *UserControllers) RegisterUser(c *gin.Context){
 	var user domain.User
 
 	err := c.BindJSON(&signUp)
-	fmt.Println(err.Error())
+	//fmt.Println(err.Error())
 	if err != nil {
 		c.JSON(400, domain.ErrorResponse{
 			Message: "Invalid request",
@@ -80,13 +79,8 @@ func (uc *UserControllers)VerifyEmail(c *gin.Context){
 		})
 		return
 	}
-
-	c.JSON(200, domain.SuccessResponse{
-		Message: "Email verified successfully",
-		Status:  200,
-	})
+	c.Redirect(http.StatusFound, "http://localhost:3000/verification")
 }
-
 
 func (uc *UserControllers)Login(c *gin.Context){
 	var loginRequest domain.LoginRequest

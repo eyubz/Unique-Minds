@@ -1,20 +1,14 @@
 import React from "react";
 
 import Header from "../Components/Header";
-import SearchBar from "../Components/SearchBar";
-import FilterTags from "../Components/FilterTags";
-import CoursesSection from "../Components/ListOfCourses";
-import FeatureSection from "../Components/FeatureSection";
-import TopEducators from "../Components/FeaturedTeachers";
-import CallToAction from "../Components/CallToAction";
+import FeatureSection from "../Components/Home/FeatureSection";
+import TopEducators from "../Components/Home/FeaturedTeachers";
+import CallToAction from "../Components/Home/CallToAction";
 
 const Home = () => {
   return (
     <>
       <Header />
-      <SearchBar />
-      <FilterTags />
-      <CoursesSection />
       <FeatureSection />
       <TopEducators />
       <CallToAction />
