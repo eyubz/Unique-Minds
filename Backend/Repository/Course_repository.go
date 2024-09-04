@@ -109,3 +109,20 @@ func (r *CourseRepository) GetCourses(pageNo int64, pageSize int64, search strin
 
 	return courses, paginationInfo, nil
 }
+
+func (r *CourseRepository) GerCourseById(id string) (domain.Course, error) {
+	var course domain.Course
+
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return domain.Course{}, err
+	}
+
+	filter := bson.M{"_id": objID}
+	err = r.collection.FindOne(context.TODO(), filter).Decode(&course)
+	if err != nil {
+		return domain.Course{}, err
+	}
+
+	return course, nil
+}

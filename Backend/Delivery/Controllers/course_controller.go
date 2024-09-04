@@ -110,3 +110,14 @@ func (c *CourseController) GetCourses(ctx *gin.Context) {
 		})
 	}
 }
+
+func (c *CourseController) GetCourseById(ctx *gin.Context) {
+    id := ctx.Param("id")
+    course, err := c.courseUsecase.GetCourseById(id)
+    if err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    ctx.JSON(http.StatusOK, course)
+}

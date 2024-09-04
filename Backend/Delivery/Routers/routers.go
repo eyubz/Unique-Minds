@@ -48,6 +48,7 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
 
     serverGroup.GET("/api/featured-courses", courseController.GetFeaturedCourses)
     serverGroup.GET("/api/courses", courseController.GetCourses)
+    serverGroup.GET("/api/courses/:id", courseController.GetCourseById)
 
 
 }

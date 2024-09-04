@@ -50,3 +50,11 @@ func (u *courseUseCase) GetCourses(pageNo string, pageSize string, search string
 		return blogs, pagination, nil
 	}
 }
+
+func (u *courseUseCase) GetCourseById(id string) (domain.Course, error) {
+	result, err := u.courseRepo.GerCourseById(id)
+	if err != nil {
+		return domain.Course{}, err
+	}
+	return result, nil
+}

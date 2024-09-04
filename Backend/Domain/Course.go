@@ -42,9 +42,11 @@ type CourseRepository interface {
     Save(course *Course) error
     FetchRecentCourses() ([]Course, error)
     GetCourses(pageNo int64, pageSize int64, search string, tag string) ([]Course, Pagination, error)
+    GerCourseById(id string) (Course, error)
 }
 type CourseUseCaseInterface interface {
     UploadCourse(course *Course) error
     GetRecentCourses() ([]Course, error)
     GetCourses(pageNo string, pageSize string, search string, filter string) ([]Course, Pagination, error)
+    GetCourseById(id string) (Course, error)
 }
