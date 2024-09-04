@@ -78,14 +78,35 @@ func (c *CourseController) GetFeaturedCourses(ctx *gin.Context) {
     ctx.JSON(http.StatusOK, courses)
 }
 
-// func (c *CourseController) GetCourseByID(ctx *gin.Context) {
-//     id := ctx.Param("id")
-//     // Convert id to uint and handle error (omitted for brevity)
-//     course, err := c.courseUsecase.GetCourseByID(id)
-//     if err != nil {
-//         ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-//         return
-//     }
+func (c *CourseController) GetCourses(ctx *gin.Context) {
+	pageNo := ctx.Query("page")
+	pageSize := ctx.Query("limit")
+    search := ctx.Query("search")
+    tag := ctx.Query("tag")
 
-//     ctx.JSON(http.StatusOK, course)
-// }
+	if pageNo == "" {
+		pageNo = "1"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	blogs, pagination, err := c.courseUsecase.GetCourses(pageNo, pageSize, search, tag)
+	if err != nil {
+		ctx.JSON(500, domain.ErrorResponse{
+			Message: err.Error(),
+			Status: 500,
+
+		})
+		ctx.Abort()
+	} else {
+		ctx.JSON(http.StatusOK, domain.SuccessResponse{
+			Status: http.StatusOK,
+			Data: map[string]interface{}{
+				"course" : blogs, 
+				"pagination" : pagination,
+			},
+			Message: "courses fetched successfully.",
+		})
+	}
+}

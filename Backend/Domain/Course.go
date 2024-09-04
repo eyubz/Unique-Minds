@@ -41,8 +41,10 @@ type Material struct {
 type CourseRepository interface {
     Save(course *Course) error
     FetchRecentCourses() ([]Course, error)
+    GetCourses(pageNo int64, pageSize int64, search string, tag string) ([]Course, Pagination, error)
 }
 type CourseUseCaseInterface interface {
     UploadCourse(course *Course) error
     GetRecentCourses() ([]Course, error)
+    GetCourses(pageNo string, pageSize string, search string, filter string) ([]Course, Pagination, error)
 }

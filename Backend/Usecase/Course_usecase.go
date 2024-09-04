@@ -1,6 +1,8 @@
 package usecases
 
 import (
+	"errors"
+	"strconv"
 	domain "unique-minds/Domain"
 )
 
@@ -19,7 +21,7 @@ func (u *courseUseCase) UploadCourse(course *domain.Course) error {
     return u.courseRepo.Save(course)
 }
 
-func (u *courseUseCase )GetRecentCourses() ([]domain.Course, error) {
+func (u *courseUseCase) GetRecentCourses() ([]domain.Course, error) {
     result, err := u.courseRepo.FetchRecentCourses()
     if err != nil{
         return nil, err
@@ -28,7 +30,23 @@ func (u *courseUseCase )GetRecentCourses() ([]domain.Course, error) {
 }
 
 
+func (u *courseUseCase) GetCourses(pageNo string, pageSize string, search string, filter string) ([]domain.Course, domain.Pagination, error) {
+	PageNo, err := strconv.ParseInt(pageNo, 10, 64)
+	if err != nil {
+		return []domain.Course{}, domain.Pagination{}, err
+	}
+	PageSize, err := strconv.ParseInt(pageSize, 10, 64)
+	if err != nil {
+		return []domain.Course{}, domain.Pagination{}, err
+	}
+	if PageNo <= 0 || PageSize <= 0 {
+		return []domain.Course{}, domain.Pagination{}, errors.New("invalid page number or page size")
+	}
 
-// func (u *courseUseCase ) GetCourseByID(id uint) (*domain.Course, error) {
-//     return u.courseRepo.FindByID(id)
-// }
+	blogs, pagination, err := u.courseRepo.GetCourses(PageNo, PageSize, search, filter)
+	if err != nil {
+		return nil, domain.Pagination{}, err
+	} else {
+		return blogs, pagination, nil
+	}
+}

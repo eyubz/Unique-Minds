@@ -36,7 +36,7 @@ const FeaturedCourses = () => {
   // useEffect(() => {
   //   const fetchCourses = async () => {
   //     try {
-  //       const response = await fetch("/api/featured-courses");
+  //       const response = await fetch("https://localhost:8080/api/featured-courses");
   //       if (!response.ok) {
   //         throw new Error("Network response was not ok.");
   //       }

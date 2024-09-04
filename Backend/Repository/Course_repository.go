@@ -2,9 +2,11 @@ package repository
 
 import (
 	"context"
+	"math"
 	"time"
 	domain "unique-minds/Domain"
 	infrastructure "unique-minds/Infrastructure"
+	utils "unique-minds/Utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -69,21 +71,41 @@ func (r *CourseRepository) FetchRecentCourses() ([]domain.Course, error) {
 }
 
 
+func (r *CourseRepository) GetCourses(pageNo int64, pageSize int64, search string, tag string) ([]domain.Course, domain.Pagination, error) {
+	pagination := utils.PaginationByPage(pageNo, pageSize)
 
-// func (r *CourseRepositoryImpl) FindByID(id uint) (*domain.Course, error) {
-//     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-//     defer cancel()
+	totalResults, err := r.collection.CountDocuments(context.TODO(), bson.M{})
+	if err != nil {
+		return []domain.Course{}, domain.Pagination{}, err
+	}
+    filter := bson.M{}
+    if search != "" {
+        filter["name"] = bson.M{"$regex": search, "$options": "i"}
+    }
+    if tag != "" {
+        filter["tags"] = bson.M{"$regex": tag, "$options": "i"}
+    }
 
-//     var course domain.Course
-//     filter := bson.M{"_id": id}
+	totalPages := int64(math.Ceil(float64(totalResults) / float64(pageSize)))
 
-//     err := r.collection.FindOne(ctx, filter).Decode(&course)
-//     if err != nil {
-//         if errors.Is(err, mongo.ErrNoDocuments) {
-//             return nil, errors.New("course not found")
-//         }
-//         return nil, err
-//     }
+	cursor, err := r.collection.Find(context.TODO(), filter, pagination)
+    
+	if err != nil {
+		return []domain.Course{}, domain.Pagination{}, err
+	}
+	var courses []domain.Course
+	for cursor.Next(context.TODO()) {
+		var course domain.Course
+		if err := cursor.Decode(&course); err != nil {
+			return []domain.Course{}, domain.Pagination{}, err
+		}
+	}
+	paginationInfo := domain.Pagination{
+		CurrentPage: pageNo,
+		PageSize:    pageSize,
+		TotalPages:  totalPages,
+		TotatRecord: totalResults,
+	}
 
-//     return &course, nil
-// }
+	return courses, paginationInfo, nil
+}

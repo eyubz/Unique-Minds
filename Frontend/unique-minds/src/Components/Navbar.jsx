@@ -11,7 +11,7 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow-md p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-blue-500 text-lg font-bold">
+        <Link to="/" className="text-customBlue text-lg font-bold">
           UniqueMinds
         </Link>
         <div className="flex items-center">
@@ -29,7 +29,7 @@ const Navbar = () => {
           </Link>
           <Link
             to="/signup"
-            className="bg-blue-500 text-white px-4 py-2 rounded mr-4"
+            className="bg-customBlue text-white px-4 py-2 rounded mr-4"
           >
             Signup
           </Link>
