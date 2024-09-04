@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import imgEducator1 from "../../Assets/teacher1.jpg";
 
 const educators = [
@@ -24,20 +25,26 @@ const educators = [
 
 const TopEducators = () => {
   return (
-    <div className="flex flex-col items-center p-8 bg-white rounded-lg shadow-md mt-10 mb-10">
+    <div className="p-8 bg-gray-100 rounded-lg shadow-md mt-10 mb-10">
       <h2 className="text-center text-3xl font-bold mb-8">
-        Top 3 Educators of the Month
+        Top Teachers of the Week
       </h2>
-      <div className="flex justify-between items-end gap-8">
+      <div className="flex justify-center items-end gap-8">
         {educators.map((educator) => (
-          <div
+          <motion.div
             key={educator.id}
-            className={`bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-110 hover:shadow-xl ${
-              educator.rank === 1 ? "scale-110" : "scale-100"
+            className={`bg-white rounded-lg shadow-lg overflow-hidden ${
+              educator.rank === 1 ? "scale-110 z-10" : "scale-100"
             }`}
             style={{
               marginTop: educator.rank === 1 ? "-20px" : "0",
-              zIndex: educator.rank === 1 ? "10" : "1",
+            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: educator.rank * 0.2 }}
+            whileHover={{
+              scale: 1.05,
+              boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
             }}
           >
             <img
@@ -46,9 +53,11 @@ const TopEducators = () => {
               className="w-48 h-48 object-cover"
             />
             <div className="p-4 text-center">
-              <h3 className="text-xl font-semibold">{educator.name}</h3>
+              <h3 className="text-xl font-semibold text-gray-800">
+                {educator.name}
+              </h3>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

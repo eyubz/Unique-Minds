@@ -67,6 +67,17 @@ func (c *CourseController) UploadCourse(ctx *gin.Context) {
     ctx.JSON(http.StatusOK, gin.H{"message": "Course uploaded successfully"})
 }
 
+
+func (c *CourseController) GetFeaturedCourses(ctx *gin.Context) {
+    courses, err := c.courseUsecase.GetRecentCourses()
+    if err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    ctx.JSON(http.StatusOK, courses)
+}
+
 // func (c *CourseController) GetCourseByID(ctx *gin.Context) {
 //     id := ctx.Param("id")
 //     // Convert id to uint and handle error (omitted for brevity)

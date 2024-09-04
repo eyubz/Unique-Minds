@@ -46,5 +46,7 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     courseGroup.POST("/", courseController.UploadCourse)
     courseGroup.POST("/upload", courseController.UploadFile)
 
+    serverGroup.GET("/api/featured-courses", courseController.GetFeaturedCourses)
+
 
 }

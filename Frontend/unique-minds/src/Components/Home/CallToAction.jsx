@@ -1,9 +1,9 @@
 import React from "react";
-import donateImage from "../../Assets/image1_0.jpg";
+import donateImage from "../../Assets/herosecrtion.jpg";
 
 const CallToAction = () => {
   return (
-    <div className="flex flex-col md:flex-row-reverse items-center p-8 bg-blue-100 rounded-lg shadow-md mt-20 mb-20">
+    <div className="flex flex-col md:flex-row-reverse items-center p-8 bg-customBlue rounded-lg shadow-md mt-20 mb-20">
       <div className="md:w-1/2 mb-4 md:mb-0 flex justify-center">
         <img
           src={donateImage}
@@ -12,10 +12,10 @@ const CallToAction = () => {
         />
       </div>
       <div className="md:w-1/2 md:pr-8 text-center md:text-left">
-        <h2 className="text-3xl font-bold text-blue-900 mb-4">
+        <h2 className="text-3xl font-bold text-white mb-4">
           Help Students with Down Syndrome Thrive
         </h2>
-        <p className="text-lg text-gray-700 mb-6">
+        <p className="text-lg text-white mb-6">
           Your contribution can make a huge difference in the lives of students
           with Down syndrome. By donating, you're providing the resources and
           support they need to reach their full potential.

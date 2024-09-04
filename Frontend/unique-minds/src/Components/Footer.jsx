@@ -11,9 +11,8 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-blue-800 text-white py-12 px-8 mt-8">
+    <footer className="bg-customBlue text-white py-12 px-8 mt-32">
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
-        {/* About Section */}
         <div>
           <h4 className="text-xl font-bold mb-4">About Us</h4>
           <p className="text-white">

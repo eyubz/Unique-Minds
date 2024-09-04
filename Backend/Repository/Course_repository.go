@@ -44,6 +44,32 @@ func (r *CourseRepository) Save(course *domain.Course) error {
     return nil
 }
 
+
+func (r *CourseRepository) FetchRecentCourses() ([]domain.Course, error) {
+    var courses []domain.Course
+
+    cur, err := r.collection.Find(context.TODO(), bson.D{}, options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}}).SetLimit(3))
+    if err != nil {
+        return nil, err
+    }
+    defer cur.Close(context.TODO())
+
+    for cur.Next(context.TODO()) {
+        var course domain.Course
+        if err := cur.Decode(&course); err != nil {
+            return nil, err
+        }
+        courses = append(courses, course)
+    }
+
+    if err := cur.Err(); err != nil {
+        return nil, err
+    }
+	return courses, nil
+}
+
+
+
 // func (r *CourseRepositoryImpl) FindByID(id uint) (*domain.Course, error) {
 //     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 //     defer cancel()

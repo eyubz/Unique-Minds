@@ -14,10 +14,20 @@ func NewCourseUseCase(cr domain.CourseRepository) *courseUseCase  {
     }
 }
 
-func (u *courseUseCase ) UploadCourse(course *domain.Course) error {
+func (u *courseUseCase) UploadCourse(course *domain.Course) error {
     // Add any business logic here
     return u.courseRepo.Save(course)
 }
+
+func (u *courseUseCase )GetRecentCourses() ([]domain.Course, error) {
+    result, err := u.courseRepo.FetchRecentCourses()
+    if err != nil{
+        return nil, err
+    }
+    return result, nil
+}
+
+
 
 // func (u *courseUseCase ) GetCourseByID(id uint) (*domain.Course, error) {
 //     return u.courseRepo.FindByID(id)
