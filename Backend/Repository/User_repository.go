@@ -10,19 +10,22 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserRepository struct {
 	collection *mongo.Collection
 	activeUserCollection *mongo.Collection
+	profileCollection *mongo.Collection
 	config   *infrastructure.Config
 }
 
-func NewUserRepository(collection *mongo.Collection, activeUserColl *mongo.Collection, config *infrastructure.Config) *UserRepository {
+func NewUserRepository(collection *mongo.Collection, activeUserColl *mongo.Collection, profileCollection *mongo.Collection, config *infrastructure.Config) *UserRepository {
 	return &UserRepository{
 		collection: collection,
 		activeUserCollection: activeUserColl,
 		config: config,
+		profileCollection: profileCollection,
 	}
 }
 
@@ -81,7 +84,6 @@ func (ur *UserRepository) FindUserByID(id string)(domain.User, error){
 	return user, nil
 }
 
-
 func (ur *UserRepository) SaveAsActiveUser(user domain.ActiveUser, refreshToken string) error {
 	_, err := ur.FindActiveUser(user.ID.Hex(), user.UserAgent)
 	if err == nil {
@@ -121,4 +123,48 @@ func (ur *UserRepository) FindActiveUser(ids string, user_agent string) (domain.
 	return au, err
 }
 
+func (ur *UserRepository)  GetStudentProfile(userId uint) (*domain.StudentProfile, error) {
+	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
+	defer cancel()
+    var profile domain.StudentProfile
 
+    filter := bson.M{"user_id": userId}
+    err := ur.profileCollection.FindOne(context, filter).Decode(&profile)
+
+    if err != nil {
+        if err == mongo.ErrNoDocuments {
+            return nil, errors.New("profile not found")
+        }
+        return nil, err
+    }
+
+    return &profile, nil
+}
+
+func  (ur *UserRepository)  UpdateStudentProfile(profile *domain.StudentProfile) (*domain.StudentProfile, error) {
+	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
+	defer cancel()
+    filter := bson.M{"user_id": profile.UserID}
+
+    update := bson.M{
+        "$set": bson.M{
+            "name":           profile.Name,
+            "age":            profile.Age,
+            "bio":            profile.Bio,
+            "guardianEmail":  profile.GuardianEmail,
+            "guardianPhone":  profile.GuardianPhone,
+            "location":       profile.Location,
+            "profileImage":   profile.ProfileImage,
+            "updatedAt":      time.Now(),
+        },
+    }
+
+	
+    opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+    err := ur.profileCollection.FindOneAndUpdate(context, filter, update, opts).Decode(&profile)
+    if err != nil {
+        return nil, err
+    }
+
+    return profile, nil
+}

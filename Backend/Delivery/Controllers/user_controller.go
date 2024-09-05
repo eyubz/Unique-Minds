@@ -1,7 +1,9 @@
 package Controllers
 
 import (
+	"fmt"
 	"net/http"
+	"path/filepath"
 	domain "unique-minds/Domain"
 
 	"github.com/gin-gonic/gin"
@@ -284,4 +286,65 @@ func (uc *UserControllers) UpdateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
+}
+
+
+func (uc *UserControllers) GetStudentProfile(c *gin.Context) {
+    userId := c.GetString("userId")
+    if userId == "" {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+        return
+    }
+
+    profile, err := uc.userUserCase.GetUserProfile(userId)
+    if err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, profile)
+}
+
+func (uc *UserControllers) UpdateStudentProfile(c *gin.Context) {
+    userId, exists := c.Get("userId")
+    if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+        return
+    }
+
+    var profileData domain.StudentProfile
+
+    if err := c.ShouldBind(&profileData); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+        return
+    }
+
+    updatedProfile, err := uc.userUserCase.UpdateStudentProfile(userId, &profileData)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, updatedProfile)
+}
+
+func (uc *UserControllers) UploadProfileImage (ctx *gin.Context) {
+    file, err := ctx.FormFile("file")
+    if err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "No file uploaded"})
+        return
+    }
+
+    filename := filepath.Base(file.Filename)
+    savePath := fmt.Sprintf("./uploads/%s", filename)
+
+    if err := ctx.SaveUploadedFile(file, savePath); err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to save file"})
+        fmt.Println(err)
+        return
+    }
+
+    fileURL := fmt.Sprintf("http://localhost:8080/uploads/%s", filename)
+
+    ctx.JSON(http.StatusOK, gin.H{"fileUrl": fileURL})
 }

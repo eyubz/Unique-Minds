@@ -302,3 +302,29 @@ func (uc *UserUseCase) UpdateUser(id string, user domain.UserProfile) error {
 	}	
 	return uc.UserRepo.UpdateUser(id, newUser)
 }
+
+
+func (uc *UserUseCase) UpdateStudentProfile (userId string, updatedProfile *domain.StudentProfile) (*domain.StudentProfile, error) {
+    profile, err := uc.UserRepo.GetStudentProfile(userId)
+    if err != nil {
+        return nil, err
+    }
+	profile.Name = updatedProfile.Name
+	profile.Age = updatedProfile.Age
+	profile.Bio = updatedProfile.Bio
+	profile.GuardianEmail = updatedProfile.GuardianEmail
+	profile.GuardianPhone = updatedProfile.GuardianPhone
+	profile.Location = updatedProfile.Location
+
+
+    if updatedProfile.ProfileImage != "" {
+        profile.ProfileImage = updatedProfile.ProfileImage
+    }
+
+    return uc.UserRepo.UpdateStudentProfile(profile)
+}
+
+
+func (uc *UserUseCase) GetStudentProfile(userId string) (*domain.StudentProfile, error) {
+	return uc.UserRepo.GetStudentProfile(userId)
+}

@@ -49,7 +49,7 @@ const Navbar = () => {
                   className="block px-4 py-2 text-blue-500 hover:bg-blue-100"
                 > */}
                 <Link
-                  to="/educator_dashboard"
+                  to="/student_dashboard"
                   className="block px-4 py-2 text-blue-500 hover:bg-blue-100"
                 >
                   Dashboard
