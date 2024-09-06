@@ -141,13 +141,13 @@ const Courses = () => {
               value={input}
               onChange={handleInputChange}
               placeholder="Enter Course Name"
-              className="w-full py-3 px-4 pl-12 rounded-md text-blue-500 border border-blue-300 focus:outline-none"
+              className="w-full py-3 px-4 pl-12 rounded-md text-customBlue border border-blue-300 focus:outline-none"
             />
             <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-customBlue" />
           </div>
           <button
             type="submit"
-            className="bg-customBlue text-white py-3 px-6 rounded-md hover:bg-blue-800 focus:outline-none ml-5"
+            className="bg-customBlue text-white py-3 px-6 rounded-md hover:bg-gray-500 focus:outline-none"
           >
             Search
           </button>
@@ -165,7 +165,7 @@ const Courses = () => {
           <button
             key={tag}
             onClick={() => handleTagSelect(tag)}
-            className="px-6 py-2 rounded-full bg-customBlue text-white border border-blue-300 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+            className="px-6 py-2 rounded-full bg-customBlue text-white border border-blue-300 hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
           >
             {tag}
           </button>
@@ -178,8 +178,8 @@ const Courses = () => {
     <>
       <SearchBar />
       <FilterTags />
-      <div className="container mx-auto my-8 px-4">
-        <h2 className="text-4xl font-bold text-center mb-8 text-gray-800">
+      <div className="container mx-auto my-8 px-4 mb-16">
+        <h2 className="text-4xl font-bold text-center text-customBlue mt-12 mb-10">
           Courses
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

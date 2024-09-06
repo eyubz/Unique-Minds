@@ -9,32 +9,49 @@ const Header = () => {
       <motion.div
         className="flex-1 flex justify-center"
         initial={{ opacity: 0, x: -100 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 1 }}
+        animate={{ opacity: 1, x: 0, rotate: [0, 10, -10, 0] }} // Add subtle rotation effect
+        transition={{ duration: 1, ease: "easeInOut" }}
       >
-        <img
+        <motion.img
           src={img1}
           alt="E-Learning"
           className="w-3/4 max-w-md rounded-lg shadow-lg"
+          whileHover={{ scale: 1.05, rotate: 2 }} // Slight scaling and rotation on hover
+          transition={{ duration: 0.3 }}
         />
       </motion.div>
 
       <motion.div
         className="flex-1 text-center p-8"
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.5 }}
+        transition={{ duration: 1, delay: 0.5, ease: "easeInOut" }}
       >
-        <h1 className="text-5xl font-bold mb-4">Welcome to Unique Minds.</h1>
-        <p className="text-lg mb-8">Serving the uniques.</p>
+        <motion.h1
+          className="text-5xl font-bold mb-4"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+          Welcome to Unique Minds.
+        </motion.h1>
+        <motion.p
+          className="text-lg mb-8"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+        >
+          Serving the uniques.
+        </motion.p>
+
         <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          transition={{ duration: 0.2 }}
+          whileHover={{ scale: 1, rotate: 1 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ duration: 0.3 }}
         >
           <Link
             to="/courses"
-            className="bg-white text-blue-500 px-6 py-3 rounded-lg"
+            className="bg-white text-customBlue px-6 py-3 rounded-lg shadow-lg"
           >
             Browse Courses
           </Link>

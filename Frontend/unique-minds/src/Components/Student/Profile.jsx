@@ -17,7 +17,7 @@ const EducatorDashboard = () => {
         <button
           className={`py-2 px-4 rounded text-customBlue ${
             activeSection === "profile"
-              ? "bg-blue-60"
+              ? "bg-blue-700"
               : "bg-white hover:bg-blue-700"
           } transition duration-300`}
           onClick={() => setActiveSection("profile")}

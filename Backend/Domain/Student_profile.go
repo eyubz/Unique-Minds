@@ -18,15 +18,3 @@ type StudentProfile struct {
 	UserID        primitive.ObjectID `json:"userId" bson:"userId"`
 	UpdateAt      time.Time			 `json:"updateAt" bson:"updateAt"`
 }
-
-
-type StudentProfileUseCase interface {
-	GetStudentProfile(userId string) (*StudentProfile, error)
-	UpdateStudentProfile(userId string, updatedProfile *StudentProfile) (*StudentProfile, error)
-}
-
-
-type StudentProfileRepository interface {
-	UpdateStudentProfile(profile *StudentProfile) (*StudentProfile, error)
-	GetStudentProfile(userId string) (*StudentProfile, error)
-}

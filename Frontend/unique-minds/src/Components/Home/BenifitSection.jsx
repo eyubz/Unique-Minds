@@ -5,7 +5,7 @@ import {
   UserGroupIcon,
   ClockIcon,
   StarIcon,
-} from "@heroicons/react/24/outline"; // Updated path for v2
+} from "@heroicons/react/24/outline";
 
 const benefits = [
   {
@@ -17,7 +17,7 @@ const benefits = [
   },
   {
     id: 2,
-    title: "Expert Instructors",
+    title: "Quality Instructors",
     description:
       "Learn from qualified professionals with extensive experience in their fields.",
     icon: <UserGroupIcon className="h-12 w-12 text-white" />,
@@ -41,17 +41,36 @@ const benefits = [
 const BenefitsSection = () => {
   return (
     <div className="py-16 bg-white">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-12">
+      <motion.div
+        className="container mx-auto px-4"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ staggerChildren: 0.2 }}
+      >
+        <motion.h2
+          className="text-3xl font-bold text-center mb-12 text-customBlue"
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.5 }}
+          viewport={{ once: true, amount: 0.5 }}
+        >
           Benefits of Our Platform
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+        </motion.h2>
+
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8"
+          initial="hidden"
+          animate="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ staggerChildren: 0.2 }}
+        >
           {benefits.map((benefit) => (
             <motion.div
               key={benefit.id}
-              className=" bg-customBlue rounded-lg p-6 shadow-lg flex items-center text-white"
+              className="bg-customBlue rounded-lg p-6 shadow-lg flex items-center text-white"
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: benefit.id * 0.2 }}
               whileHover={{
                 scale: 1.05,
@@ -61,13 +80,27 @@ const BenefitsSection = () => {
             >
               <div className="flex-shrink-0 mr-4">{benefit.icon}</div>
               <div>
-                <h3 className="text-xl font-semibold mb-2">{benefit.title}</h3>
-                <p>{benefit.description}</p>
+                <motion.h3
+                  className="text-xl font-semibold mb-2"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  {benefit.title}
+                </motion.h3>
+                <motion.p
+                  className="text-white"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  {benefit.description}
+                </motion.p>
               </div>
             </motion.div>
           ))}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

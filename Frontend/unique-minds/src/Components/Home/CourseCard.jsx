@@ -14,7 +14,7 @@ const CourseCard = ({ course }) => {
         <p className="text-white mb-4">{course.description}</p>
         <Link
           to={`/courses/${course.id}`}
-          className="inline-block bg-white text-customBlue py-2 px-4 rounded-lg hover:bg-blue-600 transition"
+          className="inline-block bg-white text-customBlue py-2 px-4 rounded-lg hover:bg-gray-500 hover:text-white transition"
         >
           View Details
         </Link>

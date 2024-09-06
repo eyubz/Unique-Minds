@@ -321,7 +321,7 @@ func (uc *UserUseCase) UpdateStudentProfile (userId string, updatedProfile *doma
         profile.ProfileImage = updatedProfile.ProfileImage
     }
 
-    return uc.UserRepo.UpdateStudentProfile(profile)
+    return uc.UserRepo.UpdateStudentProfile(userId, profile)
 }
 
 

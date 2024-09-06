@@ -1,30 +1,28 @@
-import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import logo from "../Assets/logo.png";
+import img from "../Assets/image1_0.jpg";
 
 const Navbar = () => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
   return (
     <nav className="bg-white shadow-md p-4">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="text-customBlue text-lg font-bold">
-          UniqueMinds
+          <img src={logo} alt="UniqueMinds" className="w-20 h-10" />
         </Link>
         <div className="flex items-center">
-          <Link to="/courses" className="text-blue-500 mr-4">
+          <Link to="/courses" className="text-customBlue mr-4">
             Courses
           </Link>
-          <Link to="/about" className="text-blue-500 mr-4">
+          <Link to="/courses" className="text-customBlue mr-4">
+            Educators
+          </Link>
+          <Link to="/about" className="text-customBlue mr-4">
             About Us
           </Link>
-          <Link to="/contact" className="text-blue-500 mr-4">
-            Contact
+          <Link to="/contact" className="text-customBlue mr-4">
+            Contact Us
           </Link>
-          <Link to="/login" className="text-blue-500 mr-4">
+          <Link to="/login" className="text-customBlue mr-4">
             Login
           </Link>
           <Link
@@ -33,36 +31,16 @@ const Navbar = () => {
           >
             Signup
           </Link>
-
-          {/* User Profile Dropdown */}
-          <div className="relative">
-            <button
-              onClick={toggleDropdown}
-              className="text-blue-500 focus:outline-none"
-            >
-              Profile
-            </button>
-            {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2">
-                {/* <Link
-                  to="/dashboard"
-                  className="block px-4 py-2 text-blue-500 hover:bg-blue-100"
-                > */}
-                <Link
-                  to="/student_dashboard"
-                  className="block px-4 py-2 text-blue-500 hover:bg-blue-100"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  to="/logout"
-                  className="block px-4 py-2 text-blue-500 hover:bg-blue-100"
-                >
-                  Logout
-                </Link>
-              </div>
-            )}
-          </div>
+          <Link>
+            <div className="flex items-center">
+              <img
+                //src={profileImage ? profileImage : img}
+                src={img}
+                alt="Profile"
+                className="w-10 h-10 rounded-full object-cover"
+              />
+            </div>
+          </Link>
         </div>
       </div>
     </nav>

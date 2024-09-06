@@ -13,13 +13,15 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     user_collection := db.CreateDb(config.DatabaseUrl, config.DbName, config.UserCollection)
     active_user_collection := db.CreateDb(config.DatabaseUrl, config.DbName, config.ActiveUserCollection)
     course_collection := db.CreateDb(config.DatabaseUrl, config.DbName, config.CourseCollection)
+    profile_collection := db.CreateDb(config.DatabaseUrl, config.DbName, config.ProfileCollection)
 
-    user_repository := repository.NewUserRepository(user_collection, active_user_collection, config)
+    user_repository := repository.NewUserRepository(user_collection, active_user_collection, profile_collection, config)
     course_repository := repository.NewCourseRepository(course_collection, config)
     password_service := infrastructure.NewPasswordService()
 
     course_useCase := useCase.NewCourseUseCase(course_repository)
     user_useCase := useCase.NewUserUseCase(user_repository, *password_service, config)
+    //useCase.NewUserUseCase(user_repository, *password_service, config)
 
     userControllers := controllers.NewUserControllers(user_useCase)
     courseController := controllers.NewCourseController(course_useCase)

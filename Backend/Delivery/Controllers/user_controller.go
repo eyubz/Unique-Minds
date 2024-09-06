@@ -306,8 +306,8 @@ func (uc *UserControllers) GetStudentProfile(c *gin.Context) {
 }
 
 func (uc *UserControllers) UpdateStudentProfile(c *gin.Context) {
-    userId, exists := c.Get("userId")
-    if !exists {
+    userId := c.GetString("userId")
+    if userId == "" {
         c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
         return
     }

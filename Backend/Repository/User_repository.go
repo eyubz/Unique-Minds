@@ -123,7 +123,7 @@ func (ur *UserRepository) FindActiveUser(ids string, user_agent string) (domain.
 	return au, err
 }
 
-func (ur *UserRepository)  GetStudentProfile(userId uint) (*domain.StudentProfile, error) {
+func (ur *UserRepository) GetStudentProfile(userId string) (*domain.StudentProfile, error) {
 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
 	defer cancel()
     var profile domain.StudentProfile
@@ -141,30 +141,32 @@ func (ur *UserRepository)  GetStudentProfile(userId uint) (*domain.StudentProfil
     return &profile, nil
 }
 
-func  (ur *UserRepository)  UpdateStudentProfile(profile *domain.StudentProfile) (*domain.StudentProfile, error) {
+func  (ur *UserRepository) UpdateStudentProfile(userId string, updatedProfile *domain.StudentProfile) (*domain.StudentProfile, error) {
 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
 	defer cancel()
-    filter := bson.M{"user_id": profile.UserID}
+    filter := bson.M{"user_id": updatedProfile.UserID}
 
     update := bson.M{
         "$set": bson.M{
-            "name":           profile.Name,
-            "age":            profile.Age,
-            "bio":            profile.Bio,
-            "guardianEmail":  profile.GuardianEmail,
-            "guardianPhone":  profile.GuardianPhone,
-            "location":       profile.Location,
-            "profileImage":   profile.ProfileImage,
+            "name":           updatedProfile.Name,
+            "age":            updatedProfile.Age,
+            "bio":            updatedProfile.Bio,
+            "guardianEmail":  updatedProfile.GuardianEmail,
+            "guardianPhone":  updatedProfile.GuardianPhone,
+            "location":       updatedProfile.Location,
+            "profileImage":   updatedProfile.ProfileImage,
             "updatedAt":      time.Now(),
         },
     }
 
 	
     opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
-    err := ur.profileCollection.FindOneAndUpdate(context, filter, update, opts).Decode(&profile)
+    err := ur.profileCollection.FindOneAndUpdate(context, filter, update, opts).Decode(&updatedProfile)
     if err != nil {
         return nil, err
     }
 
-    return profile, nil
+    return updatedProfile, nil
 }
+
+
