@@ -10,6 +10,8 @@ import Footer from "./Components/Footer";
 import StudentDashboard from "./Components/Student/Profile.jsx";
 import CourseDetail from "./Pages/CourseDetail";
 import VerifyOTP from "./Components/VerifyAccount";
+import Educators from "./Pages/Educator";
+import EducatorProfileDetail from "./Pages/EducatorProfileDetail.jsx";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
         <Route path="/forgot-password" element={<VerifyOTP />} />
         <Route path="/verification" element={<VerifyOTP />} />
         <Route path="/courses/:id" element={<CourseDetail />} />
+        <Route path="/educators" element={<Educators />} />
+        <Route path="/educator_detail" element={<EducatorProfileDetail />} />
       </Routes>
       <Footer />
     </Router>

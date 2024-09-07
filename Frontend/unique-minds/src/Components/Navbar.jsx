@@ -13,7 +13,7 @@ const Navbar = () => {
           <Link to="/courses" className="text-customBlue mr-4">
             Courses
           </Link>
-          <Link to="/courses" className="text-customBlue mr-4">
+          <Link to="/educators" className="text-customBlue mr-4">
             Educators
           </Link>
           <Link to="/about" className="text-customBlue mr-4">

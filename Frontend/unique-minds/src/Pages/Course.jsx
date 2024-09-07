@@ -130,7 +130,7 @@ const Courses = () => {
     };
 
     return (
-      <div className="flex justify-center pt-8 pb-4 px-4 mt-10">
+      <div className="flex justify-center pt-8 pb-4 px-4 mt-10 mb-20">
         <form
           onSubmit={handleSearchSubmit}
           className="w-full max-w-2xl flex items-center bg-white rounded-md overflow-hidden"
