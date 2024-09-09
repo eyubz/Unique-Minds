@@ -3,6 +3,8 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
+	"strings"
 	"time"
 	domain "unique-minds/Domain"
 	infrastructure "unique-minds/Infrastructure"
@@ -10,22 +12,23 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserRepository struct {
 	collection *mongo.Collection
 	activeUserCollection *mongo.Collection
-	profileCollection *mongo.Collection
+	studentProfileCollection *mongo.Collection
+	educatorProfileCollection *mongo.Collection
 	config   *infrastructure.Config
 }
 
-func NewUserRepository(collection *mongo.Collection, activeUserColl *mongo.Collection, profileCollection *mongo.Collection, config *infrastructure.Config) *UserRepository {
+func NewUserRepository(collection *mongo.Collection, activeUserColl *mongo.Collection, studentProfile *mongo.Collection, educatorProfile *mongo.Collection, config *infrastructure.Config) *UserRepository {
 	return &UserRepository{
 		collection: collection,
 		activeUserCollection: activeUserColl,
 		config: config,
-		profileCollection: profileCollection,
+		studentProfileCollection: studentProfile,
+		educatorProfileCollection: educatorProfile,
 	}
 }
 
@@ -52,9 +55,36 @@ func (ur *UserRepository) FindUserByUserName(username string) (domain.User, erro
 }
 
 func (ur *UserRepository) RegisterUser(user domain.User) error {
-	context, _ := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
+	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
+	defer cancel()
 	user.ID = primitive.NewObjectID()
 	_, err := ur.collection.InsertOne(context, user)
+	if err != nil {
+		return err
+	}
+	if strings.ToLower(user.UserType) == "student"{
+		var student = domain.StudentProfile{
+			ID: user.ID,
+			UserName: user.UserName,
+			Email: user.Email,
+			Password: user.Password,
+			Created_At: user.Created_At,
+			UpdateAt: user.Created_At,
+		}
+		_, err = ur.studentProfileCollection.InsertOne(context, student)
+
+	}else{
+		fmt.Println(user.UserType)
+		var educator = domain.EducatorProfile{
+			ID: user.ID,
+			UserName: user.UserName,
+			Email: user.Email,
+			Password: user.Password,
+			Created_At: user.Created_At,
+			UpdateAt: user.Created_At,
+		}
+		_, err = ur.educatorProfileCollection.InsertOne(context, educator)
+	}
 	if err != nil {
 		return err
 	}
@@ -123,50 +153,50 @@ func (ur *UserRepository) FindActiveUser(ids string, user_agent string) (domain.
 	return au, err
 }
 
-func (ur *UserRepository) GetStudentProfile(userId string) (*domain.StudentProfile, error) {
-	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
-	defer cancel()
-    var profile domain.StudentProfile
+// func (ur *UserRepository) GetStudentProfile(userId string) (*domain.StudentProfile, error) {
+// 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
+// 	defer cancel()
+//     var profile domain.StudentProfile
 
-    filter := bson.M{"user_id": userId}
-    err := ur.profileCollection.FindOne(context, filter).Decode(&profile)
+//     filter := bson.M{"user_id": userId}
+//     err := ur.profileCollection.FindOne(context, filter).Decode(&profile)
 
-    if err != nil {
-        if err == mongo.ErrNoDocuments {
-            return nil, errors.New("profile not found")
-        }
-        return nil, err
-    }
+//     if err != nil {
+//         if err == mongo.ErrNoDocuments {
+//             return nil, errors.New("profile not found")
+//         }
+//         return nil, err
+//     }
 
-    return &profile, nil
-}
+//     return &profile, nil
+// }
 
-func  (ur *UserRepository) UpdateStudentProfile(userId string, updatedProfile *domain.StudentProfile) (*domain.StudentProfile, error) {
-	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
-	defer cancel()
-    filter := bson.M{"user_id": updatedProfile.UserID}
+// func  (ur *UserRepository) UpdateStudentProfile(userId string, updatedProfile *domain.StudentProfile) (*domain.StudentProfile, error) {
+// 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
+// 	defer cancel()
+//     filter := bson.M{"user_id": updatedProfile.UserID}
 
-    update := bson.M{
-        "$set": bson.M{
-            "name":           updatedProfile.Name,
-            "age":            updatedProfile.Age,
-            "bio":            updatedProfile.Bio,
-            "guardianEmail":  updatedProfile.GuardianEmail,
-            "guardianPhone":  updatedProfile.GuardianPhone,
-            "location":       updatedProfile.Location,
-            "profileImage":   updatedProfile.ProfileImage,
-            "updatedAt":      time.Now(),
-        },
-    }
+//     update := bson.M{
+//         "$set": bson.M{
+//             "name":           updatedProfile.Name,
+//             "age":            updatedProfile.Age,
+//             "bio":            updatedProfile.Bio,
+//             "guardianEmail":  updatedProfile.GuardianEmail,
+//             "guardianPhone":  updatedProfile.GuardianPhone,
+//             "location":       updatedProfile.Location,
+//             "profileImage":   updatedProfile.ProfileImage,
+//             "updatedAt":      time.Now(),
+//         },
+//     }
 
 	
-    opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
-    err := ur.profileCollection.FindOneAndUpdate(context, filter, update, opts).Decode(&updatedProfile)
-    if err != nil {
-        return nil, err
-    }
+//     opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+//     err := ur.profileCollection.FindOneAndUpdate(context, filter, update, opts).Decode(&updatedProfile)
+//     if err != nil {
+//         return nil, err
+//     }
 
-    return updatedProfile, nil
-}
+//     return updatedProfile, nil
+// }
 
 

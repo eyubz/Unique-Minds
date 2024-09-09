@@ -192,25 +192,25 @@ func (uc *UserUseCase) RefreshToken(request domain.RefreshTokenRequest, user_id 
 }
 
 
-func (uc *UserUseCase) GetUserProfile(id string)(domain.UserProfile, error){
-	user, err := uc.UserRepo.FindUserByID(id)
-	if err != nil {
-		return domain.UserProfile{}, errors.New("user not found")
-	}
-	return domain.UserProfile{
-		ID: user.ID,
-		FullName: user.FullName,
-		User_Name: user.UserName,
-		Email: user.Email,
-		Contact: user.Contact,
-		Dob: user.Dob,
-		Phone: user.Phone,
-		Address: user.Address,
-		Bio: user.Bio,
-		ProfileImage: user.ProfileImage,
+// func (uc *UserUseCase) GetUserProfile(id string)(domain.UserProfile, error){
+// 	user, err := uc.UserRepo.FindUserByID(id)
+// 	if err != nil {
+// 		return domain.UserProfile{}, errors.New("user not found")
+// 	}
+// 	return domain.UserProfile{
+// 		ID: user.ID,
+// 		FullName: user.FullName,
+// 		User_Name: user.UserName,
+// 		Email: user.Email,
+// 		Contact: user.Contact,
+// 		Dob: user.Dob,
+// 		Phone: user.Phone,
+// 		Address: user.Address,
+// 		Bio: user.Bio,
+// 		ProfileImage: user.ProfileImage,
 
-	}, nil
-}
+// 	}, nil
+// }
 
 func (uc *UserUseCase) ResetPassword(email string, user_id string) error{
 	user, err := uc.UserRepo.FindUserByEmail(email)
@@ -283,48 +283,48 @@ func (uc *UserUseCase) Logout(user_id string, user_agent string) error {
 }
 
 
-func (uc *UserUseCase) UpdateUser(id string, user domain.UserProfile) error {
-	var newUser domain.User	= domain.User{
-		ID: user.ID,
-		FullName: user.FullName,
-		UserName: user.User_Name,
-		Contact: user.Contact,
-		Dob: user.Dob,
-		Phone: user.Phone,
-		Bio: user.Bio,
-		ProfileImage: user.ProfileImage,
-	}
-	if user.Email != ""{
-		newUser.Email = user.Email
-	}
-	if user.Address != (domain.Address{}){
-		newUser.Address = user.Address
-	}	
-	return uc.UserRepo.UpdateUser(id, newUser)
-}
+// func (uc *UserUseCase) UpdateUser(id string, user domain.UserProfile) error {
+// 	var newUser domain.User	= domain.User{
+// 		ID: user.ID,
+// 		FullName: user.FullName,
+// 		UserName: user.User_Name,
+// 		Contact: user.Contact,
+// 		Dob: user.Dob,
+// 		Phone: user.Phone,
+// 		Bio: user.Bio,
+// 		ProfileImage: user.ProfileImage,
+// 	}
+// 	if user.Email != ""{
+// 		newUser.Email = user.Email
+// 	}
+// 	if user.Address != (domain.Address{}){
+// 		newUser.Address = user.Address
+// 	}	
+// 	return uc.UserRepo.UpdateUser(id, newUser)
+// }
 
 
-func (uc *UserUseCase) UpdateStudentProfile (userId string, updatedProfile *domain.StudentProfile) (*domain.StudentProfile, error) {
-    profile, err := uc.UserRepo.GetStudentProfile(userId)
-    if err != nil {
-        return nil, err
-    }
-	profile.Name = updatedProfile.Name
-	profile.Age = updatedProfile.Age
-	profile.Bio = updatedProfile.Bio
-	profile.GuardianEmail = updatedProfile.GuardianEmail
-	profile.GuardianPhone = updatedProfile.GuardianPhone
-	profile.Location = updatedProfile.Location
+// func (uc *UserUseCase) UpdateStudentProfile (userId string, updatedProfile *domain.StudentProfile) (*domain.StudentProfile, error) {
+//     profile, err := uc.UserRepo.GetStudentProfile(userId)
+//     if err != nil {
+//         return nil, err
+//     }
+// 	profile.Name = updatedProfile.Name
+// 	profile.Age = updatedProfile.Age
+// 	profile.Bio = updatedProfile.Bio
+// 	profile.GuardianEmail = updatedProfile.GuardianEmail
+// 	profile.GuardianPhone = updatedProfile.GuardianPhone
+// 	profile.Location = updatedProfile.Location
 
 
-    if updatedProfile.ProfileImage != "" {
-        profile.ProfileImage = updatedProfile.ProfileImage
-    }
+//     if updatedProfile.ProfileImage != "" {
+//         profile.ProfileImage = updatedProfile.ProfileImage
+//     }
 
-    return uc.UserRepo.UpdateStudentProfile(userId, profile)
-}
+//     return uc.UserRepo.UpdateStudentProfile(userId, profile)
+// }
 
 
-func (uc *UserUseCase) GetStudentProfile(userId string) (*domain.StudentProfile, error) {
-	return uc.UserRepo.GetStudentProfile(userId)
-}
+// func (uc *UserUseCase) GetStudentProfile(userId string) (*domain.StudentProfile, error) {
+// 	return uc.UserRepo.GetStudentProfile(userId)
+// }

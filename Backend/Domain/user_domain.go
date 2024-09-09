@@ -8,11 +8,9 @@ import (
 
 type User struct {
 	ID                   primitive.ObjectID   `bson:"_id,omitempity" json:"id" `
-	FullName        	string             	  `bson:"name" json:"name"`
 	UserName            string                `bson:"username"  json:"username"`
 	Email 				 string 			  `bson:"email" validate:"required,email" json:"email"`
     Password             string               `bson:"password" json:"password" validate:"required"`
-    Contact              string               `bson:"contact" json:"contact"`
 	IsVerified			 bool 				  `bson:"is_verified" json:"is_verified"`
 	Created_At		     time.Time			  `bson:"created_at" json:"created_at"`
     ResetPasswordToken   string               `bson:"reset_password_token" json:"reset_password_token"`
@@ -20,21 +18,57 @@ type User struct {
 	VerificationToken    string               `bson:"verification_token" json:"verification_token"`
 	VerificationExpires  time.Time            `bson:"verification_expires" json:"verification_expires"`
 	Role 			   	 string               `bson:"role" json:"role"`
-	GoogleID			 string				  `bson:"google_id" json:"google_id"`
 	UserType        	 string 			  `bson:"user_type" json:"user_type" validate:"required"`
-	Dob         		 string               `bson:"dob" json:"dob"`
-	Phone       		 string               `bson:"phone" json:"phone"`
-	Address     		 Address              `bson:"address" json:"address"`
-	Bio         		 string               `bson:"bio" json:"bio"`
-	ProfileImage 		 string               `bson:"profileImage" json:"profileImage"`
 }
+
+type StudentProfile struct {
+	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	FullName      string             `bson:"name" json:"name"`
+	UserName      string       	     `bson:"username"  json:"username"`
+	Email 		  string      		 `bson:"email" validate:"required,email" json:"email"`
+    Password      string             `bson:"password" json:"password" validate:"required"`
+	Age           int                `json:"age" bson:"age"`
+	Bio           string             `json:"bio" bson:"bio"`
+	GuardianEmail string             `json:"guardianEmail" bson:"guardianEmail"`
+	GuardianPhone string             `json:"guardianPhone" bson:"guardianPhone"`
+	Location      string             `json:"location" bson:"location"`
+	ProfileImage  string             `json:"profileImage" bson:"profileImage"`
+	UserID        primitive.ObjectID `json:"userId" bson:"userId"`
+	UpdateAt      time.Time			 `json:"updateAt" bson:"updateAt"`
+	Created_At	  time.Time			  `bson:"created_at" json:"created_at"`
+	Dob           string             `bson:"dob" json:"dob"`
+	Phone         string             `bson:"phone" json:"phone"`
+	Address       Address            `bson:"address" json:"address"`
+}
+
+
+type EducatorProfile struct {
+	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	FullName      string       		 `bson:"name" json:"name"`
+	UserName      string             `bson:"username"  json:"username"`
+	Email 		  string 			 `bson:"email" validate:"required,email" json:"email"`
+    Password      string             `bson:"password" json:"password" validate:"required"`
+	Age           int                `json:"age" bson:"age"`
+	Bio           string             `json:"bio" bson:"bio"`
+	GuardianEmail string             `json:"guardianEmail" bson:"guardianEmail"`
+	GuardianPhone string             `json:"guardianPhone" bson:"guardianPhone"`
+	Location      string             `json:"location" bson:"location"`
+	ProfileImage  string             `json:"profileImage" bson:"profileImage"`
+	UserID        primitive.ObjectID `json:"userId" bson:"userId"`
+	Created_At	  time.Time			  `bson:"created_at" json:"created_at"`
+	UpdateAt      time.Time			 `json:"updateAt" bson:"updateAt"`
+	Contact       string      		 `bson:"contact" json:"contact"`
+	Dob           string             `bson:"dob" json:"dob"`
+	Phone         string             `bson:"phone" json:"phone"`
+	Address       Address            `bson:"address" json:"address"`
+	EnrolledCourses []primitive.ObjectID `bson:"courses" json:"courses"`
+}
+
 type Address struct {
 	Street     string `bson:"street" json:"street"`
 	City       string `bson:"city" json:"city"`
 	PostalCode string `bson:"postalCode" json:"postalCode"`
 }
-
-
 
 type UserUseCaseInterface interface {
 	RegisterUser(user User) error
@@ -43,12 +77,12 @@ type UserUseCaseInterface interface {
 	CreateAccessToken(user *User, secret string, expiry int) (accessToken string, err error)
 	CreateRefreshToken(user *User, secret string, expiry int) (refreshToken string, err error)
 	RefreshToken(request RefreshTokenRequest, user_id string) (RefreshTokenResponse, error)
-	GetUserProfile(id string)(UserProfile, error)
+	//GetUserProfile(id string)(UserProfile, error)
 	ResetPassword(email string, user_id string)error
 	ResetPasswordVerify(email string, token string, user_id string, password string) error
 	Logout(user_id string, user_agent string) error
-	UpdateUser(id string, user UserProfile) error
-	UpdateStudentProfile(userId string, updatedProfile *StudentProfile) (*StudentProfile, error)
+	//UpdateUser(id string, user UserProfile) error
+	//UpdateStudentProfile(userId string, updatedProfile *StudentProfile) (*StudentProfile, error)
 	
 }
 
@@ -62,8 +96,8 @@ type UserRepositoryInterface interface {
 	DeleteActiveUser(ids string, user_agent string) error
 	FindActiveUser(ids string, user_agent string) (ActiveUser, error)
 	UpdateUser(id string, user User) error
-	GetStudentProfile(userId string) (*StudentProfile, error)
-	UpdateStudentProfile(userId string, updatedProfile *StudentProfile) (*StudentProfile, error)
+	//GetStudentProfile(userId string) (*StudentProfile, error)
+	//UpdateStudentProfile(userId string, updatedProfile *StudentProfile) (*StudentProfile, error)
 }
 
 type AdminUseCaseInterface interface {

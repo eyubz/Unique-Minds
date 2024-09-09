@@ -18,7 +18,7 @@ func main() {
 
     server := gin.Default()
     server.Use(corsMiddleware.CORSMiddleware())
-    server.Static("/uploads", "../uploads")
+    server.Static("/uploads", "./uploads")
     serverGroup := server.Group("/api")
     router.Routers(serverGroup, database, config)
     server.Run(fmt.Sprintf(":%d", config.Port))

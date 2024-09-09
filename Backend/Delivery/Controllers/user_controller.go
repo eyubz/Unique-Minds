@@ -26,7 +26,6 @@ func (uc *UserControllers) RegisterUser(c *gin.Context){
 	var user domain.User
 
 	err := c.BindJSON(&signUp)
-	//fmt.Println(err.Error())
 	if err != nil {
 		c.JSON(400, domain.ErrorResponse{
 			Message: "Invalid request",
@@ -37,6 +36,7 @@ func (uc *UserControllers) RegisterUser(c *gin.Context){
 	validate := validator.New()
 
 	if err := validate.Struct(signUp); err != nil {
+		fmt.Println(err.Error())
 		c.JSON(400, domain.ErrorResponse{
 			Message: "Invalid request",
 			Status:  400,
@@ -47,9 +47,9 @@ func (uc *UserControllers) RegisterUser(c *gin.Context){
 
 	err = uc.userUserCase.RegisterUser(user)
 	if err != nil{
-		c.JSON(400, domain.ErrorResponse{
+		c.JSON(500, domain.ErrorResponse{
 			Message: err.Error(),
-			Status:  400,
+			Status:  500,
 		})
 		return
 	}
@@ -158,28 +158,28 @@ func (uc *UserControllers)RefreshToken(c *gin.Context){
 
 }
 
-func (uc *UserControllers)GetUserProfile(c *gin.Context){
-	user_id := c.GetString("user_id")
-	if user_id == "" {
-		c.JSON(500, domain.ErrorResponse{
-			Message: "Unauthorized: Authorization header required",
-			Status:  500,
-		})
-	}
-	user, err := uc.userUserCase.GetUserProfile(user_id)
-	if err != nil{
-		c.JSON(400, domain.ErrorResponse{
-			Message: err.Error(),
-			Status:  400,
-		})
-		return
-	}
-	c.JSON(200, domain.SuccessResponse{
-		Message: "User profile retrieved successfully",
-		Data: user,
-		Status:  200,
-	})
-}
+// func (uc *UserControllers)GetUserProfile(c *gin.Context){
+// 	user_id := c.GetString("user_id")
+// 	if user_id == "" {
+// 		c.JSON(500, domain.ErrorResponse{
+// 			Message: "Unauthorized: Authorization header required",
+// 			Status:  500,
+// 		})
+// 	}
+// 	user, err := uc.userUserCase.GetUserProfile(user_id)
+// 	if err != nil{
+// 		c.JSON(400, domain.ErrorResponse{
+// 			Message: err.Error(),
+// 			Status:  400,
+// 		})
+// 		return
+// 	}
+// 	c.JSON(200, domain.SuccessResponse{
+// 		Message: "User profile retrieved successfully",
+// 		Data: user,
+// 		Status:  200,
+// 	})
+// }
 
 func (uc *UserControllers)ResetPassword(c *gin.Context){
 	var request domain.ResetPasswordRequest
@@ -271,62 +271,62 @@ func (uc *UserControllers) Logout(c *gin.Context) {
 	})
 }
 
-func (uc *UserControllers) UpdateUser(c *gin.Context) {
-	var user domain.UserProfile
-	if err := c.BindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+// func (uc *UserControllers) UpdateUser(c *gin.Context) {
+// 	var user domain.UserProfile
+// 	if err := c.BindJSON(&user); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	id := c.Param("id")
-	err := uc.userUserCase.UpdateUser(id, user)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
-		return
-	}
+// 	id := c.Param("id")
+// 	err := uc.userUserCase.UpdateUser(id, user)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
+// 		return
+// 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
-}
+// 	c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
+// }
 
 
-func (uc *UserControllers) GetStudentProfile(c *gin.Context) {
-    userId := c.GetString("userId")
-    if userId == "" {
-        c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-        return
-    }
+// func (uc *UserControllers) GetStudentProfile(c *gin.Context) {
+//     userId := c.GetString("userId")
+//     if userId == "" {
+//         c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+//         return
+//     }
 
-    profile, err := uc.userUserCase.GetUserProfile(userId)
-    if err != nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-        return
-    }
+//     profile, err := uc.userUserCase.GetUserProfile(userId)
+//     if err != nil {
+//         c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+//         return
+//     }
 
-    c.JSON(http.StatusOK, profile)
-}
+//     c.JSON(http.StatusOK, profile)
+// }
 
-func (uc *UserControllers) UpdateStudentProfile(c *gin.Context) {
-    userId := c.GetString("userId")
-    if userId == "" {
-        c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-        return
-    }
+// func (uc *UserControllers) UpdateStudentProfile(c *gin.Context) {
+//     userId := c.GetString("userId")
+//     if userId == "" {
+//         c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+//         return
+//     }
 
-    var profileData domain.StudentProfile
+//     var profileData domain.StudentProfile
 
-    if err := c.ShouldBind(&profileData); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
-        return
-    }
+//     if err := c.ShouldBind(&profileData); err != nil {
+//         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+//         return
+//     }
 
-    updatedProfile, err := uc.userUserCase.UpdateStudentProfile(userId, &profileData)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        return
-    }
+//     updatedProfile, err := uc.userUserCase.UpdateStudentProfile(userId, &profileData)
+//     if err != nil {
+//         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+//         return
+//     }
 
-    c.JSON(http.StatusOK, updatedProfile)
-}
+//     c.JSON(http.StatusOK, updatedProfile)
+// }
 
 func (uc *UserControllers) UploadProfileImage (ctx *gin.Context) {
     file, err := ctx.FormFile("file")
