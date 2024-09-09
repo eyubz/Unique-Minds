@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"math"
 	"time"
 	domain "unique-minds/Domain"
@@ -46,7 +47,6 @@ func (r *CourseRepository) Save(course *domain.Course) error {
     return nil
 }
 
-
 func (r *CourseRepository) FetchRecentCourses() ([]domain.Course, error) {
     var courses []domain.Course
 
@@ -69,7 +69,6 @@ func (r *CourseRepository) FetchRecentCourses() ([]domain.Course, error) {
     }
 	return courses, nil
 }
-
 
 func (r *CourseRepository) GetCourses(pageNo int64, pageSize int64, search string, tag string) ([]domain.Course, domain.Pagination, error) {
 	pagination := utils.PaginationByPage(pageNo, pageSize)
@@ -99,6 +98,7 @@ func (r *CourseRepository) GetCourses(pageNo int64, pageSize int64, search strin
 		if err := cursor.Decode(&course); err != nil {
 			return []domain.Course{}, domain.Pagination{}, err
 		}
+		courses = append(courses, course)
 	}
 	paginationInfo := domain.Pagination{
 		CurrentPage: pageNo,
@@ -120,9 +120,25 @@ func (r *CourseRepository) GerCourseById(id string) (domain.Course, error) {
 
 	filter := bson.M{"_id": objID}
 	err = r.collection.FindOne(context.TODO(), filter).Decode(&course)
-	if err != nil {
+	if err != nil { 
 		return domain.Course{}, err
 	}
 
 	return course, nil
+}
+
+func (r *CourseRepository) SaveCourse(userID string, courseID string) error {
+	studentObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return errors.New("invalid student ID")
+	}
+	courseObjID, err := primitive.ObjectIDFromHex(courseID)
+	if err != nil {
+		return errors.New("invalid course ID")
+	}
+	filter := bson.M{"_id": studentObjID}
+	update := bson.M{"$push": bson.M{"course_id": courseObjID}}
+
+	_, err = r.collection.UpdateOne(context.TODO(), filter, update)
+	return err
 }

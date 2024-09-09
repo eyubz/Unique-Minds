@@ -58,3 +58,13 @@ func (u *courseUseCase) GetCourseById(id string) (domain.Course, error) {
 	}
 	return result, nil
 }
+
+
+func (u *courseUseCase) SaveCourse(studentID string, courseID string) error{
+	err := u.courseRepo.SaveCourse(studentID, courseID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -1,40 +1,46 @@
 import React from "react";
-import { Bar } from "react-chartjs-2";
 import {
-  Chart as ChartJS,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-} from "chart.js";
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
 
-ChartJS.register(BarElement, CategoryScale, LinearScale);
+const courses = [
+  { id: 1, title: "Introduction to AI", progress: 75 },
+  { id: 2, title: "Web Development Bootcamp", progress: 50 },
+  { id: 3, title: "Data Science Fundamentals", progress: 20 },
+];
 
-function Progress() {
-  const data = {
-    labels: ["AI", "Web Development", "Data Science"],
-    datasets: [
-      {
-        label: "Progress",
-        data: [70, 50, 90],
-        backgroundColor: "#3b82f6",
-      },
-    ],
-  };
-
-  const options = {
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
-
+const ProgressBarChart = () => {
   return (
-    <div className="max-w-lg mx-auto">
-      <h2 className="text-xl font-semibold mb-4">Your Progress</h2>
-      <Bar data={data} options={options} />
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart
+        data={courses}
+        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="title" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="progress" fill="rgb(20, 74, 102)" />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+};
+
+const ProgressSection = () => {
+  return (
+    <div className="w-full p-6">
+      <h2 className="text-2xl font-bold mb-6">Course Progress</h2>
+      <ProgressBarChart />
     </div>
   );
-}
+};
 
-export default Progress;
+export default ProgressSection;

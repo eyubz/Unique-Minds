@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import img from "../Assets/educator.jpg";
 import { Link } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
 
 const Educators = () => {
   const [educators, setEducators] = useState([
@@ -28,24 +29,71 @@ const Educators = () => {
         "Alex is a leading cybersecurity consultant with experience in ethical hacking.",
       image: img,
     },
+    {
+      id: 1,
+      name: "John Doe",
+      title: "AI Specialist",
+      description:
+        "John is an AI expert with years of experience in artificial intelligence and machine learning.",
+      image: img,
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      title: "Web Developer",
+      description:
+        "Jane is a full-stack web developer specializing in modern front-end technologies.",
+      image: img,
+    },
+    {
+      id: 3,
+      name: "Alex Johnson",
+      title: "Cybersecurity Expert",
+      description:
+        "Alex is a leading cybersecurity consultant with experience in ethical hacking.",
+      image: img,
+    },
     // Add more educators as needed
   ]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const [visibleEducators, setVisibleEducators] = useState([]);
-  const [showMore, setShowMore] = useState(false);
-  const itemsPerPage = 6;
+  const fetchEducators = async (query = "", page = 1) => {
+    try {
+      const response = await fetch(
+        `https://localhost:8080/api/educators?search=${query}&page=${page}&limit=6`
+      );
+      const data = await response.json();
 
+      if (response.ok) {
+        setEducators((prevEducators) =>
+          page === 1
+            ? data.data.educators
+            : [...prevEducators, ...data.data.educators]
+        );
+        setTotalPages(data.data.pagination.totalPages);
+      } else {
+        console.error("Failed to fetch educators");
+      }
+    } catch (error) {
+      console.error("Error fetching educators:", error);
+    }
+  };
   useEffect(() => {
-    // Initial load of educators
-    setVisibleEducators(educators.slice(0, itemsPerPage));
-    setShowMore(educators.length > itemsPerPage);
-  }, [educators]);
+    fetchEducators();
+  }, []);
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    fetchEducators(query, 1);
+  };
 
   const loadMoreEducators = () => {
-    const nextPage = visibleEducators.length + itemsPerPage;
-    setVisibleEducators(educators.slice(0, nextPage));
-    if (nextPage >= educators.length) {
-      setShowMore(false); // Hide "Show More" if no more educators to load
+    if (page < totalPages) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchEducators(searchQuery, nextPage);
     }
   };
 
@@ -58,11 +106,11 @@ const Educators = () => {
 
     const handleSearchSubmit = (e) => {
       e.preventDefault();
-      // Add search functionality here
+      handleSearch(input);
     };
 
     return (
-      <div className="flex justify-center pt-8 pb-4 px-4">
+      <div className="flex justify-center pt-8 pb-4 px-4 mt-10 mb-20">
         <form
           onSubmit={handleSearchSubmit}
           className="w-full max-w-2xl flex items-center bg-white rounded-md overflow-hidden"
@@ -75,6 +123,7 @@ const Educators = () => {
               placeholder="Search Educator"
               className="w-full py-3 px-4 pl-12 rounded-md text-customBlue border border-blue-300 focus:outline-none"
             />
+            <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-customBlue" />
           </div>
           <button
             type="submit"
@@ -88,21 +137,21 @@ const Educators = () => {
   };
 
   return (
-    <div className="mt-12">
+    <>
       <SearchBar />
-      <div className="container mx-auto my-8 px-4">
-        <h2 className="text-4xl font-bold text-center text-gray-500 mt-12 mb-28">
-          Our Teachers
+      <div className="container mx-auto my-8 px-4 mb-16">
+        <h2 className="text-4xl font-bold text-center text-customBlue mt-12 mb-10">
+          Educators
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-          {visibleEducators.map((educator) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-3/4 mx-auto">
+          {educators.map((educator) => (
             <div
               key={educator.id}
-              className="bg-customBlue rounded-lg shadow-lg overflow-hidden max-w-xs transition-transform transform hover:scale-105 hover:shadow-xl"
+              className="bg-customBlue rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl"
             >
               <div className="p-6 text-center">
                 <img
-                  src={educator.image}
+                  src={educator.image || img}
                   alt={educator.name}
                   className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
                 />
@@ -111,26 +160,28 @@ const Educators = () => {
                 </h3>
                 <h4 className="text-lg text-white mb-2">{educator.title}</h4>
                 <p className="text-white">{educator.description}</p>
-                <button className="mt-4 bg-white text-customBlue font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 focus:outline-none">
-                  <Link to="/educator_detail">View Profile</Link>
+                <button className="mt-4 bg-white text-customBlue font-semibold py-2 px-4 rounded-lg hover:bg-gray-500 focus:outline-none">
+                  <Link to={`/educator_detail/${educator.id}`}>
+                    View Profile
+                  </Link>
                 </button>
               </div>
             </div>
           ))}
         </div>
 
-        {showMore && (
+        {page < totalPages && (
           <div className="flex justify-center mt-8">
             <button
               onClick={loadMoreEducators}
               className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none"
             >
-              Show More
+              Load More
             </button>
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 };
 

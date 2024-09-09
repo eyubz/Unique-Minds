@@ -4,36 +4,8 @@ import img1 from "../Assets/img1.jpg";
 
 const CourseDetail = () => {
   const { course_id } = useParams();
-  const [course, setCourse] = useState({
-    id: "",
-    name: "",
-    description: "",
-    image: img1,
-    parts: [],
-  });
-
-  //   useEffect(() => {
-  //     const fetchCourse = async () => {
-  //       try {
-  //         const response = await fetch(`https://localhost:8080/api/courses/${id}`);
-  //         const data = await response.json();
-
-  //         if (response.ok) {
-  //           setCourse(data.course);
-  //         } else {
-  //           console.error("Failed to fetch course");
-  //         }
-  //       } catch (error) {
-  //         console.error("Error fetching course:", error);
-  //       }
-  //     };
-
-  //     fetchCourse();
-  //   }, [id]);
-  // Fetch the course data later, for now it's a placeholder
-  useEffect(() => {
-    // Simulate fetching the data
-    setCourse({
+  const [course, setCourse] = useState(
+    {
       id: "66d74926dc95cf36ee67fa5f",
       name: "Introduction to AI",
       description:
@@ -77,14 +49,62 @@ const CourseDetail = () => {
           ],
         },
       ],
-    });
-  }, []);
+    }
+    // id: "",
+    // name: "",
+    // description: "",
+    // image: img1,
+    // parts: [],
+  );
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch(
+        `https://localhost:8080/api/courses/${course_id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Course saved successfully:", result);
+      } else {
+        console.error("Failed to save the course");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        const response = await fetch(
+          `https://localhost:8080/api/courses/${course_id}`
+        );
+        const data = await response.json();
+
+        if (response.ok) {
+          setCourse(data.course);
+        } else {
+          console.error("Failed to fetch course");
+        }
+      } catch (error) {
+        console.error("Error fetching course:", error);
+      }
+    };
+
+    fetchCourse();
+  }, [course_id]);
 
   return (
-    <div className="container mx-auto my-12 px-4 mb-20">
+    <div className="container mx-auto my-12 px-4 mb-20 w-3/4">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <img
-          src={course.image}
+          src={`http://localhost:8080/uploads/${course.image}`}
           alt={course.name}
           className="w-full h-64 object-cover rounded-t-lg"
         />
@@ -105,7 +125,7 @@ const CourseDetail = () => {
             {course.parts.map((part) => (
               <div
                 key={part.id}
-                className="bg-gray-100 p-6 rounded-lg shadow-md"
+                className="bg-gray-100 p-6 rounded-lg shadow-md hover:bg-white hover:text-white"
               >
                 <h3 className="text-xl font-semibold text-customBlue mb-2">
                   {part.name}
@@ -137,7 +157,7 @@ const CourseDetail = () => {
           <div className="flex justify-end mt-8">
             <button
               className="bg-customBlue text-white font-bold py-2 px-6 rounded-lg shadow hover:bg-gray-400 transition duration-300"
-              onClick={() => console.log("Save Course clicked")}
+              onClick={handleSave}
             >
               Save Course
             </button>

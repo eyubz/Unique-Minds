@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"errors"
+	"strconv"
 	"time"
 	domain "unique-minds/Domain"
 	infrastructure "unique-minds/Infrastructure"
@@ -66,7 +67,6 @@ func (uc *UserUseCase) RegisterUser(user domain.User) error {
 	}
 	return nil
 }
-
 
 
 func (uc *UserUseCase) VerifyEmail(email string, token string)error{
@@ -139,7 +139,6 @@ func (uc *UserUseCase) Login(user domain.User, user_agent string)(domain.LoginRe
 	}, nil
 }
 
-
 func (uc *UserUseCase) CreateAccessToken(user *domain.User, secret string, expiry int) (accessToken string, err error) {
 	exp := time.Now().Add(time.Hour * time.Duration(expiry))
 	claims := &domain.JwtCustomClaims{
@@ -162,7 +161,6 @@ func (uc *UserUseCase) CreateRefreshToken(user *domain.User, secret string, expi
 	}
 	return infrastructure.CreateToken(claims, secret)
 }
-
 
 func (uc *UserUseCase) RefreshToken(request domain.RefreshTokenRequest, user_id string) (domain.RefreshTokenResponse, error) {
 	id, err := infrastructure.ExtractIDFromToken(request.RefreshToken, uc.Config.RefreshTokenSecret)
@@ -328,3 +326,43 @@ func (uc *UserUseCase) Logout(user_id string, user_agent string) error {
 // func (uc *UserUseCase) GetStudentProfile(userId string) (*domain.StudentProfile, error) {
 // 	return uc.UserRepo.GetStudentProfile(userId)
 // }
+
+
+
+func (uc *UserUseCase) GetEducators(pageNo string, pageSize string, search string) ([]domain.EducatorProfile, domain.Pagination, error) {
+	PageNo, err := strconv.ParseInt(pageNo, 10, 64)
+	if err != nil {
+		return []domain.EducatorProfile{}, domain.Pagination{}, err
+	}
+	PageSize, err := strconv.ParseInt(pageSize, 10, 64)
+	if err != nil {
+		return []domain.EducatorProfile{}, domain.Pagination{}, err
+	}
+	if PageNo <= 0 || PageSize <= 0 {
+		return []domain.EducatorProfile{}, domain.Pagination{}, errors.New("invalid page number or page size")
+	}
+
+	educators, pagination, err := uc.UserRepo.GetEducators(PageNo, PageSize, search)
+	if err != nil {
+		return nil, domain.Pagination{}, err
+	} else {
+		return educators, pagination, nil
+	}
+}
+
+func (uc *UserUseCase) GetEducatorById(id string) (domain.EducatorProfile, error) {
+	result, err := uc.UserRepo.GetEducatorsById(id)
+	if err != nil {
+		return domain.EducatorProfile{}, err
+	}
+	return result, nil
+}
+
+func (uc *UserUseCase) SaveReview(review domain.Review) error{
+	err := uc.UserRepo.SaveReview(review)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

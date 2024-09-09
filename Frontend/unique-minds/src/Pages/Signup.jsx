@@ -10,7 +10,7 @@ function Signup() {
     password: "",
     confirmPassword: "",
   });
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -55,7 +55,6 @@ function Signup() {
           password: "",
           confirmPassword: "",
         });
-        // Redirect to verification page
         navigate("/verification");
       } else {
         const errorData = await response.json();

@@ -212,7 +212,6 @@ func (uc *UserControllers)ResetPassword(c *gin.Context){
 	})
 }
 
-
 func (uc *UserControllers) ResetPasswordVerify(c *gin.Context){
 	var newPassword domain.ResetPassword
 	token := c.Query("token")
@@ -347,4 +346,68 @@ func (uc *UserControllers) UploadProfileImage (ctx *gin.Context) {
     fileURL := fmt.Sprintf("http://localhost:8080/uploads/%s", filename)
 
     ctx.JSON(http.StatusOK, gin.H{"fileUrl": fileURL})
+}
+
+func (uc *UserControllers) GetEducators(ctx *gin.Context) {
+	pageNo := ctx.Query("page")
+	pageSize := ctx.Query("limit")
+    search := ctx.Query("search")
+
+	if pageNo == "" {
+		pageNo = "1"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	educators, pagination, err := uc.userUserCase.GetEducators(pageNo, pageSize, search)
+	if err != nil {
+		ctx.JSON(500, domain.ErrorResponse{
+			Message: err.Error(),
+			Status: 500,
+
+		})
+		ctx.Abort()
+	} else {
+		ctx.JSON(http.StatusOK, domain.SuccessResponse{
+			Status: http.StatusOK,
+			Data: map[string]interface{}{
+				"educators" : educators, 
+				"pagination" : pagination,
+			},
+			Message: "educators fetched successfully.",
+		})
+	}
+}
+
+func (uc *UserControllers) GetEducatorById(ctx *gin.Context) {
+    id := ctx.Param("id")
+    course, err := uc.userUserCase.GetEducatorById(id)
+
+    if err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    ctx.JSON(http.StatusOK, course)
+}
+
+func (uc *UserControllers) SaveReview(ctx *gin.Context) {
+	var review domain.Review
+
+	err := ctx.ShouldBind(&review)
+	if err != nil{
+		ctx.JSON(400, domain.ErrorResponse{
+            Message: "Bad request",
+            Status: 500,
+        })
+	}
+	
+	err = uc.userUserCase.SaveReview(review)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Review Saved successfully"})
 }

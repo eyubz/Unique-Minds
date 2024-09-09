@@ -19,6 +19,7 @@ const Login = () => {
 
     if (response.ok) {
       const data = await response.json();
+      console.log(data.accessToken, data.refreshToken);
       document.cookie = `accessToken=${data.accessToken}; path=/;`;
       document.cookie = `refreshToken=${data.refreshToken}; path=/;`;
       navigate("/");

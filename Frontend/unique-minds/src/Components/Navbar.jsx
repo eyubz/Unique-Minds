@@ -31,7 +31,7 @@ const Navbar = () => {
           >
             Signup
           </Link>
-          <Link>
+          <Link to="/student_dashboard">
             <div className="flex items-center">
               <img
                 //src={profileImage ? profileImage : img}

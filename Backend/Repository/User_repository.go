@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"strings"
 	"time"
 	domain "unique-minds/Domain"
 	infrastructure "unique-minds/Infrastructure"
+	utils "unique-minds/Utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -200,3 +202,65 @@ func (ur *UserRepository) FindActiveUser(ids string, user_agent string) (domain.
 // }
 
 
+
+func (ur *UserRepository) GetEducators(pageNo int64, pageSize int64, search string) ([]domain.EducatorProfile, domain.Pagination, error) {
+	pagination := utils.PaginationByPage(pageNo, pageSize)
+
+	totalResults, err := ur.educatorProfileCollection.CountDocuments(context.TODO(), bson.M{})
+	if err != nil {
+		return []domain.EducatorProfile{}, domain.Pagination{}, err
+	}
+    filter := bson.M{}
+    if search != "" {
+        filter["name"] = bson.M{"$regex": search, "$options": "i"}
+    }
+   
+	totalPages := int64(math.Ceil(float64(totalResults) / float64(pageSize)))
+
+	cursor, err := ur.educatorProfileCollection.Find(context.TODO(), filter, pagination)
+    
+	if err != nil {
+		return []domain.EducatorProfile{}, domain.Pagination{}, err
+	}
+	var educators []domain.EducatorProfile
+	for cursor.Next(context.TODO()) {
+		var educator domain.EducatorProfile
+		if err := cursor.Decode(&educator); err != nil {
+			return []domain.EducatorProfile{}, domain.Pagination{}, err
+		}
+		educators = append(educators, educator)
+	}
+	paginationInfo := domain.Pagination{
+		CurrentPage: pageNo,
+		PageSize:    pageSize,
+		TotalPages:  totalPages,
+		TotatRecord: totalResults,
+	}
+
+	return educators, paginationInfo, nil
+}
+
+func (ur *UserRepository) GetEducatorsById(id string) (domain.EducatorProfile, error) {
+	var educator domain.EducatorProfile
+
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return domain.EducatorProfile{}, err
+	}
+
+	filter := bson.M{"_id": objID}
+	err = ur.educatorProfileCollection.FindOne(context.TODO(), filter).Decode(&educator)
+	if err != nil { 
+		return domain.EducatorProfile{}, err
+	}
+
+	return educator, nil
+}
+
+func (ur *UserRepository) SaveReview(review domain.Review) error {
+	filter := bson.M{"_id": review.EducatorID}
+	update := bson.M{"$push": bson.M{"reviews": review}}
+
+	_, err := ur.educatorProfileCollection.UpdateOne(context.TODO(), filter, update)
+	return err
+}

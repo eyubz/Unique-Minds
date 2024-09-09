@@ -41,7 +41,6 @@ func (c *CourseController) UploadFile(ctx *gin.Context) {
 }
 
 
-
 func (c *CourseController) UploadCourse(ctx *gin.Context) {
     var course domain.Course
 
@@ -67,7 +66,6 @@ func (c *CourseController) UploadCourse(ctx *gin.Context) {
     ctx.JSON(http.StatusOK, gin.H{"message": "Course uploaded successfully"})
 }
 
-
 func (c *CourseController) GetFeaturedCourses(ctx *gin.Context) {
     courses, err := c.courseUsecase.GetRecentCourses()
     if err != nil {
@@ -91,7 +89,7 @@ func (c *CourseController) GetCourses(ctx *gin.Context) {
 		pageSize = "10"
 	}
 
-	blogs, pagination, err := c.courseUsecase.GetCourses(pageNo, pageSize, search, tag)
+	courses, pagination, err := c.courseUsecase.GetCourses(pageNo, pageSize, search, tag)
 	if err != nil {
 		ctx.JSON(500, domain.ErrorResponse{
 			Message: err.Error(),
@@ -103,7 +101,7 @@ func (c *CourseController) GetCourses(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, domain.SuccessResponse{
 			Status: http.StatusOK,
 			Data: map[string]interface{}{
-				"course" : blogs, 
+				"course" : courses, 
 				"pagination" : pagination,
 			},
 			Message: "courses fetched successfully.",
@@ -120,4 +118,24 @@ func (c *CourseController) GetCourseById(ctx *gin.Context) {
     }
 
     ctx.JSON(http.StatusOK, course)
+}
+
+
+func (c *CourseController) SaveCourse(ctx *gin.Context) {
+	studentID := ctx.GetString("user_id")
+	courseID := ctx.Param("course_id")
+
+    if studentID == ""{
+        ctx.JSON(500, domain.ErrorResponse{
+            Message: "Unauthorized",
+            Status: 500,
+        })
+    }
+	err := c.courseUsecase.SaveCourse(studentID, courseID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Course ID appended successfully"})
 }

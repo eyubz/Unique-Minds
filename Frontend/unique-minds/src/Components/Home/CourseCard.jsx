@@ -5,7 +5,7 @@ const CourseCard = ({ course }) => {
   return (
     <div className="border border-gray-200 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 max-w-sm mx-auto">
       <img
-        src={course.image}
+        src={`http://localhost:8080/uploads/${course.image}`}
         alt={course.title}
         className="w-full h-40 object-cover"
       />

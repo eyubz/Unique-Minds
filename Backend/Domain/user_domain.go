@@ -39,6 +39,8 @@ type StudentProfile struct {
 	Dob           string             `bson:"dob" json:"dob"`
 	Phone         string             `bson:"phone" json:"phone"`
 	Address       Address            `bson:"address" json:"address"`
+	CourseIds     []primitive.ObjectID `bson:"course_id" json:"course_id"`
+	EnrolledCourses []primitive.ObjectID `bson:"courses" json:"courses"`
 }
 
 
@@ -61,13 +63,21 @@ type EducatorProfile struct {
 	Dob           string             `bson:"dob" json:"dob"`
 	Phone         string             `bson:"phone" json:"phone"`
 	Address       Address            `bson:"address" json:"address"`
-	EnrolledCourses []primitive.ObjectID `bson:"courses" json:"courses"`
+	Reviews 	 []Review            `bson:"reviews" json:"reviews"`
 }
 
 type Address struct {
 	Street     string `bson:"street" json:"street"`
 	City       string `bson:"city" json:"city"`
 	PostalCode string `bson:"postalCode" json:"postalCode"`
+}
+
+
+type Review struct {
+    Name        string  `bson:"name" json:"name"`
+    Text        string  `bson:"text" json:"text"`
+    Rating      float64 `bson:"rating" json:"rating"`
+    EducatorID  uint    `bson:"educator_id" json:"educator_id"`
 }
 
 type UserUseCaseInterface interface {
@@ -80,7 +90,10 @@ type UserUseCaseInterface interface {
 	//GetUserProfile(id string)(UserProfile, error)
 	ResetPassword(email string, user_id string)error
 	ResetPasswordVerify(email string, token string, user_id string, password string) error
-	Logout(user_id string, user_agent string) error
+	Logout(user_id string, user_agent string) error	
+	GetEducators(pageNo string, pageSize string, search string) ([]EducatorProfile, Pagination, error)
+	GetEducatorById(id string) (EducatorProfile, error)
+	SaveReview(review Review) error
 	//UpdateUser(id string, user UserProfile) error
 	//UpdateStudentProfile(userId string, updatedProfile *StudentProfile) (*StudentProfile, error)
 	
@@ -96,6 +109,10 @@ type UserRepositoryInterface interface {
 	DeleteActiveUser(ids string, user_agent string) error
 	FindActiveUser(ids string, user_agent string) (ActiveUser, error)
 	UpdateUser(id string, user User) error
+	GetEducators(pageNo int64, pageSize int64, search string) ([]EducatorProfile, Pagination, error)
+	GetEducatorsById(id string) (EducatorProfile, error)
+	SaveReview(review Review) error
+	
 	//GetStudentProfile(userId string) (*StudentProfile, error)
 	//UpdateStudentProfile(userId string, updatedProfile *StudentProfile) (*StudentProfile, error)
 }

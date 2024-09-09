@@ -7,7 +7,7 @@ import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import Footer from "./Components/Footer";
 // import EducatorDashboard from "./Pages/EducatorDashboard";
-import StudentDashboard from "./Components/Student/Profile.jsx";
+import StudentDashboard from "./Components/Student/StudentProfile.jsx";
 import CourseDetail from "./Pages/CourseDetail";
 import VerifyOTP from "./Components/VerifyAccount";
 import Educators from "./Pages/Educator";
@@ -28,7 +28,10 @@ function App() {
         <Route path="/verification" element={<VerifyOTP />} />
         <Route path="/courses/:id" element={<CourseDetail />} />
         <Route path="/educators" element={<Educators />} />
-        <Route path="/educator_detail" element={<EducatorProfileDetail />} />
+        <Route
+          path="/educator_detail/:id"
+          element={<EducatorProfileDetail />}
+        />
       </Routes>
       <Footer />
     </Router>

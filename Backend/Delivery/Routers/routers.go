@@ -48,13 +48,19 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     courseGroup.POST("/", courseController.UploadCourse)
     courseGroup.POST("/upload", courseController.UploadFile)
 
-    serverGroup.GET("/api/featured-courses", courseController.GetFeaturedCourses)
-    serverGroup.GET("/api/courses", courseController.GetCourses)
-    serverGroup.GET("/api/courses/:id", courseController.GetCourseById)
+    serverGroup.GET("/featured-courses", courseController.GetFeaturedCourses)
+    serverGroup.GET("/courses", courseController.GetCourses)
+    serverGroup.GET("/courses/:id", courseController.GetCourseById)
+    serverGroup.POST("/courses/:id", authMiddleWare, courseController.SaveCourse)
+    serverGroup.POST("/courses/reviews", authMiddleWare, userControllers.SaveReview)
+
+    serverGroup.GET("/educators", userControllers.GetEducators)
+    serverGroup.GET("/educators/:id", userControllers.GetEducatorById)
+
 
     studentServer := serverGroup.Group("student")
     studentServer.Use(authMiddleWare)
-    //studentServer.GET("/profile", userControllers.GetStudentProfile)
+    //studentServer.GET("/profile", userControllers.GetStudentProfile) c
     //studentServer.PUT("/profile", userControllers.UpdateStudentProfile)
     studentServer.POST("/upload", userControllers.UploadProfileImage)
 

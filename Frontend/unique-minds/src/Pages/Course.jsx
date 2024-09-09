@@ -82,7 +82,6 @@ const Courses = () => {
       const data = await response.json();
 
       if (response.ok) {
-        //setCourses(data.courses);
         setCourses((prevCourses) =>
           page === 1 ? data.data.course : [...prevCourses, ...data.data.course]
         );
@@ -157,7 +156,7 @@ const Courses = () => {
   };
 
   const FilterTags = () => {
-    const tags = ["Technology", "Science", "Mathematics", "Arts"];
+    const tags = ["Music", "Science", "Mathematics", "Arts"];
 
     return (
       <div className="flex flex-wrap justify-around gap-6 p-4 bg-white rounded-lg shadow-md mt-10">

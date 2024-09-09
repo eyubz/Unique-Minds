@@ -43,10 +43,12 @@ type CourseRepository interface {
     FetchRecentCourses() ([]Course, error)
     GetCourses(pageNo int64, pageSize int64, search string, tag string) ([]Course, Pagination, error)
     GerCourseById(id string) (Course, error)
+    SaveCourse(userID string, courseID string) error
 }
 type CourseUseCaseInterface interface {
     UploadCourse(course *Course) error
     GetRecentCourses() ([]Course, error)
     GetCourses(pageNo string, pageSize string, search string, filter string) ([]Course, Pagination, error)
     GetCourseById(id string) (Course, error)
+    SaveCourse(studentID string, courseID string) error
 }
