@@ -16,9 +16,8 @@ func NewCourseUseCase(cr domain.CourseRepository) *courseUseCase  {
     }
 }
 
-func (u *courseUseCase) UploadCourse(course *domain.Course) error {
-    // Add any business logic here
-    return u.courseRepo.Save(course)
+func (u *courseUseCase) UploadCourse(course *domain.Course, user_id string) error {
+    return u.courseRepo.Save(course, user_id)
 }
 
 func (u *courseUseCase) GetRecentCourses() ([]domain.Course, error) {
@@ -67,4 +66,12 @@ func (u *courseUseCase) SaveCourse(studentID string, courseID string) error{
 	}
 
 	return nil
+}
+
+func (u *courseUseCase) GetMyCourses(id string) ([]domain.Course, error) {
+	result, err := u.courseRepo.GetMyCourse(id)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }

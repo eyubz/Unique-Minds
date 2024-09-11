@@ -9,13 +9,14 @@ import (
 
 type Course struct {
     ID          primitive.ObjectID    `json:"_id" bson:"_id"`
-    Name        string    `json:"name" bson:"name"`
-    Description string    `json:"description" bson:"description"`
-    Image       string    `json:"image" bson:"image"`
-    Parts       []Part    `json:"parts" bson:"parts"`
-    CreatedDate time.Time `json:"created_date" bson:"created_date"`
-    LastUpdated time.Time `json:"last_updated" bson:"last_updated"`
-	IsFeatured  bool      `json:"is_featured" bson:"is_featured"`
+    Name        string                `json:"name" bson:"name"`
+    Description string                `json:"description" bson:"description"`
+    Image       string                `json:"image" bson:"image"`
+    Parts       []Part                `json:"parts" bson:"parts"`
+    CreatedDate time.Time             `json:"created_date" bson:"created_date"`
+    LastUpdated time.Time             `json:"last_updated" bson:"last_updated"`
+	IsFeatured  bool                  `json:"is_featured" bson:"is_featured"`
+    Creator_id  primitive.ObjectID    `json:"user_id" bson:"user_id"`
 }
 
 type Part struct {
@@ -39,16 +40,18 @@ type Material struct {
 }
 
 type CourseRepository interface {
-    Save(course *Course) error
     FetchRecentCourses() ([]Course, error)
     GetCourses(pageNo int64, pageSize int64, search string, tag string) ([]Course, Pagination, error)
     GerCourseById(id string) (Course, error)
     SaveCourse(userID string, courseID string) error
+    GetMyCourse(id string) ([]Course, error)
+    Save(course *Course, user_id string) error
 }
 type CourseUseCaseInterface interface {
-    UploadCourse(course *Course) error
     GetRecentCourses() ([]Course, error)
     GetCourses(pageNo string, pageSize string, search string, filter string) ([]Course, Pagination, error)
     GetCourseById(id string) (Course, error)
     SaveCourse(studentID string, courseID string) error
+    GetMyCourses(id string) ([]Course, error)
+    UploadCourse(course *Course, user_id string) error
 }

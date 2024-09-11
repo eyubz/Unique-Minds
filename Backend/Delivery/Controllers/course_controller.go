@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
-	"time"
 	domain "unique-minds/Domain"
 
 	"github.com/gin-gonic/gin"
@@ -40,20 +39,20 @@ func (c *CourseController) UploadFile(ctx *gin.Context) {
     ctx.JSON(http.StatusOK, gin.H{"fileUrl": fileURL})
 }
 
-
 func (c *CourseController) UploadCourse(ctx *gin.Context) {
     var course domain.Course
-
-    if err := ctx.ShouldBindJSON(&course); err != nil {
-        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
-        fmt.Println(err.Error())
+    user_id := ctx.GetString("user_id")
+    if user_id == ""{
+        ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
         return
     }
 
-    course.CreatedDate = time.Now().UTC()
-    course.LastUpdated = time.Now().UTC()
+    if err := ctx.ShouldBindJSON(&course); err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+        return
+    }
 
-    if err := c.courseUsecase.UploadCourse(&course); err != nil {
+    if err := c.courseUsecase.UploadCourse(&course, user_id); err != nil {
         ctx.JSON(http.StatusInternalServerError,
             domain.ErrorResponse{
                 Message: "Error uploading course",
@@ -138,4 +137,20 @@ func (c *CourseController) SaveCourse(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "Course ID appended successfully"})
+}
+
+func (c *CourseController) GetMyCourse(ctx *gin.Context) {
+    user_id := ctx.GetString("user_id")
+    if user_id == ""{
+        ctx.JSON(400, gin.H{
+            "Error" : "Unauthorized",
+        })
+    }
+    course, err := c.courseUsecase.GetMyCourses(user_id)
+    if err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    ctx.JSON(http.StatusOK, course)
 }

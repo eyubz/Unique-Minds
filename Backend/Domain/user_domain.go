@@ -40,30 +40,38 @@ type StudentProfile struct {
 	Phone         string             `bson:"phone" json:"phone"`
 	Address       Address            `bson:"address" json:"address"`
 	CourseIds     []primitive.ObjectID `bson:"course_id" json:"course_id"`
-	EnrolledCourses []primitive.ObjectID `bson:"courses" json:"courses"`
+	EnrolledCourses []Course `bson:"courses" json:"courses"`
 }
 
 
 type EducatorProfile struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	FullName      string       		 `bson:"name" json:"name"`
+	Title 	   	  string             `bson:"title" json:"title"`
+	ProfileImage  string             `json:"profileImage" bson:"profileImage"`
+	Education 	  []string 		 	 `bson:"education" json:"education"`
+	ContactInfo	  Contact            `bson:"contact" json:"contact"`
+	Interests     []string      	 `bson:"interests" json:"interests"`
+	Bio 		  string             `json:"bio" bson:"bio"`
+	Rating        float32		     `json:"rating" bson:"rating"`
+	Reviews       []Review           `bson:"reviews" json:"reviews"`
+	Availability  []string           `bson:"availability" json:"availability"`
 	UserName      string             `bson:"username"  json:"username"`
 	Email 		  string 			 `bson:"email" validate:"required,email" json:"email"`
     Password      string             `bson:"password" json:"password" validate:"required"`
-	Age           int                `json:"age" bson:"age"`
-	Bio           string             `json:"bio" bson:"bio"`
-	GuardianEmail string             `json:"guardianEmail" bson:"guardianEmail"`
-	GuardianPhone string             `json:"guardianPhone" bson:"guardianPhone"`
-	Location      string             `json:"location" bson:"location"`
-	ProfileImage  string             `json:"profileImage" bson:"profileImage"`
-	UserID        primitive.ObjectID `json:"userId" bson:"userId"`
 	Created_At	  time.Time			  `bson:"created_at" json:"created_at"`
 	UpdateAt      time.Time			 `json:"updateAt" bson:"updateAt"`
-	Contact       string      		 `bson:"contact" json:"contact"`
-	Dob           string             `bson:"dob" json:"dob"`
-	Phone         string             `bson:"phone" json:"phone"`
-	Address       Address            `bson:"address" json:"address"`
-	Reviews 	 []Review            `bson:"reviews" json:"reviews"`
+	Address       string            `bson:"address" json:"address"`
+	
+}
+
+
+type Contact struct {
+	Email string `bson:"email" json:"email"`
+	Phone string `bson:"phone" json:"phone"`
+	Linkedin string `bson:"linkedin" json:"linkedin"`
+	Facebook string `bson:"facebook" json:"facebook"`
+	Twitter string `bson:"twitter" json:"twitter"`
 }
 
 type Address struct {
@@ -71,7 +79,6 @@ type Address struct {
 	City       string `bson:"city" json:"city"`
 	PostalCode string `bson:"postalCode" json:"postalCode"`
 }
-
 
 type Review struct {
     Name        string  `bson:"name" json:"name"`

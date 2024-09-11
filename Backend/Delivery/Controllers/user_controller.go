@@ -36,7 +36,6 @@ func (uc *UserControllers) RegisterUser(c *gin.Context){
 	validate := validator.New()
 
 	if err := validate.Struct(signUp); err != nil {
-		fmt.Println(err.Error())
 		c.JSON(400, domain.ErrorResponse{
 			Message: "Invalid request",
 			Status:  400,

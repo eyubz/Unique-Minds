@@ -27,13 +27,16 @@ func NewCourseRepository(collection *mongo.Collection, config *infrastructure.Co
     }
 }
 
-func (r *CourseRepository) Save(course *domain.Course) error {
+func (r *CourseRepository) Save(course *domain.Course, user_id string) error {
+	uid, _ := primitive.ObjectIDFromHex(user_id)
     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
     defer cancel()
 
 	course.ID = primitive.NewObjectID()
 	course.CreatedDate = time.Now()
 	course.LastUpdated = time.Now()
+	course.Creator_id = uid
+	
 
     filter := bson.M{"_id": course.ID}
     update := bson.M{"$set": course}
@@ -141,4 +144,33 @@ func (r *CourseRepository) SaveCourse(userID string, courseID string) error {
 
 	_, err = r.collection.UpdateOne(context.TODO(), filter, update)
 	return err
+}
+
+func (r *CourseRepository) GetMyCourse(id string) ([]domain.Course, error) {
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	pipeline := mongo.Pipeline{
+		bson.D{{Key : "$match", Value: bson.D{{Key:"_id", Value: objID}}}},
+		bson.D{{Key: "$lookup", Value: bson.D{
+			{Key: "from", Value: "courses"},
+			{Key: "localField", Value: "course_ids"},
+			{Key: "foreignField", Value: "_id"},
+			{Key: "as", Value: "courses"},
+		}}},
+	}
+	cursor, err := r.collection.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	var student domain.StudentProfile
+	if cursor.Next(context.TODO()) {
+		if err := cursor.Decode(&student); err != nil {
+			return nil, err
+		}
+	}
+	return student.EnrolledCourses, nil
 }

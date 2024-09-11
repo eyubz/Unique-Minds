@@ -44,8 +44,7 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     tokenGroup.POST("/refresh", authMiddleWare, userControllers.RefreshToken)
 
     courseGroup := serverGroup.Group("courses")
-    //courseGroup.Use(authMiddleWare)
-    courseGroup.POST("/", courseController.UploadCourse)
+    courseGroup.POST("/", authMiddleWare, courseController.UploadCourse)
     courseGroup.POST("/upload", courseController.UploadFile)
 
     serverGroup.GET("/featured-courses", courseController.GetFeaturedCourses)
@@ -53,6 +52,7 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     serverGroup.GET("/courses/:id", courseController.GetCourseById)
     serverGroup.POST("/courses/:id", authMiddleWare, courseController.SaveCourse)
     serverGroup.POST("/courses/reviews", authMiddleWare, userControllers.SaveReview)
+    serverGroup.GET("/courses/my", authMiddleWare, courseController.GetMyCourse)
 
     serverGroup.GET("/educators", userControllers.GetEducators)
     serverGroup.GET("/educators/:id", userControllers.GetEducatorById)
