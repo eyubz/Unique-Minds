@@ -40,10 +40,28 @@ type StudentProfile struct {
 	Phone         string             `bson:"phone" json:"phone"`
 	Address       Address            `bson:"address" json:"address"`
 	CourseIds     []primitive.ObjectID `bson:"course_id" json:"course_id"`
-	EnrolledCourses []Course `bson:"courses" json:"courses"`
+	EnrolledCourses []CourseProgress 		`bson:"courses" json:"courses"`
 	Schedule 	   []Schedule         `bson:"schedules" json:"schedules"`
+
 }
 
+type CourseProgress struct{
+	CourseID     primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+    Progress	 int64      `json:"progress" bson:"progress"`
+	CompletedParts []primitive.ObjectID  `json:"completed_parts" bson:"completed_parts"`
+	IsCompleted    bool  `json:"is_completed" bson:"is_completed"`
+
+}
+
+
+type CourseDetailResponse struct{
+	Course  Course `json:"course"`
+	Progress CourseProgress `json:"progress"`
+}
+
+type ProgressRequest struct {
+    CompletedParts []string `json:"completed_parts"`
+}
 
 type EducatorProfile struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`

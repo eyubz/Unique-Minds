@@ -108,37 +108,6 @@ func (c *CourseController) GetCourses(ctx *gin.Context) {
 	}
 }
 
-func (c *CourseController) GetCourseById(ctx *gin.Context) {
-    id := ctx.Param("id")
-    course, err := c.courseUsecase.GetCourseById(id)
-    if err != nil {
-        ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        return
-    }
-
-    ctx.JSON(http.StatusOK, course)
-}
-
-
-func (c *CourseController) SaveCourse(ctx *gin.Context) {
-	studentID := ctx.GetString("user_id")
-	courseID := ctx.Param("course_id")
-
-    if studentID == ""{
-        ctx.JSON(500, domain.ErrorResponse{
-            Message: "Unauthorized",
-            Status: 500,
-        })
-    }
-	err := c.courseUsecase.SaveCourse(studentID, courseID)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{"message": "Course ID appended successfully"})
-}
-
 func (c *CourseController) GetMyCourse(ctx *gin.Context) {
     user_id := ctx.GetString("user_id")
     if user_id == ""{
@@ -182,4 +151,62 @@ func (uc *CourseController) DeleteCourse(c *gin.Context) {
         return
     }
     c.JSON(http.StatusOK, gin.H{"message": "Course deleted successfully"})
+}
+
+
+func (c *CourseController) GetCourseById(ctx *gin.Context) {
+    id := ctx.Param("id")
+    user_id := ctx.GetString("user_id")
+    if user_id == ""{
+        ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+        return
+    }
+
+    course, err := c.courseUsecase.GetCourseByID(id, user_id)
+    if err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    ctx.JSON(http.StatusOK, course)
+}
+
+func (c *CourseController) UpdateProgress(ctx *gin.Context) {
+    var progressRequest domain.ProgressRequest
+    if err := ctx.ShouldBindJSON(&progressRequest); err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    courseID := ctx.Param("id")
+    userID := ctx.GetString("userID")
+
+    err := c.courseUsecase.UpdateProgress(courseID, userID, progressRequest.CompletedParts)
+      
+    if err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    ctx.JSON(http.StatusOK, gin.H{"message": "Progress updated successfully"})
+}
+
+
+func (c *CourseController) SaveCourse(ctx *gin.Context) {
+	studentID := ctx.GetString("user_id")
+	courseID := ctx.Param("course_id")
+
+    if studentID == ""{
+        ctx.JSON(500, domain.ErrorResponse{
+            Message: "Unauthorized",
+            Status: 500,
+        })
+    }
+	err := c.courseUsecase.SaveCourse(studentID, courseID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Course ID appended successfully"})
 }

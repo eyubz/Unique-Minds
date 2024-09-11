@@ -50,24 +50,6 @@ func (u *courseUseCase) GetCourses(pageNo string, pageSize string, search string
 	}
 }
 
-func (u *courseUseCase) GetCourseById(id string) (domain.Course, error) {
-	result, err := u.courseRepo.GerCourseById(id)
-	if err != nil {
-		return domain.Course{}, err
-	}
-	return result, nil
-}
-
-
-func (u *courseUseCase) SaveCourse(studentID string, courseID string) error{
-	err := u.courseRepo.SaveCourse(studentID, courseID)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (u *courseUseCase) GetMyCourses(id string) ([]domain.Course, error) {
 	result, err := u.courseRepo.GetMyCourse(id)
 	if err != nil {
@@ -90,4 +72,29 @@ func (u *courseUseCase) DeleteCourse(id string) error {
 		return err
 	}
 	return nil
+}
+
+func (u *courseUseCase) GetCourseByID(courseID, userID string) (*domain.CourseDetailResponse, error) {
+    course, err := u.courseRepo.GerCourseById(courseID)
+    if err != nil {
+        return nil, err
+    }
+    progress, err := u.courseRepo.GetCourseProgress(courseID, userID)
+	var courseDetail  domain.CourseDetailResponse
+	courseDetail.Course = course
+    if err == nil {
+		courseDetail.Progress.Progress = progress.Progress
+        courseDetail.Progress.CompletedParts = progress.CompletedParts
+        courseDetail.Progress.IsCompleted = progress.IsCompleted
+    }
+    return &courseDetail, nil
+}
+
+func  (u *courseUseCase) UpdateProgress(courseID, userID string, completedParts []string) error {
+    return u.courseRepo.UpdateCourseProgress(courseID, userID, completedParts)
+}
+
+
+func  (u *courseUseCase) SaveCourse(courseID, userID string) error {
+    return u.courseRepo.SaveCourse(courseID, userID)
 }

@@ -18,11 +18,13 @@ import (
 type CourseRepository struct {
     collection *mongo.Collection
 	config   *infrastructure.Config
+	userCollection *mongo.Collection
 }
 
-func NewCourseRepository(collection *mongo.Collection, config *infrastructure.Config) *CourseRepository{
+func NewCourseRepository(collection *mongo.Collection, eduColl *mongo.Collection, config *infrastructure.Config) *CourseRepository{
     return &CourseRepository{
 		collection: collection,
+		userCollection : eduColl,
 		config: config,
     }
 }
@@ -113,39 +115,6 @@ func (r *CourseRepository) GetCourses(pageNo int64, pageSize int64, search strin
 	return courses, paginationInfo, nil
 }
 
-func (r *CourseRepository) GerCourseById(id string) (domain.Course, error) {
-	var course domain.Course
-
-	objID, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return domain.Course{}, err
-	}
-
-	filter := bson.M{"_id": objID}
-	err = r.collection.FindOne(context.TODO(), filter).Decode(&course)
-	if err != nil { 
-		return domain.Course{}, err
-	}
-
-	return course, nil
-}
-
-func (r *CourseRepository) SaveCourse(userID string, courseID string) error {
-	studentObjID, err := primitive.ObjectIDFromHex(userID)
-	if err != nil {
-		return errors.New("invalid student ID")
-	}
-	courseObjID, err := primitive.ObjectIDFromHex(courseID)
-	if err != nil {
-		return errors.New("invalid course ID")
-	}
-	filter := bson.M{"_id": studentObjID}
-	update := bson.M{"$push": bson.M{"course_id": courseObjID}}
-
-	_, err = r.collection.UpdateOne(context.TODO(), filter, update)
-	return err
-}
-
 func (r *CourseRepository) GetMyCourse(id string) ([]domain.Course, error) {
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -172,7 +141,8 @@ func (r *CourseRepository) GetMyCourse(id string) ([]domain.Course, error) {
 			return nil, err
 		}
 	}
-	return student.EnrolledCourses, nil
+	return nil, nil
+	//return student.EnrolledCourses, nil
 }
 
 func (r *CourseRepository) GetCoursesByEducator(userID string) ([]domain.Course, error) {
@@ -205,4 +175,110 @@ func (r *CourseRepository) DeleteCourse(courseID string) error {
     }
     
     return nil
+}
+
+func (r *CourseRepository) GerCourseById(id string) (domain.Course, error) {
+	var course domain.Course
+
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return domain.Course{}, err
+	}
+
+	filter := bson.M{"_id": objID}
+	err = r.collection.FindOne(context.TODO(), filter).Decode(&course)
+	if err != nil { 
+		return domain.Course{}, err
+	}
+
+	return course, nil
+}
+
+func (r *CourseRepository) GetCourseProgress(courseID, userID string) (*domain.CourseProgress, error) {
+	var user struct {
+		EnrolledCourses []domain.CourseProgress `bson:"courses"`
+	}
+
+	cid, err := primitive.ObjectIDFromHex(courseID)
+	if err != nil {
+		return nil, errors.New("invalid course ID")
+	}
+	uid, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return nil, errors.New("invalid user ID")
+	}
+
+	err = r.collection.FindOne(context.TODO(), bson.M{"_id": uid}).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+	for _, courseProgress := range user.EnrolledCourses {
+		if courseProgress.CourseID == cid {
+			return &courseProgress, nil
+		}
+	}
+	return nil, errors.New("course progress not found")
+}
+
+func (r *CourseRepository) UpdateCourseProgress(courseID, userID string, completedParts []string) error {
+	cid, err := primitive.ObjectIDFromHex(courseID)
+	if err != nil {
+		return errors.New("invalid course ID")
+	}
+	uid, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return errors.New("invalid user ID")
+	}
+
+	course, err := r.GerCourseById(cid.Hex())
+	if err != nil{
+		return errors.New("course not found")
+	}
+
+	total_parts := len(course.Parts)
+
+	filter := bson.M{"_id": uid, "courses._id": cid}
+	update := bson.M{
+		"$set": bson.M{
+			"courses.$.progress":       int64(len(completedParts)) * 100 / int64(total_parts),
+			"courses.$.completed_parts": completedParts,
+			"courses.$.is_completed":    len(completedParts) == total_parts,
+		},
+	}
+	_, err = r.collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+
+func (r *CourseRepository) SaveCourse(userID string, courseID string) error {
+	studentObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return errors.New("invalid student ID")
+	}
+	courseObjID, err := primitive.ObjectIDFromHex(courseID)
+	if err != nil {
+		return errors.New("invalid course ID")
+	}
+
+	initialProgress := domain.CourseProgress{
+		CourseID:       courseObjID,
+		Progress:       0, 
+		CompletedParts: []primitive.ObjectID{},
+		IsCompleted:    false,
+	}
+
+	filter := bson.M{"_id": studentObjID}
+	update := bson.M{
+		"$push": bson.M{
+			"course_id":    courseObjID,      
+			"courses":      initialProgress, 
+		},
+	}
+
+	_, err = r.userCollection.UpdateOne(context.TODO(), filter, update)
+	return err
 }
