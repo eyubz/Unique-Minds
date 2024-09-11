@@ -11,6 +11,7 @@ import (
 	infrastructure "unique-minds/Infrastructure"
 	utils "unique-minds/Utils"
 
+	// Add this line to import the package that defines the StudentProfile struct
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -21,16 +22,18 @@ type UserRepository struct {
 	activeUserCollection *mongo.Collection
 	studentProfileCollection *mongo.Collection
 	educatorProfileCollection *mongo.Collection
+	courseCollection *mongo.Collection
 	config   *infrastructure.Config
 }
 
-func NewUserRepository(collection *mongo.Collection, activeUserColl *mongo.Collection, studentProfile *mongo.Collection, educatorProfile *mongo.Collection, config *infrastructure.Config) *UserRepository {
+func NewUserRepository(collection *mongo.Collection, activeUserColl *mongo.Collection, studentProfile *mongo.Collection, educatorProfile *mongo.Collection, courseColl *mongo.Collection, config *infrastructure.Config) *UserRepository {
 	return &UserRepository{
 		collection: collection,
 		activeUserCollection: activeUserColl,
 		config: config,
 		studentProfileCollection: studentProfile,
 		educatorProfileCollection: educatorProfile,
+		courseCollection: courseColl,
 	}
 }
 
@@ -263,4 +266,182 @@ func (ur *UserRepository) SaveReview(review domain.Review) error {
 
 	_, err := ur.educatorProfileCollection.UpdateOne(context.TODO(), filter, update)
 	return err
+}
+
+
+func (ur *UserRepository) GetStudentById(id string) (domain.StudentProfile, error){
+	var student domain.StudentProfile
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return domain.StudentProfile{}, err
+	}
+	filter := bson.M{"_id": objID}
+	err = ur.studentProfileCollection.FindOne(context.TODO(), filter).Decode(&student)
+	if err != nil {
+		return domain.StudentProfile{}, err
+	}
+	return student, nil
+}
+
+func (ur *UserRepository) UpdateEducatorProfile(user_id string, educator domain.EducatorProfile) domain.EducatorProfile{
+	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
+	defer cancel()
+	filter := bson.M{"_id": user_id}
+	_, err := ur.educatorProfileCollection.UpdateOne(context, filter, bson.M{"$set": educator})
+	if err != nil {
+		return domain.EducatorProfile{}
+	}
+	return educator
+}
+
+func (ur *UserRepository)  UpdateStudentProfile(user_id string, student domain.StudentProfile) domain.StudentProfile{
+	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
+	defer cancel()
+	filter := bson.M{"_id": user_id}
+	_, err := ur.studentProfileCollection.UpdateOne(context, filter, bson.M{"$set": student})
+	if err != nil {
+		return domain.StudentProfile{}
+	}
+	return student
+}
+
+func (ur *UserRepository) SetAvailability(userID, availability string) error {
+	filter := bson.M{"user_id": userID}
+    update := bson.M{
+        "$push": bson.M{
+            "availability": availability,
+        },
+    }
+
+    _, err := ur.educatorProfileCollection.UpdateOne(context.TODO(), filter, update)
+    if err != nil {
+        return errors.New("unable to set availability")
+    }
+
+    return nil
+}
+
+func (ur *UserRepository) FindEducatorSchedules(educatorId string) (interface{}, error) {
+    user_id, err := primitive.ObjectIDFromHex(educatorId)
+    if err != nil {
+        return nil, err
+    }
+    var educator struct {
+        Schedules []domain.Schedule `bson:"schedules"`
+    }
+    err = ur.educatorProfileCollection.FindOne(context.TODO(), bson.M{"_id": user_id}).Decode(&educator)
+    if err != nil {
+        return nil, err
+    }
+
+	type ScheduleWithStudent struct {
+		ID             primitive.ObjectID `json:"id" bson:"_id"`
+		Date           string             `json:"date"`
+		GoogleMeetLink string             `json:"googleMeetLink"`
+		StudentName    string             `json:"studentName"`
+	}
+    var schedulesWithStudent []ScheduleWithStudent
+
+    for _, schedule := range educator.Schedules {
+        var student struct {
+            Name  string `bson:"name"`
+        }
+
+        err = ur.studentProfileCollection.FindOne(context.TODO(), bson.M{"_id": schedule.StudentID}).Decode(&student)
+        if err != nil {
+            return nil, err
+        }
+
+        scheduleWithStudent := ScheduleWithStudent{
+            ID:             schedule.ID,
+            Date:           schedule.Date.Format("2006-01-02 15:04"),
+            GoogleMeetLink: schedule.GoogleMeetLink,
+            StudentName:    student.Name,
+        }
+        schedulesWithStudent = append(schedulesWithStudent, scheduleWithStudent)
+    }
+    return schedulesWithStudent, nil
+}
+
+func (ur *UserRepository) DeleteSchedule(scheduleId string, userId string) error {
+    scheduleObjID, _ := primitive.ObjectIDFromHex(scheduleId)
+    userObjID, _ := primitive.ObjectIDFromHex(userId)
+
+    educatorFilter := bson.M{
+        "_id":           userObjID,
+        "schedules._id": scheduleObjID,
+    }
+    update := bson.M{
+        "$pull": bson.M{
+            "schedules": bson.M{"_id": scheduleObjID},
+        },
+    }
+
+    _, err := ur.educatorProfileCollection.UpdateOne(context.TODO(), educatorFilter, update)
+    if err != nil {
+        return err
+    }
+
+    studentFilter := bson.M{
+        "_id":           userObjID,
+        "schedules._id": scheduleObjID,
+    }
+
+    _, err = ur.studentProfileCollection.UpdateOne(context.TODO(), studentFilter, update)
+    if err != nil {
+        return err
+    }
+
+    return nil
+}
+
+func (ur *UserRepository) GetStudentsFromEducatorProfile(educatorID string) ([]domain.CourseWithStudents, error) {
+    educatorObjID, err := primitive.ObjectIDFromHex(educatorID)
+    if err != nil {
+        return nil, err
+    }
+
+    var educatorProfile domain.EducatorProfile
+    err = ur.educatorProfileCollection.FindOne(context.TODO(), bson.M{"_id": educatorObjID}).Decode(&educatorProfile)
+    if err != nil {
+        return nil, err
+    }
+
+    var result []domain.CourseWithStudents
+
+    for _, studentEntry := range educatorProfile.Students {
+        var student domain.StudentProfile
+        studentObjID := studentEntry.Student_id
+
+        err := ur.studentProfileCollection.FindOne(context.TODO(), bson.M{"_id": studentObjID}).Decode(&student)
+        if err != nil {
+            continue
+        }
+
+        var course domain.Course
+        courseObjID := studentEntry.Course_id
+
+        err = ur.courseCollection.FindOne(context.TODO(), bson.M{"_id": courseObjID}).Decode(&course)
+        if err != nil {
+            continue
+        }
+
+        found := false
+        for i, courseWithStudents := range result {
+            if courseWithStudents.CourseName == course.Name {
+                result[i].Students = append(result[i].Students, student)
+                found = true
+                break
+            }
+        }
+
+        if !found {
+            result = append(result, domain.CourseWithStudents{
+                CourseName: course.Name,
+                Students:   []domain.StudentProfile{student},
+            })
+        }
+    }
+
+    return result, nil
 }

@@ -154,3 +154,32 @@ func (c *CourseController) GetMyCourse(ctx *gin.Context) {
 
     ctx.JSON(http.StatusOK, course)
 }
+
+func (uc *CourseController) GetEducatorCourses(c *gin.Context) {
+    user_id := c.GetString("user_id")
+    if user_id == "" {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+        return
+    }
+    courses, err := uc.courseUsecase.GetEducatorCourses(user_id)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch courses"})
+        return
+    }
+    c.JSON(http.StatusOK, courses)
+}
+
+func (uc *CourseController) DeleteCourse(c *gin.Context) {
+    courseID := c.Param("id")
+	user_id := c.GetString("user_id")
+    if user_id == "" {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+        return
+    }
+    err := uc.courseUsecase.DeleteCourse(courseID)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete course"})
+        return
+    }
+    c.JSON(http.StatusOK, gin.H{"message": "Course deleted successfully"})
+}

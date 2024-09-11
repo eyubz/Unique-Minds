@@ -410,3 +410,137 @@ func (uc *UserControllers) SaveReview(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "Review Saved successfully"})
 }
+
+
+func  (uc *UserControllers) GetProfile(c *gin.Context) {
+	user_id := c.GetString("user_id")
+	if user_id == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	user_type := c.GetString("user_type")
+	if user_type == "educator" {
+		profile, err := uc.userUserCase.GetEducatorProfile(user_id)
+		if err != nil{
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch profile"})
+			return
+		}
+		c.JSON(http.StatusOK, profile)
+	}else{
+		profile, err := uc.userUserCase.GetStudentProfile(user_id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch profile"})
+			return
+		}
+		c.JSON(http.StatusOK, profile)
+		return
+	}
+}
+
+func  (uc *UserControllers) UpdateProfile(c *gin.Context) {
+	user_id := c.GetString("user_id")
+	user_type := c.GetString("user_type")
+	if user_id == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	var educator domain.EducatorProfile
+	var student domain.StudentProfile
+
+	if user_type == "educator" {
+		if err := c.BindJSON(&educator); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+			return
+		}
+		updatedProfile, err := uc.userUserCase.UpdateEducatorProfile(user_id, educator)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to update profile"})
+			return
+		}
+		c.JSON(http.StatusOK, updatedProfile)
+	} else {
+		if err := c.BindJSON(&student); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+			return
+		}
+		updatedProfile, err := uc.userUserCase.UpdateStudentProfile(user_id, student)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to update profile"})
+			return
+		}
+		c.JSON(http.StatusOK, updatedProfile)
+	}
+}
+
+func (uc *UserControllers) SetAvailability(c *gin.Context) {
+    user_id := c.GetString("user_id")
+    if user_id == "" {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+        return
+    }
+
+    var requestBody struct {
+        Availability   string `json:"availability"`
+    }
+
+    if err := c.ShouldBindJSON(&requestBody); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+        return
+    }
+
+    err := uc.userUserCase.SetAvailability(user_id, requestBody.Availability)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to set availability", "details": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"message": "Availability set successfully"})
+}
+
+
+func (uc *UserControllers) GetSchedules(ctx *gin.Context) {
+    user_id := ctx.GetString("user_id")
+    if user_id == ""{
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unauthorized"})
+    }
+    schedules, err := uc.userUserCase.GetEducatorSchedules(user_id)
+    if err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch schedules"})
+        return
+    }
+
+    ctx.JSON(http.StatusOK, schedules)
+}
+
+func (uc *UserControllers) CancelSchedule(ctx *gin.Context) {
+	user_id := ctx.GetString("user_id")
+    if user_id == ""{
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unauthorized"})
+    }
+    scheduleId := ctx.Param("id")
+
+    err := uc.userUserCase.CancelEducatorSchedule(scheduleId, user_id)
+    if err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to cancel schedule"})
+        return
+    }
+
+    ctx.JSON(http.StatusOK, gin.H{"message": "Schedule canceled successfully"})
+}
+
+
+func (uc *UserControllers) GetStudentsByCourses(c *gin.Context) {
+	user_id := c.GetString("user_id")
+	if user_id == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+    studentsByCourses, err := uc.userUserCase.FetchStudentsByCourses(user_id)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch students"})
+        return
+    }
+
+    c.JSON(http.StatusOK, studentsByCourses)
+}

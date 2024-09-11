@@ -4,7 +4,7 @@ const UploadCourse = () => {
   const [course, setCourse] = useState({
     name: "",
     description: "",
-    image: null, // Changed to handle file
+    image: null,
     isFeatured: false,
     parts: [],
   });
@@ -19,7 +19,7 @@ const UploadCourse = () => {
   const [currentMaterial, setCurrentMaterial] = useState({
     name: "",
     type: "",
-    content: null, // Changed to handle file
+    content: null,
     description: "",
   });
 
@@ -149,7 +149,6 @@ const UploadCourse = () => {
       isFeatured: course.isFeatured,
       parts: partsWithUploadedMaterials,
     };
-    console.log(JSON.stringify(courseData));
     try {
       const response = await fetch("http://localhost:8080/api/courses/", {
         method: "POST",
@@ -171,14 +170,11 @@ const UploadCourse = () => {
   };
 
   return (
-    <div className="bg-gray-100 p-8 rounded-lg shadow-lg max-w-6xl mx-auto">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">
-        Upload New Course
-      </h2>
+    <div className="bg-customBlue p-8 rounded-lg shadow-lg max-w-6xl mx-auto">
+      <h3 className="text-3xl font-bold mb-6 text-white">Upload New Course</h3>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Course Details Section */}
-        <div className="bg-white p-6 rounded-lg shadow w-full lg:w-1/3">
+        <div className="bg-white p-6 rounded-lg shadow w-full lg:w-1/3 h-fit">
           <h3 className="text-xl font-semibold mb-4 text-gray-800">
             Course Details
           </h3>
@@ -198,28 +194,17 @@ const UploadCourse = () => {
               placeholder="Course Description"
               className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 h-32 resize-none"
             />
+            <label className="flex items-center space-x-2">Course Image </label>
             <input
               type="file"
               name="image"
               onChange={handleCourseChange}
               className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             />
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                name="isFeatured"
-                checked={course.isFeatured}
-                onChange={handleCourseChange}
-                className="form-checkbox h-5 w-5 text-blue-600"
-              />
-              <span className="text-gray-700">Featured Course</span>
-            </label>
           </div>
         </div>
 
-        {/* Parts and Materials Section */}
         <div className="flex-1 space-y-8">
-          {/* Add Part */}
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-semibold mb-4 text-gray-800">
               Add Part
@@ -250,14 +235,12 @@ const UploadCourse = () => {
               />
               <button
                 onClick={addPart}
-                className="md:col-span-2 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
+                className="md:col-span-2 py-3 bg-customBlue text-white rounded-lg hover:bg-gray-500 transition duration-300"
               >
                 Add Part
               </button>
             </div>
           </div>
-
-          {/* Parts List */}
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-semibold mb-4 text-gray-800">
               Course Parts
@@ -299,7 +282,7 @@ const UploadCourse = () => {
                     )}
                     <button
                       onClick={() => setSelectedPartSequence(part.sequence)}
-                      className="py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 mt-4"
+                      className="py-2 px-4 bg-customBlue text-white rounded-lg hover:bg-gray-500 transition duration-300 mt-4"
                     >
                       Select for Adding Materials
                     </button>
@@ -309,7 +292,6 @@ const UploadCourse = () => {
             </div>
           </div>
 
-          {/* Add Material */}
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-semibold mb-4 text-gray-800">
               Add Material to Selected Part
@@ -346,7 +328,7 @@ const UploadCourse = () => {
               />
               <button
                 onClick={addMaterial}
-                className="md:col-span-2 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
+                className="md:col-span-2 py-3 bg-customBlue text-white rounded-lg hover:bg-gray-500 transition duration-300"
               >
                 Add Material
               </button>
@@ -355,11 +337,10 @@ const UploadCourse = () => {
         </div>
       </div>
 
-      {/* Submit */}
       <div className="flex justify-end mt-8">
         <button
           onClick={handleSubmit}
-          className="py-3 px-6 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300"
+          className="py-3 px-6 bg-white text-customBlue rounded-lg hover:bg-gray-100 transition duration-300"
         >
           Submit Course
         </button>

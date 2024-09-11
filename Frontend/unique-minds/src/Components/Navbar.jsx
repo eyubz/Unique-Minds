@@ -41,6 +41,9 @@ const Navbar = () => {
               />
             </div>
           </Link>
+          <Link to="/educator_dashboard">
+            <h1>Educator</h1>
+          </Link>
         </div>
       </div>
     </nav>

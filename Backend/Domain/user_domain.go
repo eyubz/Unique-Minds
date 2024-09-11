@@ -41,6 +41,7 @@ type StudentProfile struct {
 	Address       Address            `bson:"address" json:"address"`
 	CourseIds     []primitive.ObjectID `bson:"course_id" json:"course_id"`
 	EnrolledCourses []Course `bson:"courses" json:"courses"`
+	Schedule 	   []Schedule         `bson:"schedules" json:"schedules"`
 }
 
 
@@ -49,9 +50,7 @@ type EducatorProfile struct {
 	FullName      string       		 `bson:"name" json:"name"`
 	Title 	   	  string             `bson:"title" json:"title"`
 	ProfileImage  string             `json:"profileImage" bson:"profileImage"`
-	Education 	  []string 		 	 `bson:"education" json:"education"`
-	ContactInfo	  Contact            `bson:"contact" json:"contact"`
-	Interests     []string      	 `bson:"interests" json:"interests"`
+	Phone 		  string 			 `bson:"phone" json:"phone"`
 	Bio 		  string             `json:"bio" bson:"bio"`
 	Rating        float32		     `json:"rating" bson:"rating"`
 	Reviews       []Review           `bson:"reviews" json:"reviews"`
@@ -62,18 +61,23 @@ type EducatorProfile struct {
 	Created_At	  time.Time			  `bson:"created_at" json:"created_at"`
 	UpdateAt      time.Time			 `json:"updateAt" bson:"updateAt"`
 	Address       string            `bson:"address" json:"address"`
+	Schedules     []Schedule         `bson:"schedules" json:"schedules"`
+	Students 	  []Student          `bson:"students" json:"students"`
 	
 }
 
-
-type Contact struct {
-	Email string `bson:"email" json:"email"`
-	Phone string `bson:"phone" json:"phone"`
-	Linkedin string `bson:"linkedin" json:"linkedin"`
-	Facebook string `bson:"facebook" json:"facebook"`
-	Twitter string `bson:"twitter" json:"twitter"`
+type Student struct{
+	Student_id primitive.ObjectID `json:"student_id" bson:"student_id"`
+	Course_id  primitive.ObjectID `json:"course_id" bson:"course_id"`
 }
 
+type Schedule struct {
+	ID 		  primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	StudentID primitive.ObjectID `json:"student_id" bson:"student_id"`
+	EducatorId primitive.ObjectID `json:"educator_id" bson:"educator_id"`
+	Date 	  time.Time          `json:"date" bson:"date"`
+	GoogleMeetLink string       `json:"googleMeetLink" bson:"googleMeetLink"`
+}
 type Address struct {
 	Street     string `bson:"street" json:"street"`
 	City       string `bson:"city" json:"city"`
@@ -86,6 +90,15 @@ type Review struct {
     Rating      float64 `bson:"rating" json:"rating"`
     EducatorID  uint    `bson:"educator_id" json:"educator_id"`
 }
+type Profile struct {
+	ID          primitive.ObjectID `bson:"_id,omitempty"`
+	Name        string             `bson:"name"`
+	Description string             `bson:"description"`
+}
+type CourseWithStudents struct {
+	CourseName string           `json:"courseName"`
+	Students   []StudentProfile `json:"students"`
+}
 
 type UserUseCaseInterface interface {
 	RegisterUser(user User) error
@@ -94,16 +107,20 @@ type UserUseCaseInterface interface {
 	CreateAccessToken(user *User, secret string, expiry int) (accessToken string, err error)
 	CreateRefreshToken(user *User, secret string, expiry int) (refreshToken string, err error)
 	RefreshToken(request RefreshTokenRequest, user_id string) (RefreshTokenResponse, error)
-	//GetUserProfile(id string)(UserProfile, error)
 	ResetPassword(email string, user_id string)error
 	ResetPasswordVerify(email string, token string, user_id string, password string) error
 	Logout(user_id string, user_agent string) error	
 	GetEducators(pageNo string, pageSize string, search string) ([]EducatorProfile, Pagination, error)
 	GetEducatorById(id string) (EducatorProfile, error)
 	SaveReview(review Review) error
-	//UpdateUser(id string, user UserProfile) error
-	//UpdateStudentProfile(userId string, updatedProfile *StudentProfile) (*StudentProfile, error)
-	
+	UpdateStudentProfile(user_id string, updatedProfile StudentProfile) (StudentProfile, error)
+	GetStudentProfile(user_id string) (StudentProfile, error)
+	UpdateEducatorProfile(user_id string, updatedProfile EducatorProfile) (EducatorProfile, error)
+	GetEducatorProfile(user_id string) (EducatorProfile, error)
+	SetAvailability(userID string, availability string) error
+	GetEducatorSchedules(educatorId string) (interface{}, error)
+	CancelEducatorSchedule(scheduleId string, user_id string) error
+	FetchStudentsByCourses(educatorID string) ([]CourseWithStudents, error)
 }
 
 type UserRepositoryInterface interface {
@@ -119,9 +136,13 @@ type UserRepositoryInterface interface {
 	GetEducators(pageNo int64, pageSize int64, search string) ([]EducatorProfile, Pagination, error)
 	GetEducatorsById(id string) (EducatorProfile, error)
 	SaveReview(review Review) error
-	
-	//GetStudentProfile(userId string) (*StudentProfile, error)
-	//UpdateStudentProfile(userId string, updatedProfile *StudentProfile) (*StudentProfile, error)
+	GetStudentById(id string) (StudentProfile, error)
+	UpdateEducatorProfile(user_id string, educator EducatorProfile)EducatorProfile
+	UpdateStudentProfile(user_id string, student StudentProfile)StudentProfile
+	SetAvailability(userID, availability string) error 
+	FindEducatorSchedules(educatorId string) (interface{}, error)
+	DeleteSchedule(scheduleId string, userId string) error
+	GetStudentsFromEducatorProfile(educatorID string) ([]CourseWithStudents, error)
 }
 
 type AdminUseCaseInterface interface {

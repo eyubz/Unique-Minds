@@ -9,51 +9,38 @@ const Educators = () => {
       id: 1,
       name: "John Doe",
       title: "AI Specialist",
-      description:
-        "John is an AI expert with years of experience in artificial intelligence and machine learning.",
       image: img,
     },
     {
       id: 2,
       name: "Jane Smith",
       title: "Web Developer",
-      description:
-        "Jane is a full-stack web developer specializing in modern front-end technologies.",
       image: img,
     },
     {
       id: 3,
       name: "Alex Johnson",
       title: "Cybersecurity Expert",
-      description:
-        "Alex is a leading cybersecurity consultant with experience in ethical hacking.",
       image: img,
     },
     {
       id: 1,
       name: "John Doe",
       title: "AI Specialist",
-      description:
-        "John is an AI expert with years of experience in artificial intelligence and machine learning.",
       image: img,
     },
     {
       id: 2,
       name: "Jane Smith",
       title: "Web Developer",
-      description:
-        "Jane is a full-stack web developer specializing in modern front-end technologies.",
       image: img,
     },
     {
       id: 3,
       name: "Alex Johnson",
       title: "Cybersecurity Expert",
-      description:
-        "Alex is a leading cybersecurity consultant with experience in ethical hacking.",
       image: img,
     },
-    // Add more educators as needed
   ]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -159,7 +146,6 @@ const Educators = () => {
                   {educator.name}
                 </h3>
                 <h4 className="text-lg text-white mb-2">{educator.title}</h4>
-                <p className="text-white">{educator.description}</p>
                 <button className="mt-4 bg-white text-customBlue font-semibold py-2 px-4 rounded-lg hover:bg-gray-500 focus:outline-none">
                   <Link to={`/educator_detail/${educator.id}`}>
                     View Profile

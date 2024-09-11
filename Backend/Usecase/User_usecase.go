@@ -366,3 +366,87 @@ func (uc *UserUseCase) SaveReview(review domain.Review) error{
 
 	return nil
 }
+
+
+func (uc *UserUseCase) GetEducatorProfile(user_id string) (domain.EducatorProfile, error){
+	educator, err := uc.UserRepo.GetEducatorsById(user_id)
+	if err != nil {
+		return domain.EducatorProfile{}, errors.New("educator not found")
+	}
+	return educator, nil
+}
+
+func (uc *UserUseCase) GetStudentProfile(user_id string) (domain.StudentProfile, error){
+	student, err := uc.UserRepo.GetStudentById(user_id)
+	if err != nil {
+		return domain.StudentProfile{}, errors.New("student not found")
+	}
+	return student, nil
+}
+
+func (uc *UserUseCase) UpdateEducatorProfile(user_id string, updatedProfile domain.EducatorProfile) (domain.EducatorProfile, error){
+	educator, err := uc.UserRepo.GetEducatorsById(user_id)
+	if err != nil {
+		return domain.EducatorProfile{}, errors.New("educator not found")
+	}
+	educator.ID = updatedProfile.ID
+	educator.FullName = updatedProfile.FullName
+	educator.Title = updatedProfile.Title
+	educator.Bio = updatedProfile.Bio
+	educator.Email = updatedProfile.Email
+	educator.Rating = updatedProfile.Rating
+	educator.Phone = updatedProfile.Phone
+	educator.Address = updatedProfile.Address
+	educator.ProfileImage = updatedProfile.ProfileImage
+	educator.Address = updatedProfile.Address
+	educator.Availability = updatedProfile.Availability
+	educator.UpdateAt = time.Now()
+	
+
+	result := uc.UserRepo.UpdateEducatorProfile(user_id, educator)
+	return result, nil
+}
+
+func (uc *UserUseCase) UpdateStudentProfile(user_id string, updatedProfile domain.StudentProfile)(domain.StudentProfile, error){
+	student, err := uc.UserRepo.GetStudentById(user_id)
+	if err != nil {
+		return domain.StudentProfile{}, errors.New("student not found")
+	}
+	student.ID = updatedProfile.ID
+	student.FullName = updatedProfile.FullName
+	//student.Title = updatedProfile.Title
+	student.Bio = updatedProfile.Bio
+	student.Email = updatedProfile.Email
+	//student.Rating = updatedProfile.Rating
+	student.Phone = updatedProfile.Phone
+	//student.Address = updatedProfile.Address
+	student.ProfileImage = updatedProfile.ProfileImage
+	//student.Address = updatedProfile.Address
+	//student.Availability = updatedProfile.Availability
+	student.UpdateAt = time.Now()
+	
+
+	result := uc.UserRepo.UpdateStudentProfile(user_id, student)
+	return result, nil
+}
+
+func (uc *UserUseCase) SetAvailability(userID string, availability string) error {
+    err := uc.UserRepo.SetAvailability(userID, availability)
+    if err != nil {
+		return errors.New("error setting availability")
+    }
+
+    return nil
+}
+
+func (uc *UserUseCase) GetEducatorSchedules(educatorId string) (interface{}, error) {
+	return uc.UserRepo.FindEducatorSchedules(educatorId)
+}
+
+func (uc *UserUseCase) CancelEducatorSchedule(scheduleId string, user_id string) error {
+    return uc.UserRepo.DeleteSchedule(scheduleId, user_id)
+}
+
+func (uc *UserUseCase) FetchStudentsByCourses(educatorID string) ([]domain.CourseWithStudents, error) {
+    return uc.UserRepo.GetStudentsFromEducatorProfile(educatorID)
+}

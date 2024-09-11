@@ -174,3 +174,35 @@ func (r *CourseRepository) GetMyCourse(id string) ([]domain.Course, error) {
 	}
 	return student.EnrolledCourses, nil
 }
+
+func (r *CourseRepository) GetCoursesByEducator(userID string) ([]domain.Course, error) {
+	uid, _ := primitive.ObjectIDFromHex(userID)
+    var courses []domain.Course
+    filter := bson.M{"creator_id": uid}
+
+    cursor, err := r.collection.Find(context.TODO(), filter)
+    if err != nil {
+        return nil, errors.New("failed to get courses")
+    }
+
+    if err = cursor.All(context.TODO(), &courses); err != nil {
+        return nil, errors.New("failed to get courses")
+    }
+
+    return courses, nil
+}
+
+func (r *CourseRepository) DeleteCourse(courseID string) error {
+	cid, _ := primitive.ObjectIDFromHex(courseID)
+    filter := bson.M{"_id": cid, "count": 0}
+    result, err := r.collection.DeleteOne(context.TODO(), filter)
+    if err != nil {
+        return errors.New("failed to delete course")
+    }
+    
+    if result.DeletedCount == 0 {
+        return errors.New("failed to delete course")
+    }
+    
+    return nil
+}

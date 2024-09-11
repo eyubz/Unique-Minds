@@ -75,3 +75,19 @@ func (u *courseUseCase) GetMyCourses(id string) ([]domain.Course, error) {
 	}
 	return result, nil
 }
+
+func (u *courseUseCase) GetEducatorCourses(id string) ([]domain.Course, error) {
+	result, err := u.courseRepo.GetCoursesByEducator(id)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (u *courseUseCase) DeleteCourse(id string) error {
+	err := u.courseRepo.DeleteCourse(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}

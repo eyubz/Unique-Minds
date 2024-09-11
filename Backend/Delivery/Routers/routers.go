@@ -16,7 +16,7 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     student_profile_collection := db.CreateDb(config.DatabaseUrl, config.DbName, config.StudentProfileCollection)
     educator_profile_collection := db.CreateDb(config.DatabaseUrl, config.DbName, config.EducatorProfileCollection)
 
-    user_repository := repository.NewUserRepository(user_collection, active_user_collection, student_profile_collection, educator_profile_collection, config)
+    user_repository := repository.NewUserRepository(user_collection, active_user_collection, student_profile_collection, educator_profile_collection, course_collection, config)
     course_repository := repository.NewCourseRepository(course_collection, config)
     password_service := infrastructure.NewPasswordService()
 
@@ -38,7 +38,6 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     auth.POST("/forgot-password", userControllers.ResetPassword)
     auth.POST("/reset-password", userControllers.ResetPasswordVerify)
     auth.GET("logout", userControllers.Logout)
-    //auth.GET("users/:id", userControllers.GetUserProfile)
 
     tokenGroup := serverGroup.Group("token")
     tokenGroup.POST("/refresh", authMiddleWare, userControllers.RefreshToken)
@@ -56,11 +55,20 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
 
     serverGroup.GET("/educators", userControllers.GetEducators)
     serverGroup.GET("/educators/:id", userControllers.GetEducatorById)
+    serverGroup.GET("/educator/courses", authMiddleWare, courseController.GetEducatorCourses)
+    serverGroup.DELETE("/educator/courses/:id", authMiddleWare, courseController.DeleteCourse)
+    serverGroup.GET("/educator/schedules", authMiddleWare, userControllers.GetSchedules)
+    serverGroup.DELETE("educators/schedules:/id", authMiddleWare, userControllers.CancelSchedule)
+    serverGroup.GET("/educator/students", authMiddleWare, userControllers.GetStudentsByCourses)
+
+    serverGroup.GET("/profile", authMiddleWare, userControllers.GetProfile)
+    serverGroup.PUT("/profile", authMiddleWare, userControllers.UpdateProfile)
+    serverGroup.PUT("/availability", authMiddleWare, userControllers.SetAvailability)
 
 
     studentServer := serverGroup.Group("student")
     studentServer.Use(authMiddleWare)
-    //studentServer.GET("/profile", userControllers.GetStudentProfile) c
+    //studentServer.GET("/profile", userControllers.GetStudentProfile)
     //studentServer.PUT("/profile", userControllers.UpdateStudentProfile)
     studentServer.POST("/upload", userControllers.UploadProfileImage)
 

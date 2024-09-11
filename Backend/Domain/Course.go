@@ -17,6 +17,8 @@ type Course struct {
     LastUpdated time.Time             `json:"last_updated" bson:"last_updated"`
 	IsFeatured  bool                  `json:"is_featured" bson:"is_featured"`
     Creator_id  primitive.ObjectID    `json:"user_id" bson:"user_id"`
+    Tags        []string              `json:"tags" bson:"tags"`
+    Count       int                   `json:"count" bson:"count"`
 }
 
 type Part struct {
@@ -46,6 +48,8 @@ type CourseRepository interface {
     SaveCourse(userID string, courseID string) error
     GetMyCourse(id string) ([]Course, error)
     Save(course *Course, user_id string) error
+    DeleteCourse(courseID string) error
+    GetCoursesByEducator(userID string) ([]Course, error)
 }
 type CourseUseCaseInterface interface {
     GetRecentCourses() ([]Course, error)
@@ -54,4 +58,6 @@ type CourseUseCaseInterface interface {
     SaveCourse(studentID string, courseID string) error
     GetMyCourses(id string) ([]Course, error)
     UploadCourse(course *Course, user_id string) error
+    GetEducatorCourses(id string) ([]Course, error)
+    DeleteCourse(id string) error
 }
