@@ -147,12 +147,11 @@ func (uc *CourseController) DeleteCourse(c *gin.Context) {
     }
     err := uc.courseUsecase.DeleteCourse(courseID)
     if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete course"})
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusOK, gin.H{"message": "Course deleted successfully"})
 }
-
 
 func (c *CourseController) GetCourseById(ctx *gin.Context) {
     id := ctx.Param("id")
@@ -191,7 +190,6 @@ func (c *CourseController) UpdateProgress(ctx *gin.Context) {
     ctx.JSON(http.StatusOK, gin.H{"message": "Progress updated successfully"})
 }
 
-
 func (c *CourseController) SaveCourse(ctx *gin.Context) {
 	studentID := ctx.GetString("user_id")
 	courseID := ctx.Param("course_id")
@@ -210,3 +208,5 @@ func (c *CourseController) SaveCourse(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "Course ID appended successfully"})
 }
+
+

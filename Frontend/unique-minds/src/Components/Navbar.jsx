@@ -1,8 +1,43 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import logo from "../Assets/logo.png";
-import img from "../Assets/image1_0.jpg";
+import defaultImg from "../Assets/image1_0.jpg";
 
 const Navbar = () => {
+  const [accessToken, setAccessToken] = useState(null);
+  const [profileImage, setProfileImage] = useState(defaultImg);
+  const [role, setRole] = useState("student");
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+
+    if (token) {
+      setAccessToken(token);
+      fetchUserProfile(token);
+    }
+  }, []);
+
+  const fetchUserProfile = async (token) => {
+    try {
+      const response = await fetch("/api/auth/user-profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const profileImageUrl = data.profileImage
+          ? `https://localhost:8080${data.profileImage}`
+          : defaultImg;
+        setProfileImage(profileImageUrl);
+        setRole(data.role);
+      }
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    }
+  };
+
   return (
     <nav className="bg-white shadow-md p-4">
       <div className="container mx-auto flex justify-between items-center">
@@ -22,28 +57,45 @@ const Navbar = () => {
           <Link to="/contact" className="text-customBlue mr-4">
             Contact Us
           </Link>
-          <Link to="/login" className="text-customBlue mr-4">
-            Login
-          </Link>
-          <Link
-            to="/signup"
-            className="bg-customBlue text-white px-4 py-2 rounded mr-4"
-          >
-            Signup
-          </Link>
-          <Link to="/student_dashboard">
-            <div className="flex items-center">
-              <img
-                //src={profileImage ? profileImage : img}
-                src={img}
-                alt="Profile"
-                className="w-10 h-10 rounded-full object-cover"
-              />
-            </div>
-          </Link>
-          <Link to="/educator_dashboard">
-            <h1>Educator</h1>
-          </Link>
+
+          {!accessToken ? (
+            <>
+              <Link to="/login" className="text-customBlue mr-4">
+                Login
+              </Link>
+              <Link
+                to="/signup"
+                className="bg-customBlue text-white px-4 py-2 rounded mr-4"
+              >
+                Signup
+              </Link>
+            </>
+          ) : (
+            <>
+              {role === "student" && (
+                <Link to="/student_dashboard" className="mr-4">
+                  <div className="flex items-center">
+                    <img
+                      src={profileImage}
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  </div>
+                </Link>
+              )}
+              {role === "educator" && (
+                <Link to="/educator_dashboard" className="text-customBlue mr-4">
+                  <div className="flex items-center">
+                    <img
+                      src={profileImage}
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  </div>
+                </Link>
+              )}
+            </>
+          )}
         </div>
       </div>
     </nav>

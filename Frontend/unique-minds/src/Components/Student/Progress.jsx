@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -10,13 +10,29 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const courses = [
-  { id: 1, title: "Introduction to AI", progress: 75 },
-  { id: 2, title: "Web Development Bootcamp", progress: 50 },
-  { id: 3, title: "Data Science Fundamentals", progress: 20 },
-];
-
 const ProgressBarChart = () => {
+  const sampleCourses = [
+    { id: 1, title: "Introduction to AI", progress: 75 },
+    { id: 2, title: "Web Development Bootcamp", progress: 50 },
+    { id: 3, title: "Data Science Fundamentals", progress: 20 },
+  ];
+
+  const [courses, setCourses] = useState(sampleCourses);
+  const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   fetch("http://localhost:8080/api/courses/progress")
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setCourses(data);
+  //       setLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching course progress data:", error);
+  //       setLoading(false);
+  //     });
+  // }, []);
+
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart

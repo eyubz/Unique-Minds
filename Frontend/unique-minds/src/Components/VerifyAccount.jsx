@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 const VerifyEmail = () => {
   const navigate = useNavigate();
 
-  // Function to handle redirection or any other action
   const handleGoToLogin = () => {
     navigate("/login");
   };
@@ -13,7 +12,7 @@ const VerifyEmail = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded shadow">
         <div>
-          <h2 className="text-3xl font-bold text-center text-gray-900">
+          <h2 className="text-3xl font-bold text-center text-customBlue">
             Verify Your Email
           </h2>
           <p className="mt-2 text-center text-gray-600">
@@ -24,7 +23,7 @@ const VerifyEmail = () => {
         <div className="mt-6 text-center">
           <button
             onClick={handleGoToLogin}
-            className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+            className="px-4 py-2 text-white bg-customBlue rounded-md hover:bg-gray-500"
           >
             Go to Login
           </button>

@@ -19,37 +19,51 @@ type CourseRepository struct {
     collection *mongo.Collection
 	config   *infrastructure.Config
 	userCollection *mongo.Collection
+	studentColl  *mongo.Collection
 }
 
-func NewCourseRepository(collection *mongo.Collection, eduColl *mongo.Collection, config *infrastructure.Config) *CourseRepository{
+func NewCourseRepository(collection *mongo.Collection, eduColl *mongo.Collection, studColl *mongo.Collection, config *infrastructure.Config) *CourseRepository{
     return &CourseRepository{
 		collection: collection,
 		userCollection : eduColl,
 		config: config,
+		studentColl: studColl,
     }
 }
 
+
 func (r *CourseRepository) Save(course *domain.Course, user_id string) error {
 	uid, _ := primitive.ObjectIDFromHex(user_id)
-    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-    defer cancel()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
 	course.ID = primitive.NewObjectID()
 	course.CreatedDate = time.Now()
 	course.LastUpdated = time.Now()
 	course.Creator_id = uid
-	
 
-    filter := bson.M{"_id": course.ID}
-    update := bson.M{"$set": course}
-    opts := options.Update().SetUpsert(true)
+	for i := range course.Parts {
+		course.Parts[i].ID = primitive.NewObjectID()
+		course.Parts[i].CreatedDate = time.Now()
+		course.Parts[i].LastUpdated = time.Now()
 
-    _, err := r.collection.UpdateOne(ctx, filter, update, opts)
-    if err != nil {
-        return err
-    }
+		for j := range course.Parts[i].Materials {
+			course.Parts[i].Materials[j].ID = primitive.NewObjectID()
+			course.Parts[i].Materials[j].CreatedDate = time.Now()
+			course.Parts[i].Materials[j].LastUpdated = time.Now()
+		}
+	}
 
-    return nil
+	filter := bson.M{"_id": course.ID}
+	update := bson.M{"$set": course}
+	opts := options.Update().SetUpsert(true)
+
+	_, err := r.collection.UpdateOne(ctx, filter, update, opts)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (r *CourseRepository) FetchRecentCourses() ([]domain.Course, error) {
@@ -127,10 +141,10 @@ func (r *CourseRepository) GetMyCourse(id string) ([]domain.Course, error) {
 			{Key: "from", Value: "courses"},
 			{Key: "localField", Value: "course_ids"},
 			{Key: "foreignField", Value: "_id"},
-			{Key: "as", Value: "courses"},
+			{Key: "as", Value: "course_s"},
 		}}},
 	}
-	cursor, err := r.collection.Aggregate(context.TODO(), pipeline)
+	cursor, err := r.studentColl.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -141,8 +155,7 @@ func (r *CourseRepository) GetMyCourse(id string) ([]domain.Course, error) {
 			return nil, err
 		}
 	}
-	return nil, nil
-	//return student.EnrolledCourses, nil
+	return student.Courses, nil
 }
 
 func (r *CourseRepository) GetCoursesByEducator(userID string) ([]domain.Course, error) {
@@ -167,11 +180,11 @@ func (r *CourseRepository) DeleteCourse(courseID string) error {
     filter := bson.M{"_id": cid, "count": 0}
     result, err := r.collection.DeleteOne(context.TODO(), filter)
     if err != nil {
-        return errors.New("failed to delete course")
+        return errors.New("Students already enrolled in this course, cannot delete")
     }
     
     if result.DeletedCount == 0 {
-        return errors.New("failed to delete course")
+        return errors.New("Students already enrolled in this course, cannot delete")
     }
     
     return nil

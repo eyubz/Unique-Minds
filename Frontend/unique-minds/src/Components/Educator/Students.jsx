@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { FaUser } from "react-icons/fa";
 
 const sampleCoursesWithStudents = [
   {
@@ -7,6 +8,11 @@ const sampleCoursesWithStudents = [
       {
         id: "1",
         name: "John Doe",
+        description: "Down Syndrome",
+      },
+      {
+        id: "2",
+        name: "Jane Smith",
         description: "Down Syndrome",
       },
       {
@@ -29,6 +35,11 @@ const sampleCoursesWithStudents = [
         name: "Bob Lee",
         description: "Down Syndrome",
       },
+      {
+        id: "4",
+        name: "Bob Lee",
+        description: "Down Syndrome",
+      },
     ],
   },
 ];
@@ -41,8 +52,14 @@ const Students = () => {
   useEffect(() => {
     const fetchCoursesWithStudents = async () => {
       try {
+        const token = localStorage.getItem("access_token");
         const response = await fetch(
-          "http://localhost:8080/api/educator/students"
+          "http://localhost:8080/api/educator/students",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         if (!response.ok) {
           throw new Error("Failed to fetch courses and students");
@@ -58,27 +75,33 @@ const Students = () => {
   }, []);
 
   return (
-    <div className="bg-light-gray p-6 rounded shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-black">Students</h2>
+    <div className="bg-customBlue p-8 rounded-lg shadow-lg">
+      <h2 className="text-3xl font-bold mb-6 text-white">Students Overview</h2>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         {coursesWithStudents.length > 0 ? (
           coursesWithStudents.map((course) => (
-            <div key={course.courseName} className="mb-8">
-              <h3 className="text-xl font-semibold text-customBlue mb-4">
+            <div
+              key={course.courseName}
+              className="bg-white p-6 rounded-lg shadow-md"
+            >
+              <h3 className="text-2xl font-semibold text-customBlue mb-4">
                 {course.courseName}
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {course.students.length > 0 ? (
                   course.students.map((student) => (
                     <div
                       key={student.id}
-                      className="bg-customBlue p-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300"
+                      className="bg-white p-4 rounded-lg shadow-lg border border-gray-200 flex flex-col items-center space-y-4 transition-transform transform hover:scale-105"
                     >
-                      <h4 className="text-lg font-semibold text-white">
+                      <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                        <FaUser className="text-customBlue text-3xl" />
+                      </div>
+                      <h4 className="text-lg font-semibold text-gray-800">
                         {student.name}
                       </h4>
-                      <p className="text-lg text-white">
+                      <p className="text-sm text-gray-600">
                         {student.description}
                       </p>
                     </div>
@@ -90,7 +113,7 @@ const Students = () => {
             </div>
           ))
         ) : (
-          <p className="text-black">No courses or students found.</p>
+          <p className="text-gray-800">No courses or students found.</p>
         )}
       </div>
     </div>

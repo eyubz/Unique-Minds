@@ -14,7 +14,7 @@ const CourseCard = ({ title, description, imageUrl, courseId }) => {
       <p className="text-gray-700 mb-4">{description}</p>
       <Link
         to={`/courses/${courseId}`}
-        className="inline-flex items-center text-blue-500 hover:text-blue-600 font-semibold"
+        className="inline-flex items-center text-customBlue hover:text-gray-400 font-semibold"
       >
         <FaBookOpen className="mr-2" />
         Show More

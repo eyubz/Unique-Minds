@@ -16,15 +16,15 @@ const Login = () => {
       },
       body: JSON.stringify({ email, password }),
     });
+    const data = await response.json();
 
     if (response.ok) {
-      const data = await response.json();
-      console.log(data.accessToken, data.refreshToken);
-      document.cookie = `accessToken=${data.accessToken}; path=/;`;
-      document.cookie = `refreshToken=${data.refreshToken}; path=/;`;
+      localStorage.setItem("accessToken", data.data.access_token);
+      localStorage.setItem("refreshToken", data.data.refresh_token);
+
       navigate("/");
     } else {
-      alert("Login failed");
+      alert(data.message);
     }
   };
 
@@ -40,7 +40,7 @@ const Login = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="flex items-center border-b border-blue-500 py-2">
-              <FaEnvelope className="text-blue-500 mr-3" />
+              <FaEnvelope className="text-customBlue mr-3" />
               <input
                 type="email"
                 name="email"
@@ -51,7 +51,7 @@ const Login = () => {
               />
             </div>
             <div className="flex items-center border-b border-blue-500 py-2">
-              <FaLock className="text-blue-500 mr-3" />
+              <FaLock className="text-customBlue mr-3" />
               <input
                 type="password"
                 name="password"
@@ -64,7 +64,7 @@ const Login = () => {
             <div className="text-right">
               <Link
                 to="/forgot-password"
-                className="text-sm text-blue-500 hover:underline"
+                className="text-sm text-customBlue hover:underline"
               >
                 Forgot Password?
               </Link>
@@ -74,7 +74,7 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              className="w-full px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+              className="w-full px-4 py-2 text-white bg-customBlue rounded-md hover:bg-gray-400"
             >
               Login
             </button>
@@ -82,7 +82,7 @@ const Login = () => {
 
           <div className="text-sm text-center mt-4">
             Don't have an account?{" "}
-            <a href="/signup" className="text-blue-500 hover:underline">
+            <a href="/signup" className="text-customBlue hover:underline">
               Signup
             </a>
           </div>

@@ -7,7 +7,7 @@ import (
 )
 
 type ActiveUser struct {
-	ID           primitive.ObjectID `json:"id"`
+	ID           primitive.ObjectID `json:"_id bson:"_id"`
 	Username     string             `json:"username" bson:"username"`
 	RefreshToken string             `json:"refresh_token" bson:"refresh_token"`
 	UserAgent    string             `json:"user_agent" bson:"user_agent"`

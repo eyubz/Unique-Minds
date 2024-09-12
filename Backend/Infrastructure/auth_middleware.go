@@ -1,7 +1,6 @@
 package infrastructure
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -39,7 +38,6 @@ func (authenticate *Auth) AuthenticationMiddleware() gin.HandlerFunc{
 			return
 		}
 		claims, err := ExtractIDFromToken(auth[1], authenticate.env.AccessTokenSecret)
-		fmt.Println(claims)
 		if err != nil{
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message" : "Unauthorized",
@@ -47,8 +45,8 @@ func (authenticate *Auth) AuthenticationMiddleware() gin.HandlerFunc{
 			c.Abort()
 			return
 		}
-		c.Set("user_id" , claims)
+		c.Set("user_id" , claims["id"])
+		c.Set("user_type", claims["user_type"])
 		c.Next()
-		// Can check the expiration time of the token if it is valid or not
 	}
 }

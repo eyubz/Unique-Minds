@@ -7,10 +7,9 @@ const FeaturedCourses = () => {
   const [courses, setCourses] = useState([
     {
       id: 1,
-      title: "Introduction to Programming",
+      name: "Introduction to Programming",
       description: "Learn the basics of programming with hands-on examples.",
       image: img,
-      link: "/courses/programming",
     },
     {
       id: 2,
@@ -18,7 +17,6 @@ const FeaturedCourses = () => {
       description:
         "Deep dive into advanced mathematical concepts and techniques.",
       image: img,
-      link: "/courses/mathematics",
     },
     {
       id: 3,
@@ -26,7 +24,6 @@ const FeaturedCourses = () => {
       description:
         "Enhance your writing skills through creative exercises and feedback.",
       image: img,
-      link: "/courses/writing",
     },
   ]);
 

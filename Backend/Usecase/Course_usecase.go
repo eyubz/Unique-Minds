@@ -28,7 +28,6 @@ func (u *courseUseCase) GetRecentCourses() ([]domain.Course, error) {
     return result, nil
 }
 
-
 func (u *courseUseCase) GetCourses(pageNo string, pageSize string, search string, filter string) ([]domain.Course, domain.Pagination, error) {
 	PageNo, err := strconv.ParseInt(pageNo, 10, 64)
 	if err != nil {

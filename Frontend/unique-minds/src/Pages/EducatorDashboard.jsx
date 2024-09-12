@@ -12,6 +12,7 @@ import Courses from "../Components/Educator/Courses";
 import UploadCourse from "../Components/Educator/UploadCourses";
 import Schedule from "../Components/Educator/Schedule";
 import Students from "../Components/Educator/Students";
+import LogoutContent from "../Components/Educator/Logout";
 
 const EducatorDashboard = () => {
   const [activeSection, setActiveSection] = useState("profile");
@@ -102,7 +103,5 @@ const EducatorDashboard = () => {
     </div>
   );
 };
-
-const LogoutContent = () => <div>You have been logged out.</div>;
 
 export default EducatorDashboard;

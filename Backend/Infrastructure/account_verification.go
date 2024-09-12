@@ -40,7 +40,7 @@ func SendVerificationEmail(to, token string) error {
     `, verificationLink)
 
     m := gomail.NewMessage()
-    m.SetHeader("From", fmt.Sprintf("%s <%s>", "Eyerusalem Loan Tracking Project", EmailFrom))
+    m.SetHeader("From", fmt.Sprintf("%s <%s>", "Unique Minds", EmailFrom))
     m.SetHeader("To", to)
     m.SetHeader("Subject", "Email Verification")
     m.SetBody("text/plain", body)

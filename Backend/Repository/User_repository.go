@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"errors"
-	"fmt"
 	"math"
 	"strings"
 	"time"
@@ -15,6 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserRepository struct {
@@ -70,23 +70,40 @@ func (ur *UserRepository) RegisterUser(user domain.User) error {
 	if strings.ToLower(user.UserType) == "student"{
 		var student = domain.StudentProfile{
 			ID: user.ID,
-			UserName: user.UserName,
-			Email: user.Email,
-			Password: user.Password,
+			FullName: "Enter Your Full Name Here",
+			Age: 0,
+			Bio: "Enter Your Bio Here",
+			GuardianEmail: user.Email,
+			GuardianPhone: "Enter Your Guardian Phone Number Here",
+			Location: "Enter Your Location Here",
+			ProfileImage: "../../Assets/educator.jpg",
 			Created_At: user.Created_At,
 			UpdateAt: user.Created_At,
+			CourseIds: []primitive.ObjectID{},
+			EnrolledCourses: []domain.CourseProgress{},
+			Schedule: []domain.Schedule{},
+			Courses: []domain.Course{},
+			Condition: "Enter Your Condition Here",
 		}
 		_, err = ur.studentProfileCollection.InsertOne(context, student)
 
 	}else{
-		fmt.Println(user.UserType)
 		var educator = domain.EducatorProfile{
 			ID: user.ID,
-			UserName: user.UserName,
+			FullName: "Enter Your Full Name Here",
+			Title: "Enter Your Title Here",
+			ProfileImage: "../../Assets/educator.jpg",
+			Phone: "Enter Your Phone Number Here",
+			Bio: "Enter Your Bio Here",
+			Rating: 0,
+			Reviews: []domain.Review{},
+			Availability: []string{},
 			Email: user.Email,
-			Password: user.Password,
 			Created_At: user.Created_At,
 			UpdateAt: user.Created_At,
+			Address: "Enter Your Address Here",
+			Schedules: []domain.Schedule{},
+			Students: []domain.Student{},
 		}
 		_, err = ur.educatorProfileCollection.InsertOne(context, educator)
 	}
@@ -142,7 +159,7 @@ func (ur *UserRepository) DeleteActiveUser(ids string, user_agent string) error 
 	if err != nil {
 		return err
 	}
-	_, err = ur.activeUserCollection.DeleteOne(context, bson.M{"id": id, "user_agent": user_agent})
+	_, err = ur.activeUserCollection.DeleteOne(context, bson.M{"_id": id, "user_agent": user_agent})
 	return err
 }
 
@@ -154,57 +171,9 @@ func (ur *UserRepository) FindActiveUser(ids string, user_agent string) (domain.
 		return domain.ActiveUser{}, err
 	}
 	var au domain.ActiveUser
-	err = ur.activeUserCollection.FindOne(context, bson.M{"id": id, "user_agent": user_agent}).Decode(&au)
+	err = ur.activeUserCollection.FindOne(context, bson.M{"_id": id, "user_agent": user_agent}).Decode(&au)
 	return au, err
 }
-
-// func (ur *UserRepository) GetStudentProfile(userId string) (*domain.StudentProfile, error) {
-// 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
-// 	defer cancel()
-//     var profile domain.StudentProfile
-
-//     filter := bson.M{"user_id": userId}
-//     err := ur.profileCollection.FindOne(context, filter).Decode(&profile)
-
-//     if err != nil {
-//         if err == mongo.ErrNoDocuments {
-//             return nil, errors.New("profile not found")
-//         }
-//         return nil, err
-//     }
-
-//     return &profile, nil
-// }
-
-// func  (ur *UserRepository) UpdateStudentProfile(userId string, updatedProfile *domain.StudentProfile) (*domain.StudentProfile, error) {
-// 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
-// 	defer cancel()
-//     filter := bson.M{"user_id": updatedProfile.UserID}
-
-//     update := bson.M{
-//         "$set": bson.M{
-//             "name":           updatedProfile.Name,
-//             "age":            updatedProfile.Age,
-//             "bio":            updatedProfile.Bio,
-//             "guardianEmail":  updatedProfile.GuardianEmail,
-//             "guardianPhone":  updatedProfile.GuardianPhone,
-//             "location":       updatedProfile.Location,
-//             "profileImage":   updatedProfile.ProfileImage,
-//             "updatedAt":      time.Now(),
-//         },
-//     }
-
-	
-//     opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
-//     err := ur.profileCollection.FindOneAndUpdate(context, filter, update, opts).Decode(&updatedProfile)
-//     if err != nil {
-//         return nil, err
-//     }
-
-//     return updatedProfile, nil
-// }
-
-
 
 func (ur *UserRepository) GetEducators(pageNo int64, pageSize int64, search string) ([]domain.EducatorProfile, domain.Pagination, error) {
 	pagination := utils.PaginationByPage(pageNo, pageSize)
@@ -444,4 +413,48 @@ func (ur *UserRepository) GetStudentsFromEducatorProfile(educatorID string) ([]d
     }
 
     return result, nil
+}
+
+func (ur *UserRepository) FindById(userID string) (*domain.UserData, error) {
+    var student domain.StudentProfile
+    var educator domain.EducatorProfile
+	uid, _ := primitive.ObjectIDFromHex(userID)
+
+
+    err := ur.studentProfileCollection.FindOne(context.TODO(), bson.M{"id": uid}).Decode(&student)
+    if err == nil {
+        return &domain.UserData{
+            ProfileImage: student.ProfileImage,
+            Role:         "student",
+        }, nil
+    }
+
+    err = ur.educatorProfileCollection.FindOne(context.TODO(), bson.M{"id": uid}).Decode(&educator)
+    if err == nil {
+        return &domain.UserData{
+            ProfileImage: educator.ProfileImage,
+            Role:         "educator",
+        }, nil
+    }
+    return nil, errors.New("user not found")
+}
+
+func (ur *UserRepository) GetTopEducators() ([]domain.EducatorProfile, error) {
+    var topEducators []domain.EducatorProfile
+
+    findOptions := options.Find()
+    findOptions.SetSort(bson.D{{Key: "rating", Value: -1}})
+    findOptions.SetLimit(3)
+
+    cursor, err := ur.educatorProfileCollection.Find(context.TODO(), bson.D{}, findOptions)
+    if err != nil {
+        return nil, err
+    }
+    defer cursor.Close(context.TODO())
+
+    if err = cursor.All(context.TODO(), &topEducators); err != nil {
+        return nil, err
+    }
+
+    return topEducators, nil
 }

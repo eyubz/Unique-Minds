@@ -1,29 +1,40 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import imgEducator1 from "../../Assets/teacher1.jpg";
 
-const educators = [
-  {
-    id: 1,
-    name: "Jane Doe",
-    image: imgEducator1,
-    rank: 1,
-  },
-  {
-    id: 2,
-    name: "John Smith",
-    image: imgEducator1,
-    rank: 2,
-  },
-  {
-    id: 3,
-    name: "Alice Johnson",
-    image: imgEducator1,
-    rank: 3,
-  },
-];
-
 const TopEducators = () => {
+  const [educators, setEducators] = useState([
+    {
+      id: 1,
+      name: "Jane Doe",
+      image: imgEducator1,
+    },
+    {
+      id: 2,
+      name: "John Smith",
+      image: imgEducator1,
+    },
+    {
+      id: 3,
+      name: "Alice Johnson",
+      image: imgEducator1,
+    },
+  ]);
+
+  useEffect(() => {
+    const fetchEducators = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/top-educators");
+        const data = await response.json();
+        setEducators(data);
+      } catch (error) {
+        console.error("Error fetching top educators:", error);
+      }
+    };
+
+    fetchEducators();
+  }, []);
+
   return (
     <div className="p-8 bg-gray-100 rounded-lg shadow-md mt-10 mb-10 text-customBlue">
       <motion.h2
@@ -45,7 +56,7 @@ const TopEducators = () => {
       >
         {educators.map((educator) => (
           <motion.div
-            key={educator.id}
+            key={educator._id} // Use MongoDB _id as key
             className={`bg-white rounded-lg shadow-lg overflow-hidden transition-all ${
               educator.rank === 1 ? "scale-110 z-10" : "scale-100"
             }`}

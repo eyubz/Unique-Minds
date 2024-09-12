@@ -130,7 +130,7 @@ func (uc *UserUseCase) Login(user domain.User, user_agent string)(domain.LoginRe
 	}
 	err = uc.UserRepo.SaveAsActiveUser(activeUser, refreshToken)
 	if err != nil {
-		return domain.LoginResponse{}, errors.New("error logging in user")
+		return domain.LoginResponse{}, err
 	}
 
 	return domain.LoginResponse{
@@ -163,7 +163,7 @@ func (uc *UserUseCase) CreateRefreshToken(user *domain.User, secret string, expi
 }
 
 func (uc *UserUseCase) RefreshToken(request domain.RefreshTokenRequest, user_id string) (domain.RefreshTokenResponse, error) {
-	id, err := infrastructure.ExtractIDFromToken(request.RefreshToken, uc.Config.RefreshTokenSecret)
+	id, err := infrastructure.ExtractID(request.RefreshToken, uc.Config.RefreshTokenSecret)
 	if err != nil {
 		return domain.RefreshTokenResponse{}, errors.New("user not found")
 	}
@@ -188,27 +188,6 @@ func (uc *UserUseCase) RefreshToken(request domain.RefreshTokenRequest, user_id 
 		AccessToken:  accessToken,
 	}, nil
 }
-
-
-// func (uc *UserUseCase) GetUserProfile(id string)(domain.UserProfile, error){
-// 	user, err := uc.UserRepo.FindUserByID(id)
-// 	if err != nil {
-// 		return domain.UserProfile{}, errors.New("user not found")
-// 	}
-// 	return domain.UserProfile{
-// 		ID: user.ID,
-// 		FullName: user.FullName,
-// 		User_Name: user.UserName,
-// 		Email: user.Email,
-// 		Contact: user.Contact,
-// 		Dob: user.Dob,
-// 		Phone: user.Phone,
-// 		Address: user.Address,
-// 		Bio: user.Bio,
-// 		ProfileImage: user.ProfileImage,
-
-// 	}, nil
-// }
 
 func (uc *UserUseCase) ResetPassword(email string, user_id string) error{
 	user, err := uc.UserRepo.FindUserByEmail(email)
@@ -279,55 +258,6 @@ func (uc *UserUseCase) Logout(user_id string, user_agent string) error {
 
 	return uc.UserRepo.DeleteActiveUser(user_id, user_agent)
 }
-
-
-// func (uc *UserUseCase) UpdateUser(id string, user domain.UserProfile) error {
-// 	var newUser domain.User	= domain.User{
-// 		ID: user.ID,
-// 		FullName: user.FullName,
-// 		UserName: user.User_Name,
-// 		Contact: user.Contact,
-// 		Dob: user.Dob,
-// 		Phone: user.Phone,
-// 		Bio: user.Bio,
-// 		ProfileImage: user.ProfileImage,
-// 	}
-// 	if user.Email != ""{
-// 		newUser.Email = user.Email
-// 	}
-// 	if user.Address != (domain.Address{}){
-// 		newUser.Address = user.Address
-// 	}	
-// 	return uc.UserRepo.UpdateUser(id, newUser)
-// }
-
-
-// func (uc *UserUseCase) UpdateStudentProfile (userId string, updatedProfile *domain.StudentProfile) (*domain.StudentProfile, error) {
-//     profile, err := uc.UserRepo.GetStudentProfile(userId)
-//     if err != nil {
-//         return nil, err
-//     }
-// 	profile.Name = updatedProfile.Name
-// 	profile.Age = updatedProfile.Age
-// 	profile.Bio = updatedProfile.Bio
-// 	profile.GuardianEmail = updatedProfile.GuardianEmail
-// 	profile.GuardianPhone = updatedProfile.GuardianPhone
-// 	profile.Location = updatedProfile.Location
-
-
-//     if updatedProfile.ProfileImage != "" {
-//         profile.ProfileImage = updatedProfile.ProfileImage
-//     }
-
-//     return uc.UserRepo.UpdateStudentProfile(userId, profile)
-// }
-
-
-// func (uc *UserUseCase) GetStudentProfile(userId string) (*domain.StudentProfile, error) {
-// 	return uc.UserRepo.GetStudentProfile(userId)
-// }
-
-
 
 func (uc *UserUseCase) GetEducators(pageNo string, pageSize string, search string) ([]domain.EducatorProfile, domain.Pagination, error) {
 	PageNo, err := strconv.ParseInt(pageNo, 10, 64)
@@ -414,18 +344,13 @@ func (uc *UserUseCase) UpdateStudentProfile(user_id string, updatedProfile domai
 	}
 	student.ID = updatedProfile.ID
 	student.FullName = updatedProfile.FullName
-	//student.Title = updatedProfile.Title
+	student.Age = updatedProfile.Age
 	student.Bio = updatedProfile.Bio
-	student.Email = updatedProfile.Email
-	//student.Rating = updatedProfile.Rating
-	student.Phone = updatedProfile.Phone
-	//student.Address = updatedProfile.Address
+	student.GuardianEmail = updatedProfile.GuardianEmail
+	student.GuardianPhone = updatedProfile.GuardianPhone
+	student.Location = updatedProfile.Location
 	student.ProfileImage = updatedProfile.ProfileImage
-	//student.Address = updatedProfile.Address
-	//student.Availability = updatedProfile.Availability
 	student.UpdateAt = time.Now()
-	
-
 	result := uc.UserRepo.UpdateStudentProfile(user_id, student)
 	return result, nil
 }
@@ -449,4 +374,13 @@ func (uc *UserUseCase) CancelEducatorSchedule(scheduleId string, user_id string)
 
 func (uc *UserUseCase) FetchStudentsByCourses(educatorID string) ([]domain.CourseWithStudents, error) {
     return uc.UserRepo.GetStudentsFromEducatorProfile(educatorID)
+}
+
+
+func (uc *UserUseCase) GetUserProfile(userID string) (*domain.UserData, error) {
+    return uc.UserRepo.FindById(userID)
+}
+
+func (uc *UserUseCase) GetTopEducatorsUseCase() ([]domain.EducatorProfile, error) {
+	return uc.UserRepo.GetTopEducators()
 }

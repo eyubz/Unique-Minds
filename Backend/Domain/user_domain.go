@@ -21,27 +21,28 @@ type User struct {
 	UserType        	 string 			  `bson:"user_type" json:"user_type" validate:"required"`
 }
 
+type UserData struct {
+    ProfileImage string
+    Role         string
+}
+
+
 type StudentProfile struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	FullName      string             `bson:"name" json:"name"`
-	UserName      string       	     `bson:"username"  json:"username"`
-	Email 		  string      		 `bson:"email" validate:"required,email" json:"email"`
-    Password      string             `bson:"password" json:"password" validate:"required"`
 	Age           int                `json:"age" bson:"age"`
 	Bio           string             `json:"bio" bson:"bio"`
 	GuardianEmail string             `json:"guardianEmail" bson:"guardianEmail"`
 	GuardianPhone string             `json:"guardianPhone" bson:"guardianPhone"`
 	Location      string             `json:"location" bson:"location"`
 	ProfileImage  string             `json:"profileImage" bson:"profileImage"`
-	UserID        primitive.ObjectID `json:"userId" bson:"userId"`
 	UpdateAt      time.Time			 `json:"updateAt" bson:"updateAt"`
 	Created_At	  time.Time			  `bson:"created_at" json:"created_at"`
-	Dob           string             `bson:"dob" json:"dob"`
-	Phone         string             `bson:"phone" json:"phone"`
-	Address       Address            `bson:"address" json:"address"`
 	CourseIds     []primitive.ObjectID `bson:"course_id" json:"course_id"`
 	EnrolledCourses []CourseProgress 		`bson:"courses" json:"courses"`
 	Schedule 	   []Schedule         `bson:"schedules" json:"schedules"`
+	Courses     []Course           `bson:"course_s" json:"course_s"`
+	Condition	 string             `bson:"condition" json:"condition"`
 
 }
 
@@ -52,7 +53,6 @@ type CourseProgress struct{
 	IsCompleted    bool  `json:"is_completed" bson:"is_completed"`
 
 }
-
 
 type CourseDetailResponse struct{
 	Course  Course `json:"course"`
@@ -72,10 +72,8 @@ type EducatorProfile struct {
 	Bio 		  string             `json:"bio" bson:"bio"`
 	Rating        float32		     `json:"rating" bson:"rating"`
 	Reviews       []Review           `bson:"reviews" json:"reviews"`
-	Availability  []string           `bson:"availability" json:"availability"`
-	UserName      string             `bson:"username"  json:"username"`
+	Availability  []string             `bson:"availability" json:"availability"`
 	Email 		  string 			 `bson:"email" validate:"required,email" json:"email"`
-    Password      string             `bson:"password" json:"password" validate:"required"`
 	Created_At	  time.Time			  `bson:"created_at" json:"created_at"`
 	UpdateAt      time.Time			 `json:"updateAt" bson:"updateAt"`
 	Address       string            `bson:"address" json:"address"`
@@ -118,6 +116,11 @@ type CourseWithStudents struct {
 	Students   []StudentProfile `json:"students"`
 }
 
+type Avail struct {
+    Start time.Time `json:"start" bson:"start"`
+    End   time.Time `json:"end" bson:"end"`
+}
+
 type UserUseCaseInterface interface {
 	RegisterUser(user User) error
 	VerifyEmail(email string, token string) error
@@ -139,6 +142,8 @@ type UserUseCaseInterface interface {
 	GetEducatorSchedules(educatorId string) (interface{}, error)
 	CancelEducatorSchedule(scheduleId string, user_id string) error
 	FetchStudentsByCourses(educatorID string) ([]CourseWithStudents, error)
+	GetUserProfile(userID string) (*UserData, error)
+	GetTopEducatorsUseCase() ([]EducatorProfile, error)
 }
 
 type UserRepositoryInterface interface {
@@ -161,6 +166,8 @@ type UserRepositoryInterface interface {
 	FindEducatorSchedules(educatorId string) (interface{}, error)
 	DeleteSchedule(scheduleId string, userId string) error
 	GetStudentsFromEducatorProfile(educatorID string) ([]CourseWithStudents, error)
+	FindById(userID string) (*UserData, error)
+	GetTopEducators() ([]EducatorProfile, error)
 }
 
 type AdminUseCaseInterface interface {

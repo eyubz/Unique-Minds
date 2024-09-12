@@ -1,8 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { FaStar } from "react-icons/fa";
+import React, { useState, useRef, useEffect, useNavigate } from "react";
+import { format } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import img from "../../Assets/educator.jpg";
+
+import {
+  FaCalendarAlt,
+  FaEnvelope,
+  FaPhoneAlt,
+  FaMapMarkerAlt,
+  FaStar,
+} from "react-icons/fa";
 
 const StarRating = ({ rating }) => {
   return (
@@ -27,28 +35,82 @@ const Profile = () => {
     email: "bezueyerusalem@gmail.com",
     phone: "0957575757",
     bio: "John Doe has over 15 years of experience in special education...",
-    availability: ["Monday 10:00 AM - 2:00 PM", "Wednesday 10:00 AM - 2:00 PM"],
+    availability: [{ start: new Date(), end: new Date() }],
     address: "Addis Ababa, Ethiopia",
     rating: 3,
   });
-
+  //const navigate = useNavigate();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
 
-  // useEffect(() => {
-  //   fetch("http://localhost:8080/api/profile")
-  //     .then((response) => response.json())
-  //     .then((data) => setProfile(data))
-  //     .catch((error) => console.error("Error fetching profile data:", error));
-  // }, []);
+  const [imageFile, setImageFile] = useState(null);
+
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      fetch("http://localhost:8080/api/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setProfile(data);
+        })
+        .catch((error) => console.error("Error fetching profile data:", error));
+    } else {
+      // navigate("/login");
+      console.error("No token found in local storage");
+    }
+  }, []);
+  const handleProfileImageClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleImageUpload = () => {
+    if (!imageFile) return;
+    const formData = new FormData();
+    formData.append("image", imageFile);
+
+    fetch("http://localhost:8080/api/upload", {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setProfile({
+          ...profile,
+          image: data.imageUrl,
+        });
+        setImageFile(null);
+      })
+      .catch((error) => console.error("Error uploading image:", error));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      handleImageUpload();
+    }
+  };
 
   const handleEditClick = () => {
     if (isEditing) {
       fetch("http://localhost:8080/api/profile", {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
         body: JSON.stringify(profile),
       })
@@ -57,7 +119,7 @@ const Profile = () => {
           setProfile(data);
           setIsEditing(false);
         })
-        .catch((error) => console.error("Error posting profile data:", error));
+        .catch((error) => console.error("Error updating profile data:", error));
     } else {
       setIsEditing(true);
     }
@@ -71,6 +133,13 @@ const Profile = () => {
     });
   };
 
+  const formatAvailability = (start, end) => {
+    return `${format(start, "eeee")} ${format(start, "h:mm a")} - ${format(
+      end,
+      "h:mm a"
+    )}`;
+  };
+
   const handleAvailabilitySubmit = (e) => {
     e.preventDefault();
 
@@ -79,18 +148,21 @@ const Profile = () => {
       return;
     }
 
-    const newAvailability = `${startDate.toLocaleDateString()} ${startDate.toLocaleTimeString()} - ${endDate.toLocaleDateString()} ${endDate.toLocaleTimeString()}`;
-    const updatedAvailability = [...profile.availability, newAvailability];
+    const newAvailability = formatAvailability(startDate, endDate);
+    const updatedAvailability = [
+      ...profile.availability,
+      { start: startDate, end: endDate },
+    ];
 
     setProfile({
       ...profile,
       availability: updatedAvailability,
     });
-
     fetch("http://localhost:8080/api/availability", {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
       body: JSON.stringify({
         availability: newAvailability,
@@ -118,7 +190,7 @@ const Profile = () => {
       <div className="flex items-center justify-between mb-6 ml-auto">
         <button
           onClick={handleEditClick}
-          className="text-blue-600 hover:text-blue-800"
+          className="text-customBlued hover:text-blue-800"
         >
           {isEditing ? "Save" : "Edit"}
         </button>
@@ -127,36 +199,47 @@ const Profile = () => {
       <div className="flex items-start space-x-6 mb-8">
         <div className="w-32 h-32">
           <img
-            src={profile.image}
+            src={profile.image || "default-profile.png"}
             alt="Profile"
-            className="w-full h-full rounded-full object-cover shadow-lg"
+            className="w-full h-full rounded-full object-cover shadow-lg cursor-pointer"
+            onClick={handleProfileImageClick}
+            style={{ cursor: "pointer" }}
+          />
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            accept="image/*"
+            onChange={handleFileChange}
+            className="hidden"
           />
         </div>
 
         <div className="flex flex-col flex-grow">
           {isEditing ? (
-            <input
-              type="text"
-              name="name"
-              value={profile.name}
-              onChange={handleChange}
-              className="text-3xl font-bold text-black bg-white border border-gray-300 rounded p-2 mb-2"
-            />
+            <>
+              <input
+                type="text"
+                name="name"
+                value={profile.name}
+                onChange={handleChange}
+                className="text-3xl font-bold text-customBlue bg-white border border-gray-300 rounded p-2 mb-2"
+              />
+              <input
+                type="text"
+                name="title"
+                value={profile.title}
+                onChange={handleChange}
+                className="text-customBlue bg-white border border-gray-300 rounded p-2 mb-2"
+              />
+            </>
           ) : (
-            <h2 className="text-3xl font-bold text-customBlue">
-              {profile.name}
-            </h2>
-          )}
-          {isEditing ? (
-            <input
-              type="text"
-              name="title"
-              value={profile.title}
-              onChange={handleChange}
-              className="text-gray-600 bg-white border border-gray-300 rounded p-2 mb-2"
-            />
-          ) : (
-            <p className="text-customBlue">{profile.title}</p>
+            <>
+              <h2 className="text-3xl font-bold text-customBlue">
+                {profile.name}
+              </h2>
+              <p className="text-customBlue">{profile.title}</p>
+            </>
           )}
           <div>
             <StarRating rating={profile.rating} />
@@ -165,19 +248,21 @@ const Profile = () => {
       </div>
 
       <div className="flex-grow">
-        <h3 className="text-2xl font-bold text-black mb-4">Bio</h3>
+        <h3 className="text-2xl font-bold text-customBlue mb-4">Bio</h3>
         {isEditing ? (
           <textarea
             name="bio"
             value={profile.bio}
             onChange={handleChange}
-            className="w-full h-32 bg-white border border-gray-300 rounded p-2 text-gray-800 mb-4"
+            className="w-full h-32 bg-white border border-gray-300 rounded p-2 text-customBlue mb-4"
           />
         ) : (
           <p className="text-gray-800 mb-4">{profile.bio}</p>
         )}
-        <h3 className="text-2xl font-bold text-black mb-4">Availability</h3>
-        <ul className="text-gray-800 mb-4">
+        <h3 className="text-2xl font-bold text-customBlue mb-4">
+          Availability
+        </h3>
+        <ul className=" mb-4 bg-customBlue rounded-lg shadow-lg p-4">
           {Array.isArray(profile.availability) &&
             profile.availability.map((avail, index) => (
               <li key={index} className="mb-2">
@@ -185,19 +270,26 @@ const Profile = () => {
                   <input
                     type="input"
                     name={`availability-${index}`}
-                    value={avail}
+                    value={formatAvailability(avail.start, avail.end)}
                     onChange={(e) => {
                       const updatedAvailability = [...profile.availability];
-                      updatedAvailability[index] = e.target.value;
+                      const [newStart, newEnd] = e.target.value.split(" - ");
+                      updatedAvailability[index] = {
+                        start: new Date(newStart),
+                        end: new Date(newEnd),
+                      };
                       setProfile({
                         ...profile,
                         availability: updatedAvailability,
                       });
                     }}
-                    className="w-full bg-white border border-gray-300 rounded p-2 mb-2"
+                    className="w-full bg-white border border-gray-300 rounded p-2 mb-2 text-customBlue"
                   />
                 ) : (
-                  avail
+                  <span className="flex items-center text-white">
+                    <FaCalendarAlt className="text-white mr-2" />
+                    {formatAvailability(avail.start, avail.end)}
+                  </span>
                 )}
               </li>
             ))}
@@ -206,7 +298,7 @@ const Profile = () => {
         {isEditing && (
           <button
             onClick={() => setIsOverlayOpen(true)}
-            className="bg-blue-600 text-white rounded px-4 py-2"
+            className="bg-customBlue text-white rounded px-4 py-2"
           >
             Add Availability
           </button>
@@ -214,97 +306,111 @@ const Profile = () => {
       </div>
 
       <div className="flex flex-col gap-4 mt-4">
+        <h3 className="text-2xl font-bold text-customBlue mb-4">
+          Contact Information
+        </h3>
         <div>
-          <h3 className="text-lg font-semibold text-black mb-2">Email</h3>
           {isEditing ? (
             <input
               type="text"
-              name="address"
+              name="email"
+              placeholder="email"
               value={profile.email}
               onChange={handleChange}
-              className="w-full bg-white border border-gray-300 rounded p-2 mb-2"
+              className="w-full bg-white border border-gray-300 rounded p-2 mb-2 text-customBlue"
             />
           ) : (
-            <p>{profile.email}</p>
+            <span className="flex items-center">
+              <FaEnvelope className="text-customBlue mr-2" />
+              {profile.email}
+            </span>
           )}
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-black mb-2">Phone</h3>
           {isEditing ? (
             <input
               type="text"
-              name="address"
+              name="phone"
+              placeholder="phone"
               value={profile.phone}
               onChange={handleChange}
-              className="w-full bg-white border border-gray-300 rounded p-2 mb-2"
+              className="w-full bg-white border border-gray-300 rounded p-2 mb-2 text-customBlue"
             />
           ) : (
-            <p>{profile.phone}</p>
+            <span className="flex items-center">
+              <FaPhoneAlt className="text-customBlue mr-2" />
+              {profile.phone}
+            </span>
           )}
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-black mb-2">Address</h3>
           {isEditing ? (
             <input
               type="text"
               name="address"
               value={profile.address}
               onChange={handleChange}
-              className="w-full bg-white border border-gray-300 rounded p-2 mb-2"
+              className="w-full bg-white border border-gray-300 rounded p-2 mb-2 text-customBlue"
             />
           ) : (
-            <p>{profile.address}</p>
+            <span className="flex items-center">
+              <FaMapMarkerAlt className="text-customBlue mr-2" />
+              {profile.address}
+            </span>
           )}
         </div>
       </div>
-
       {isOverlayOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-            <h3 className="text-xl font-bold mb-4">Set Availability</h3>
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+          onClick={() => setIsOverlayOpen(false)}
+        >
+          <div
+            className="bg-white p-6 rounded-lg shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-xl font-bold text-customBlue mb-4">
+              Set Availability
+            </h3>
             <form onSubmit={handleAvailabilitySubmit}>
               <div className="mb-4">
-                <label htmlFor="startDate" className="block text-gray-700 mb-2">
+                <label
+                  className="block mb-2 text-customBlue"
+                  htmlFor="start-date"
+                >
                   Start Date
                 </label>
                 <DatePicker
+                  id="start-date"
                   selected={startDate}
                   onChange={(date) => setStartDate(date)}
-                  selectsStart
-                  startDate={startDate}
-                  endDate={endDate}
+                  showTimeSelect
+                  dateFormat="Pp"
                   className="w-full border border-gray-300 rounded p-2"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="endDate" className="block text-gray-700 mb-2">
+                <label
+                  className="block mb-2 text-customBlue"
+                  htmlFor="end-date"
+                >
                   End Date
                 </label>
                 <DatePicker
+                  id="end-date"
                   selected={endDate}
                   onChange={(date) => setEndDate(date)}
-                  selectsEnd
-                  startDate={startDate}
-                  endDate={endDate}
-                  minDate={startDate}
+                  showTimeSelect
+                  dateFormat="Pp"
                   className="w-full border border-gray-300 rounded p-2"
                 />
               </div>
-              <div className="flex justify-between">
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white rounded px-4 py-2"
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsOverlayOpen(false)}
-                  className="bg-gray-600 text-white rounded px-4 py-2"
-                >
-                  Cancel
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="bg-customBlue text-white rounded px-4 py-2"
+              >
+                Save Availability
+              </button>
             </form>
           </div>
         </div>

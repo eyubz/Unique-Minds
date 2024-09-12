@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Header from "./Header";
 import StudentDashboard from "../Profile";
 import Courses from "./Courses";
 import {
@@ -8,7 +7,6 @@ import {
   FaCalendarAlt,
   FaSignOutAlt,
   FaUser,
-  FaTachometerAlt,
 } from "react-icons/fa";
 import ProgressSection from "../Progress";
 import Schedule from "./Schedule";
@@ -32,10 +30,8 @@ const Sidebar = () => {
               }`}
               onClick={() => handleSectionClick("Dashboard")}
             >
-              <FaTachometerAlt
-                className={
-                  activeSection === "Dashboard" ? "text-customBlue" : ""
-                }
+              <FaUser
+                className={activeSection === "Profile" ? "text-customBlue" : ""}
               />
               <span>Dashboard</span>
             </li>
@@ -92,7 +88,6 @@ const Sidebar = () => {
       </div>
 
       <div className="flex-1 flex flex-col mt-4 w-full">
-        <Header />
         {activeSection === "Dashboard" && <StudentDashboard />}
         {activeSection === "Courses" && <Courses />}
         {activeSection === "Progress" && <ProgressSection />}

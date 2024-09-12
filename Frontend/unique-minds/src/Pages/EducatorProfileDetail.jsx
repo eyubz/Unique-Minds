@@ -7,30 +7,7 @@ const EducatorProfileDetail = ({ userId }) => {
     title: "Senior Response Strategist, Executive Vice President of Admissions",
     phone: "(400) 139-9865",
     email: "fordantonette5@yahoo.com",
-    campus: "IU Southeast",
-    website: "https://mywebsite.com",
-    availability: "Monday - Friday: 9 AM - 5 PM\nSaturday: 10 AM - 2 PM",
-    education: [
-      {
-        degree: "M.Arch.",
-        field: "Arch.",
-        institution: "Southern California Institute of Architecture",
-        year: "2004",
-      },
-      {
-        degree: "B.A.",
-        field: "Sociology and Anthropology",
-        institution: "Holy Cross College",
-        year: "1995",
-      },
-    ],
-    interests: [
-      "Architecture",
-      "Social Impact Design",
-      "Augmented and Virtual Reality",
-      "Digital Fabrication",
-      "Design Thinking",
-    ],
+    availability: ["Monday - Friday: 9 AM - 5 PM", "Saturday: 10 AM - 2 PM"],
     about:
       "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quia, earum! Dolorum delectus magni aliquam nisi tempora quisquam ut? Odit placeat nam hic quia distinctio. Perferendis excepturi velit consectetur consequuntur rerum.",
     rating: 4.8,
@@ -56,6 +33,7 @@ const EducatorProfileDetail = ({ userId }) => {
     ],
     image: "https://via.placeholder.com/150", // Example image URL
   });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newReview, setNewReview] = useState({
@@ -64,6 +42,7 @@ const EducatorProfileDetail = ({ userId }) => {
     rating: 0,
   });
   const [userRating, setUserRating] = useState(0);
+  const [selectedAvailability, setSelectedAvailability] = useState("");
 
   // useEffect(() => {
   //   const fetchEducatorDetails = async () => {
@@ -105,21 +84,23 @@ const EducatorProfileDetail = ({ userId }) => {
     const reviewToSubmit = {
       ...newReview,
       rating: userRating,
-      educatorId: userId, // Include educatorId if needed
+      educatorId: userId,
     };
 
     try {
-      const response = await fetch(`https://localhost:8080/api/reviews`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(reviewToSubmit),
-      });
+      const response = await fetch(
+        `https://localhost:8080/api/courses/reviews`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(reviewToSubmit),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
-        // Update the state with the new review
         setEducator((prev) => ({
           ...prev,
           reviews: [...prev.reviews, data],
@@ -142,6 +123,42 @@ const EducatorProfileDetail = ({ userId }) => {
     } catch (error) {
       console.error("Error submitting review:", error);
       setError("Error submitting review");
+    }
+  };
+
+  const handleAvailabilityChange = (e) => {
+    const { value } = e.target;
+    setSelectedAvailability(value);
+  };
+
+  const handleSchedule = async () => {
+    if (!selectedAvailability) {
+      alert("Please select an availability slot.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://localhost:8080/api/schedule`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          educatorId: userId,
+          availability: selectedAvailability,
+        }),
+      });
+
+      if (response.ok) {
+        alert("Scheduled successfully!");
+        setSelectedAvailability("");
+      } else {
+        console.error("Failed to schedule");
+        setError("Failed to schedule");
+      }
+    } catch (error) {
+      console.error("Error scheduling:", error);
+      setError("Error scheduling");
     }
   };
 
@@ -199,11 +216,7 @@ const EducatorProfileDetail = ({ userId }) => {
     title,
     phone,
     email,
-    campus,
-    website,
     availability,
-    education,
-    interests,
     about,
     rating,
     reviews,
@@ -211,167 +224,136 @@ const EducatorProfileDetail = ({ userId }) => {
   } = educator;
 
   return (
-    <div className="container mx-auto px-4 py-12 w-3/4 shadow-lg mt-16">
-      <div className="flex flex-col items-center md:flex-row ml-12">
-        <div className="w-full md:w-1/3 text-center md:text-left">
-          <img
-            src={image || img}
-            alt="Profile"
-            className="rounded-full w-40 h-40 mx-auto md:mx-0 mb-4"
-          />
-          <h1 className="text-3xl font-bold text-gray-800">{name}</h1>
-          <h2 className="text-lg text-gray-600">{title}</h2>
+    <div className="container mx-auto px-4 py-12 w-3/4 mt-16 shadow-lg">
+      <div className="flex flex-col lg:flex-row">
+        {/* Profile Section */}
+        <div className="w-full lg:w-1/4 lg:pr-8">
+          <div className="flex flex-col items-center lg:items-start">
+            <img
+              src={image || img}
+              alt="Profile"
+              className="rounded-full w-40 h-40 mb-4"
+            />
+            <h1 className="text-3xl font-bold text-gray-800 text-center lg:text-left">
+              {name}
+            </h1>
+            <h2 className="text-lg text-gray-600 text-center lg:text-left">
+              {title}
+            </h2>
+            <p className="text-gray-600 text-center lg:text-left mt-2">
+              {phone}
+            </p>
+            <p className="text-gray-600 text-center lg:text-left">{email}</p>
+          </div>
         </div>
 
-        <div className="w-full md:w-2/3 mt-8 md:mt-0 md:ml-12">
-          <div className="bg-customBlue shadow-lg rounded-lg p-6 mt-10 text-white">
-            <ul>
-              <li className="mb-4">
-                <strong>Phone:</strong> {phone}
-              </li>
-              <li className="mb-4">
-                <strong>Email:</strong>{" "}
-                <a href={`mailto:${email}`} className="text-blue-500">
-                  {email}
-                </a>
-              </li>
-              <li className="mb-4">
-                <strong>Campus:</strong> {campus}
-              </li>
-              <li className="mb-4">
-                <strong>Website:</strong>{" "}
-                <a
-                  href={website}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-500"
-                >
-                  {website}
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="bg-gray-100 shadow-lg rounded-lg p-6 mt-6">
+        {/* Details Section */}
+        <div className="w-full lg:w-3/4">
+          <div className="bg-gray-100 shadow-lg rounded-lg p-6 mb-6">
             <h3 className="text-2xl font-bold text-gray-800 mb-4">
               Availability
             </h3>
-            <p className="text-gray-600 mb-4">{availability}</p>
-            <button className="bg-customBlue text-white font-bold py-2 px-6 rounded-lg shadow hover:bg-gray-400 transition duration-300">
+            <div className="mb-4">
+              {availability.map((slot, index) => (
+                <div key={index} className="mb-2 flex items-center">
+                  <input
+                    type="radio"
+                    id={`availability-${index}`}
+                    name="availability"
+                    value={slot}
+                    checked={selectedAvailability === slot}
+                    onChange={handleAvailabilityChange}
+                    className="mr-2"
+                  />
+                  <label
+                    htmlFor={`availability-${index}`}
+                    className="text-gray-800"
+                  >
+                    {slot}
+                  </label>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={handleSchedule}
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+            >
               Schedule
             </button>
           </div>
-        </div>
-      </div>
 
-      <div className="mt-12 ml-12">
-        <h3 className="text-2xl font-bold text-gray-800">Education</h3>
-        <ul className="mt-4 text-gray-600">
-          {education.map((edu, index) => (
-            <li key={index} className="mb-2">
-              <strong>{edu.degree}</strong> in {edu.field} from{" "}
-              {edu.institution} ({edu.year})
-            </li>
-          ))}
-        </ul>
-      </div>
+          <div className="bg-gray-100 shadow-lg rounded-lg p-6 mb-6">
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">About</h3>
+            <p className="text-gray-700">{about}</p>
+          </div>
 
-      <div className="mt-12 ml-12">
-        <h3 className="text-2xl font-bold text-gray-800">Interests</h3>
-        <ul className="mt-4 text-gray-600">
-          {interests.map((interest, index) => (
-            <li key={index} className="mb-2">
-              {interest}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="mt-12 ml-12">
-        <h3 className="text-2xl font-bold text-gray-800">About</h3>
-        <p className="text-gray-600 mt-4">{about}</p>
-      </div>
-
-      <div className="mt-12 ml-12">
-        <h3 className="text-2xl font-bold text-gray-800">Rating</h3>
-        <div className="flex items-center">
-          {renderStars(rating)}
-          <span className="ml-2 text-gray-600">({rating.toFixed(1)})</span>
-        </div>
-      </div>
-
-      <div className="mt-12 ml-12">
-        <h3 className="text-2xl font-bold text-gray-800">Reviews</h3>
-        <div className="mt-4">
-          {reviews.map((review, index) => (
-            <div key={index} className="bg-gray-100 p-6 rounded-lg shadow mb-4">
-              <div className="flex items-center mb-2">
-                {renderStars(review.rating)}
-                <p className="text-gray-600 ml-2 text-sm">{review.date}</p>
+          <div className="bg-gray-100 shadow-lg rounded-lg p-6 mb-6">
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">Reviews</h3>
+            <div className="flex items-center mb-4">
+              {renderStars(rating)}
+              <span className="ml-2 text-gray-600">{rating.toFixed(1)}</span>
+            </div>
+            {reviews.map((review, index) => (
+              <div key={index} className="mb-4 border-t border-gray-300 pt-4">
+                <h4 className="font-semibold text-gray-800">{review.name}</h4>
+                <p className="text-gray-700">{review.text}</p>
+                <p className="text-gray-500 text-sm">
+                  {review.date} - {renderStars(review.rating)}
+                </p>
               </div>
-              <p className="text-gray-800 leading-relaxed">{review.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+            ))}
+          </div>
 
-      <div className="mt-12 ml-12">
-        <h3 className="text-2xl font-bold text-gray-800">Add Your Review</h3>
-        <form
-          onSubmit={handleSubmitReview}
-          className="bg-gray-100 p-6 rounded-lg shadow-lg mt-6"
-        >
-          <div className="mb-4">
-            <label
-              htmlFor="name"
-              className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={newReview.name}
-              onChange={handleReviewChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              required
-            />
+          <div className="bg-gray-100 shadow-lg rounded-lg p-6 mb-6">
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">
+              Leave a Review
+            </h3>
+            <form onSubmit={handleSubmitReview}>
+              <div className="mb-4">
+                <label
+                  htmlFor="reviewName"
+                  className="block text-gray-700 font-semibold mb-2"
+                >
+                  Name
+                </label>
+                <input
+                  type="text"
+                  id="reviewName"
+                  name="name"
+                  value={newReview.name}
+                  onChange={handleReviewChange}
+                  className="w-full p-2 border border-gray-300 rounded-lg"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="reviewText"
+                  className="block text-gray-700 font-semibold mb-2"
+                >
+                  Review
+                </label>
+                <textarea
+                  id="reviewText"
+                  name="text"
+                  value={newReview.text}
+                  onChange={handleReviewChange}
+                  className="w-full p-2 border border-gray-300 rounded-lg"
+                  required
+                ></textarea>
+              </div>
+              <div className="mb-4 flex items-center">
+                {renderStars(userRating, handleStarClick)}
+              </div>
+              <button
+                type="submit"
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+              >
+                Submit Review
+              </button>
+            </form>
           </div>
-          <div className="mb-4">
-            <label
-              htmlFor="text"
-              className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              Review
-            </label>
-            <textarea
-              id="text"
-              name="text"
-              value={newReview.text}
-              onChange={handleReviewChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              rows="4"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Rating
-            </label>
-            <div className="flex items-center">
-              {renderStars(userRating, handleStarClick)}
-              <span className="ml-2 text-gray-600">
-                {userRating === 0 ? "Select a rating" : userRating}
-              </span>
-            </div>
-          </div>
-          <button
-            type="submit"
-            className="bg-customBlue text-white font-bold py-2 px-6 rounded-lg shadow hover:bg-gray-400 transition duration-300"
-          >
-            Submit Review
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );

@@ -70,15 +70,17 @@ function Signup() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded shadow">
         <div>
-          <h2 className="text-3xl font-bold text-center text-gray-900">
+          <h2 className="text-3xl font-bold text-center text-customBlue">
             Signup
           </h2>
-          <p className="mt-2 text-center text-gray-600">Create Your Account</p>
+          <p className="mt-2 text-center text-customBlue">
+            Create Your Account
+          </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="flex items-center border-b border-blue-500 py-2">
-              <FaUser className="text-blue-500 mr-3" />
+              <FaUser className="text-customBlue mr-3" />
               <input
                 name="username"
                 type="text"
@@ -89,7 +91,7 @@ function Signup() {
               />
             </div>
             <div className="flex items-center border-b border-blue-500 py-2">
-              <FaEnvelope className="text-blue-500 mr-3" />
+              <FaEnvelope className="text-customBlue mr-3" />
               <input
                 name="email"
                 type="email"
@@ -100,7 +102,7 @@ function Signup() {
               />
             </div>
             <div className="flex items-center border-b border-blue-500 py-2">
-              <FaLock className="text-blue-500 mr-3" />
+              <FaLock className="text-customBlue mr-3" />
               <input
                 name="password"
                 type="password"
@@ -111,7 +113,7 @@ function Signup() {
               />
             </div>
             <div className="flex items-center border-b border-blue-500 py-2">
-              <FaLock className="text-blue-500 mr-3" />
+              <FaLock className="text-customBlue mr-3" />
               <input
                 name="confirmPassword"
                 type="password"
@@ -128,8 +130,8 @@ function Signup() {
               type="button"
               className={`px-4 py-2 font-semibold text-sm border rounded-md ${
                 accountType === "educator"
-                  ? "bg-blue-500 text-white"
-                  : "text-blue-500 border-blue-500"
+                  ? "bg-customBlue text-white"
+                  : "text-customBlue border-customBlue"
               }`}
               onClick={() => handleAccountType("educator")}
             >
@@ -139,8 +141,8 @@ function Signup() {
               type="button"
               className={`px-4 py-2 font-semibold text-sm border rounded-md ${
                 accountType === "student"
-                  ? "bg-blue-500 text-white"
-                  : "text-blue-500 border-blue-500"
+                  ? "bg-customBlue text-white"
+                  : "text-customBlue border-customBlue"
               }`}
               onClick={() => handleAccountType("student")}
             >
@@ -151,7 +153,7 @@ function Signup() {
           <div>
             <button
               type="submit"
-              className="w-full px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+              className="w-full px-4 py-2 text-white bg-customBlue rounded-md hover:bg-gray-600"
             >
               Signup
             </button>
@@ -159,7 +161,7 @@ function Signup() {
 
           <div className="text-sm text-center">
             Already have an account?{" "}
-            <Link to="/login" className="text-blue-500 hover:underline">
+            <Link to="/login" className="text-customBlue hover:underline">
               Login
             </Link>
           </div>

@@ -7,6 +7,7 @@ const UploadCourse = () => {
     image: null,
     isFeatured: false,
     parts: [],
+    tags: [],
   });
 
   const [currentPart, setCurrentPart] = useState({
@@ -24,6 +25,7 @@ const UploadCourse = () => {
   });
 
   const [selectedPartSequence, setSelectedPartSequence] = useState(null);
+  const [newTag, setNewTag] = useState("");
 
   const handleCourseChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -91,9 +93,12 @@ const UploadCourse = () => {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://localhost:8080/api/courses/upload", {
+      const response = await fetch("http://localhost:8080/api/upload", {
         method: "POST",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
       });
 
       if (response.ok) {
@@ -148,12 +153,15 @@ const UploadCourse = () => {
       image: imageUrl,
       isFeatured: course.isFeatured,
       parts: partsWithUploadedMaterials,
+      tags: course.tags,
     };
     try {
+      console.log("Uploading course:", courseData);
       const response = await fetch("http://localhost:8080/api/courses/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
         body: JSON.stringify(courseData),
       });
@@ -167,6 +175,29 @@ const UploadCourse = () => {
     } catch (error) {
       console.error("Error uploading course:", error);
     }
+  };
+
+  const handleAddTag = () => {
+    if (newTag.trim() === "") {
+      alert("Tag cannot be empty.");
+      return;
+    }
+    setCourse((prevCourse) => ({
+      ...prevCourse,
+      tags: [...prevCourse.tags, newTag.trim()],
+    }));
+    setNewTag("");
+  };
+
+  const handleTagChange = (e) => {
+    setNewTag(e.target.value);
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setCourse((prevCourse) => ({
+      ...prevCourse,
+      tags: prevCourse.tags.filter((tag) => tag !== tagToRemove),
+    }));
   };
 
   return (
@@ -202,6 +233,43 @@ const UploadCourse = () => {
               className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             />
           </div>
+          {/* Tags Section */}
+          <div className="mt-8">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800">Tags</h3>
+            <div className="flex flex-col space-y-4">
+              <div className="flex gap-4 items-center">
+                <input
+                  type="text"
+                  value={newTag}
+                  onChange={handleTagChange}
+                  placeholder="Add a tag"
+                  className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                />
+                <button
+                  onClick={handleAddTag}
+                  className="py-2 px-4 bg-customBlue text-white rounded-lg hover:bg-gray-500 transition duration-300"
+                >
+                  Add Tag
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-4">
+                {course.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="bg-gray-200 text-gray-800 px-4 py-2 rounded-full flex items-center"
+                  >
+                    {tag}
+                    <button
+                      onClick={() => handleRemoveTag(tag)}
+                      className="ml-2 text-red-500"
+                    >
+                      &times;
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="flex-1 space-y-8">
@@ -223,7 +291,7 @@ const UploadCourse = () => {
                 name="sequence"
                 value={currentPart.sequence}
                 onChange={handlePartChange}
-                placeholder="Part Sequence"
+                placeholder="Sequence"
                 className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
               />
               <textarea
@@ -231,72 +299,36 @@ const UploadCourse = () => {
                 value={currentPart.description}
                 onChange={handlePartChange}
                 placeholder="Part Description"
-                className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 md:col-span-2 h-32 resize-none"
+                className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 h-32 resize-none"
               />
-              <button
-                onClick={addPart}
-                className="md:col-span-2 py-3 bg-customBlue text-white rounded-lg hover:bg-gray-500 transition duration-300"
-              >
-                Add Part
-              </button>
             </div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-semibold mb-4 text-gray-800">
-              Course Parts
-            </h3>
-            <div className="space-y-6">
-              {course.parts.map((part, index) => (
-                <div
-                  key={index}
-                  className="border p-4 rounded-lg bg-gray-50 shadow"
-                >
-                  <h4 className="text-lg font-bold text-gray-800">
-                    {part.name}
-                  </h4>
-                  <p className="text-gray-700">{part.description}</p>
-                  <p className="text-gray-700">Sequence: {part.sequence}</p>
-                  <div className="mt-4">
-                    <h5 className="font-semibold text-gray-800">Materials</h5>
-                    {part.materials.length === 0 ? (
-                      <p className="text-gray-700">No materials added yet.</p>
-                    ) : (
-                      part.materials.map((material, idx) => (
-                        <div
-                          key={idx}
-                          className="border p-3 rounded-lg bg-white shadow mb-2"
-                        >
-                          <h6 className="font-semibold text-gray-800">
-                            {material.name}
-                          </h6>
-                          <p className="text-gray-700">Type: {material.type}</p>
-                          <p className="text-gray-700">
-                            Content:{" "}
-                            {material.content?.name || "Uploaded content"}
-                          </p>
-                          <p className="text-gray-700">
-                            Description: {material.description}
-                          </p>
-                        </div>
-                      ))
-                    )}
-                    <button
-                      onClick={() => setSelectedPartSequence(part.sequence)}
-                      className="py-2 px-4 bg-customBlue text-white rounded-lg hover:bg-gray-500 transition duration-300 mt-4"
-                    >
-                      Select for Adding Materials
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <button
+              onClick={addPart}
+              className="mt-4 py-2 px-4 bg-customBlue text-white rounded-lg hover:bg-gray-500 transition duration-300"
+            >
+              Add Part
+            </button>
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-semibold mb-4 text-gray-800">
-              Add Material to Selected Part
+              Add Material
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <select
+                value={selectedPartSequence || ""}
+                onChange={(e) =>
+                  setSelectedPartSequence(Number(e.target.value))
+                }
+                className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              >
+                <option value="">Select Part</option>
+                {course.parts.map((part) => (
+                  <option key={part.sequence} value={part.sequence}>
+                    {part.name}
+                  </option>
+                ))}
+              </select>
               <input
                 type="text"
                 name="name"
@@ -305,14 +337,17 @@ const UploadCourse = () => {
                 placeholder="Material Name"
                 className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
               />
-              <input
-                type="text"
+              <select
                 name="type"
                 value={currentMaterial.type}
                 onChange={handleMaterialChange}
-                placeholder="Material Type"
                 className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-              />
+              >
+                <option value="">Select Type</option>
+                <option value="PDF">PDF</option>
+                <option value="Video">Video</option>
+                <option value="Audio">Audio</option>
+              </select>
               <input
                 type="file"
                 name="content"
@@ -324,23 +359,23 @@ const UploadCourse = () => {
                 value={currentMaterial.description}
                 onChange={handleMaterialChange}
                 placeholder="Material Description"
-                className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 md:col-span-2 h-32 resize-none"
+                className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 h-32 resize-none"
               />
-              <button
-                onClick={addMaterial}
-                className="md:col-span-2 py-3 bg-customBlue text-white rounded-lg hover:bg-gray-500 transition duration-300"
-              >
-                Add Material
-              </button>
             </div>
+            <button
+              onClick={addMaterial}
+              className="mt-4 py-2 px-4 bg-customBlue text-white rounded-lg hover:bg-gray-500 transition duration-300"
+            >
+              Add Material
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="flex justify-end mt-8">
+      <div className="mt-8 flex justify-end">
         <button
           onClick={handleSubmit}
-          className="py-3 px-6 bg-white text-customBlue rounded-lg hover:bg-gray-100 transition duration-300"
+          className="py-2 px-4 bg-white text-customBlue rounded-lg hover:bg-gray-300 transition duration-300"
         >
           Submit Course
         </button>

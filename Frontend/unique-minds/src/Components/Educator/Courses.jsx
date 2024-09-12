@@ -41,8 +41,14 @@ const Courses = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
+        const token = localStorage.getItem("access_token");
         const response = await fetch(
-          "http://localhost:8080/api/educator/courses"
+          "http://localhost:8080/api/educator/courses",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         if (!response.ok) {
           throw new Error("Failed to fetch courses");
@@ -53,6 +59,7 @@ const Courses = () => {
         console.error("Error fetching courses:", error);
       }
     };
+
     fetchCourses();
   }, []);
 
@@ -74,10 +81,14 @@ const Courses = () => {
 
   const handleDeleteClick = async (id) => {
     try {
+      const token = localStorage.getItem("access_token");
       const response = await fetch(
         `http://localhost:8080/api/educator/courses/${id}`,
         {
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       if (!response.ok) {
@@ -85,7 +96,7 @@ const Courses = () => {
       }
       setCourses(courses.filter((course) => course.id !== id));
     } catch (error) {
-      console.error("Error deleting course:", error);
+      console.error(error);
     }
   };
 
