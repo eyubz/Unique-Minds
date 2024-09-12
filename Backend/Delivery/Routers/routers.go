@@ -58,17 +58,18 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     serverGroup.GET("/courses/:id", authMiddleWare, courseController.GetCourseById)
     serverGroup.POST("/:id/progress", authMiddleWare, courseController.UpdateProgress)
     serverGroup.POST("/courses/:id", authMiddleWare, courseController.SaveCourse)
+    serverGroup.GET("/courses/progress", authMiddleWare, userControllers.GetCourseProgress)
 
     serverGroup.GET("/top-educators", userControllers.GetTopEducators)    
 
     serverGroup.GET("/educators", userControllers.GetEducators)
-    serverGroup.GET("/educators/:id", userControllers.GetEducatorById)
+    serverGroup.GET("/educators/:id", authMiddleWare, userControllers.GetEducatorById)
 
     serverGroup.GET("/educator/courses", authMiddleWare, courseController.GetEducatorCourses)
     serverGroup.DELETE("/educator/courses/:id", authMiddleWare, courseController.DeleteCourse)
     
     serverGroup.GET("/educator/schedules", authMiddleWare, userControllers.GetSchedules)
-    serverGroup.DELETE("educators/schedules/:id", authMiddleWare, userControllers.CancelSchedule)
+    serverGroup.DELETE("/educators/schedules/:id", authMiddleWare, userControllers.CancelSchedule)
     serverGroup.GET("/educator/students", authMiddleWare, userControllers.GetStudentsByCourses)
 
     serverGroup.GET("/profile", authMiddleWare, userControllers.GetProfile)
@@ -76,6 +77,7 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     serverGroup.PUT("/profile", authMiddleWare, userControllers.UpdateProfile)
     serverGroup.PUT("/availability", authMiddleWare, userControllers.SetAvailability)
 
+    serverGroup.POST("schedule", authMiddleWare, userControllers.ScheduleSession)
 
     studentServer := serverGroup.Group("student")
     studentServer.Use(authMiddleWare)

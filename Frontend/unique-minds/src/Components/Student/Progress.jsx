@@ -53,7 +53,9 @@ const ProgressBarChart = () => {
 const ProgressSection = () => {
   return (
     <div className="w-full p-6">
-      <h2 className="text-2xl font-bold mb-6">Course Progress</h2>
+      <h2 className="text-2xl font-bold mb-6 text-customBlue">
+        Course Progress
+      </h2>
       <ProgressBarChart />
     </div>
   );

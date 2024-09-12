@@ -97,3 +97,4 @@ func  (u *courseUseCase) UpdateProgress(courseID, userID string, completedParts 
 func  (u *courseUseCase) SaveCourse(courseID, userID string) error {
     return u.courseRepo.SaveCourse(courseID, userID)
 }
+

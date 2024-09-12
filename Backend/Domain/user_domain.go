@@ -144,6 +144,8 @@ type UserUseCaseInterface interface {
 	FetchStudentsByCourses(educatorID string) ([]CourseWithStudents, error)
 	GetUserProfile(userID string) (*UserData, error)
 	GetTopEducatorsUseCase() ([]EducatorProfile, error)
+	GetEnrolledCoursesProgress(userID string) ([]map[string]interface{}, error)
+	ScheduleSession(user_id string, educatorID string , availability time.Time) error
 }
 
 type UserRepositoryInterface interface {
@@ -168,6 +170,9 @@ type UserRepositoryInterface interface {
 	GetStudentsFromEducatorProfile(educatorID string) ([]CourseWithStudents, error)
 	FindById(userID string) (*UserData, error)
 	GetTopEducators() ([]EducatorProfile, error)
+	FetchCourseNameByID(courseID primitive.ObjectID) (string, error)
+	FetchUserEnrolledCourses(userID string) ([]CourseProgress, error)
+	UpdateSchedules(user_id string, educatorID string, availability time.Time) error
 }
 
 type AdminUseCaseInterface interface {

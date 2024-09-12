@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import img1 from "../Assets/herosecrtion.jpg";
 
 const CourseDetail = () => {
   const { course_id } = useParams();
+  const navigate = useNavigate();
   const [course, setCourse] = useState({
     id: "course_12345",
     name: "Introduction to Web Development",
@@ -72,10 +73,25 @@ const CourseDetail = () => {
 
   useEffect(() => {
     const fetchCourse = async () => {
+      const token = localStorage.getItem("access_token");
+
+      if (!token) {
+        //navigate("/login");
+        return;
+      }
+
       try {
         const response = await fetch(
-          `https://localhost:8080/api/courses/${course_id}`
+          `https://localhost:8080/api/courses/${course_id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
+
         const data = await response.json();
 
         if (response.ok) {
@@ -89,7 +105,7 @@ const CourseDetail = () => {
     };
 
     fetchCourse();
-  }, [course_id]);
+  }, [course_id, navigate]);
 
   const togglePartCompletion = async (partId) => {
     const updatedCompletedParts = course.completed_parts.includes(partId)
@@ -99,10 +115,12 @@ const CourseDetail = () => {
     setCourse({ ...course, completed_parts: updatedCompletedParts });
 
     try {
+      const token = localStorage.getItem("access_token");
       await fetch(`https://localhost:8080/api/courses/${course_id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ completed_parts: updatedCompletedParts }),
       });

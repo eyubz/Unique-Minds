@@ -10,7 +10,6 @@ import (
 	infrastructure "unique-minds/Infrastructure"
 	utils "unique-minds/Utils"
 
-	// Add this line to import the package that defines the StudentProfile struct
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -231,10 +230,33 @@ func (ur *UserRepository) GetEducatorsById(id string) (domain.EducatorProfile, e
 
 func (ur *UserRepository) SaveReview(review domain.Review) error {
 	filter := bson.M{"_id": review.EducatorID}
-	update := bson.M{"$push": bson.M{"reviews": review}}
 
-	_, err := ur.educatorProfileCollection.UpdateOne(context.TODO(), filter, update)
-	return err
+	var educatorProfile domain.EducatorProfile
+	err := ur.educatorProfileCollection.FindOne(context.TODO(), filter).Decode(&educatorProfile)
+	if err != nil {
+		return err
+	}
+
+	update := bson.M{"$push": bson.M{"reviews": review}}
+	_, err = ur.educatorProfileCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return err
+	}
+
+
+	totalRating := float64(educatorProfile.Rating) + (review.Rating)
+
+	newAverageRating := totalRating / float64(len(educatorProfile.Reviews))
+
+	updateRating := bson.M{
+		"$set": bson.M{"rating": newAverageRating},
+	}
+	_, err = ur.educatorProfileCollection.UpdateOne(context.TODO(), filter, updateRating)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 
@@ -457,4 +479,74 @@ func (ur *UserRepository) GetTopEducators() ([]domain.EducatorProfile, error) {
     }
 
     return topEducators, nil
+}
+
+
+func (ur *UserRepository) FetchUserEnrolledCourses(userID string) ([]domain.CourseProgress, error) {
+	userObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	filter := bson.M{"_id": userObjID}
+	var user struct {
+		EnrolledCourses []domain.CourseProgress `bson:"courses" json:"courses"`
+	}
+	err = ur.studentProfileCollection.FindOne(ctx, filter).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+	return user.EnrolledCourses, nil
+}
+
+
+func (ur *UserRepository) FetchCourseNameByID(courseID primitive.ObjectID) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	filter := bson.M{"_id": courseID}
+	var course struct {
+		Name string `bson:"name" json:"name"`
+	}
+	err := ur.courseCollection.FindOne(ctx, filter).Decode(&course)
+	if err != nil {
+		return "", err
+	}
+	return course.Name, nil
+}
+
+
+func (ur *UserRepository) UpdateSchedules(user_id string, educatorID string, availability time.Time) error {
+	uid, _ := primitive.ObjectIDFromHex(user_id)
+	educator_id, _ := primitive.ObjectIDFromHex(educatorID)
+
+	schedule := domain.Schedule{
+		ID: primitive.NewObjectID(),
+		StudentID: uid,
+		EducatorId: educator_id,
+		Date: availability,
+		GoogleMeetLink: " https://meet.google.com/jjg-ifsj-bkm",
+
+	}
+	educatorUpdate := bson.M{
+		"$push": bson.M{"schedules": schedule},
+		"$pull": bson.M{"availability": availability},
+	}
+
+	_, err := ur.educatorProfileCollection.UpdateOne(context.TODO(), bson.M{"_id": educator_id}, educatorUpdate)
+	if err != nil {
+		return err
+	}
+
+	studentUpdate := bson.M{
+		"$push": bson.M{"schedules": schedule},
+	}
+	_, err = ur.studentProfileCollection.UpdateOne(context.TODO(), bson.M{"_id": uid}, studentUpdate)
+	if err != nil{
+		return err
+	}
+	return nil
 }

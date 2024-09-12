@@ -297,7 +297,6 @@ func (uc *UserUseCase) SaveReview(review domain.Review) error{
 	return nil
 }
 
-
 func (uc *UserUseCase) GetEducatorProfile(user_id string) (domain.EducatorProfile, error){
 	educator, err := uc.UserRepo.GetEducatorsById(user_id)
 	if err != nil {
@@ -376,11 +375,38 @@ func (uc *UserUseCase) FetchStudentsByCourses(educatorID string) ([]domain.Cours
     return uc.UserRepo.GetStudentsFromEducatorProfile(educatorID)
 }
 
-
 func (uc *UserUseCase) GetUserProfile(userID string) (*domain.UserData, error) {
     return uc.UserRepo.FindById(userID)
 }
 
 func (uc *UserUseCase) GetTopEducatorsUseCase() ([]domain.EducatorProfile, error) {
 	return uc.UserRepo.GetTopEducators()
+}
+
+func (uc *UserUseCase) GetEnrolledCoursesProgress(userID string) ([]map[string]interface{}, error) {
+	enrolledCourses, err := uc.UserRepo.FetchUserEnrolledCourses(userID)
+	if err != nil {
+		return nil, err
+	}
+	var courseProgressList []map[string]interface{}
+
+	for _, enrolledCourse := range enrolledCourses {
+		courseName, err := uc.UserRepo.FetchCourseNameByID(enrolledCourse.CourseID)
+		if err != nil {
+			return nil, err
+		}
+
+		courseProgressList = append(courseProgressList, map[string]interface{}{
+			"id":       enrolledCourse.CourseID,
+			"name":     courseName,
+			"progress": enrolledCourse.Progress,
+		})
+	}
+
+	return courseProgressList, nil
+}
+
+
+func (uc *UserUseCase) ScheduleSession(user_id string, educatorID string , availability time.Time) error {
+	return uc.UserRepo.UpdateSchedules(user_id, educatorID, availability)
 }

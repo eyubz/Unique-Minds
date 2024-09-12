@@ -208,5 +208,3 @@ func (c *CourseController) SaveCourse(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "Course ID appended successfully"})
 }
-
-

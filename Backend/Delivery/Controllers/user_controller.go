@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
+	"time"
 	domain "unique-minds/Domain"
 
 	"github.com/gin-gonic/gin"
@@ -491,4 +492,41 @@ func (uc *UserControllers) GetTopEducators(c *gin.Context) {
         return
     }
     c.JSON(http.StatusOK, topEducators)
+}
+
+func (uc *UserControllers) GetCourseProgress(c *gin.Context) {
+	userID := c.Param("user_id")
+	
+	courseProgress, err := uc.userUserCase.GetEnrolledCoursesProgress(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching enrolled courses progress"})
+		return
+	}
+
+	c.JSON(http.StatusOK, courseProgress)
+}
+
+func  (uc *UserControllers) ScheduleSession(c *gin.Context) {
+	user_id := c.GetString("user_id")
+	if user_id == ""{
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	var req struct {
+		EducatorID        string `json:"educatorId"`
+		Availability      time.Time `json:"availability"`
+	}
+
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	err := uc.userUserCase.ScheduleSession(user_id, req.EducatorID, req.Availability)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Scheduled successfully"})
 }
