@@ -3,38 +3,38 @@ import img from "../../Assets/herosecrtion.jpg";
 
 const Courses = () => {
   const [courses, setCourses] = useState([
-    {
-      id: "1",
-      name: "Introduction to Special Education",
-      description:
-        "Basics of special education including strategies and methodologies.",
-      createdDate: "2023-01-15",
-      imageUrl: img,
-    },
-    {
-      id: "2",
-      name: "Advanced Down Syndrome Education",
-      description:
-        "In-depth look at educational practices specific to Down Syndrome.",
-      createdDate: "2023-03-22",
-      imageUrl: img,
-    },
-    {
-      id: "1",
-      name: "Introduction to Special Education",
-      description:
-        "Basics of special education including strategies and methodologies.",
-      createdDate: "2023-01-15",
-      imageUrl: img,
-    },
-    {
-      id: "2",
-      name: "Advanced Down Syndrome Education",
-      description:
-        "In-depth look at educational practices specific to Down Syndrome.",
-      createdDate: "2023-03-22",
-      imageUrl: img,
-    },
+    // {
+    //   id: "1",
+    //   name: "Introduction to Special Education",
+    //   description:
+    //     "Basics of special education including strategies and methodologies.",
+    //   createdDate: "2023-01-15",
+    //   imageUrl: img,
+    // },
+    // {
+    //   id: "2",
+    //   name: "Advanced Down Syndrome Education",
+    //   description:
+    //     "In-depth look at educational practices specific to Down Syndrome.",
+    //   createdDate: "2023-03-22",
+    //   imageUrl: img,
+    // },
+    // {
+    //   id: "1",
+    //   name: "Introduction to Special Education",
+    //   description:
+    //     "Basics of special education including strategies and methodologies.",
+    //   createdDate: "2023-01-15",
+    //   imageUrl: img,
+    // },
+    // {
+    //   id: "2",
+    //   name: "Advanced Down Syndrome Education",
+    //   description:
+    //     "In-depth look at educational practices specific to Down Syndrome.",
+    //   createdDate: "2023-03-22",
+    //   imageUrl: img,
+    // },
   ]);
   const [editingCourseId, setEditingCourseId] = useState(null);
 

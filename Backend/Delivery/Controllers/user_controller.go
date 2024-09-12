@@ -332,7 +332,6 @@ func (uc *UserControllers) SaveReview(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Review Saved successfully"})
 }
 
-
 func  (uc *UserControllers) GetProfile(c *gin.Context) {
 	user_id := c.GetString("user_id")
 	if user_id == "" {
@@ -340,6 +339,7 @@ func  (uc *UserControllers) GetProfile(c *gin.Context) {
 		return
 	}
 	user_type := c.GetString("user_type")
+	fmt.Println(user_type, user_id)
 	if user_type == "educator" {
 		profile, err := uc.userUserCase.GetEducatorProfile(user_id)
 		if err != nil{
@@ -432,6 +432,19 @@ func (uc *UserControllers) GetSchedules(ctx *gin.Context) {
 
     ctx.JSON(http.StatusOK, schedules)
 }
+func (uc *UserControllers) GetStudentSchedules(ctx *gin.Context) {
+    user_id := ctx.GetString("user_id")
+    if user_id == ""{
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unauthorized"})
+    }
+    schedules, err := uc.userUserCase.GetStudentSchedules(user_id)
+    if err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch schedules"})
+        return
+    }
+
+    ctx.JSON(http.StatusOK, schedules)
+}
 
 func (uc *UserControllers) CancelSchedule(ctx *gin.Context) {
 	user_id := ctx.GetString("user_id")
@@ -474,7 +487,8 @@ func (uc *UserControllers) GetUserProfile(c *gin.Context) {
     }
     user, err := uc.userUserCase.GetUserProfile(userID)
     if err != nil || user == nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"message": "User not found"})
+		fmt.Println(err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
         return
     }
 

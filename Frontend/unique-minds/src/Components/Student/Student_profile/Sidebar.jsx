@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import ProgressSection from "../Progress";
 import Schedule from "./Schedule";
+import LogoutContent from "../../Educator/Logout";
 
 const Sidebar = () => {
   const [activeSection, setActiveSection] = useState("Dashboard");
@@ -97,7 +98,5 @@ const Sidebar = () => {
     </div>
   );
 };
-
-const LogoutContent = () => <div>You have been logged out.</div>;
 
 export default Sidebar;

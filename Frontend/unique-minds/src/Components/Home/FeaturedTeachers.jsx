@@ -4,21 +4,21 @@ import imgEducator1 from "../../Assets/teacher1.jpg";
 
 const TopEducators = () => {
   const [educators, setEducators] = useState([
-    {
-      id: 1,
-      name: "Jane Doe",
-      image: imgEducator1,
-    },
-    {
-      id: 2,
-      name: "John Smith",
-      image: imgEducator1,
-    },
-    {
-      id: 3,
-      name: "Alice Johnson",
-      image: imgEducator1,
-    },
+    // {
+    //   id: 1,
+    //   name: "Jane Doe",
+    //   image: imgEducator1,
+    // },
+    // {
+    //   id: 2,
+    //   name: "John Smith",
+    //   image: imgEducator1,
+    // },
+    // {
+    //   id: 3,
+    //   name: "Alice Johnson",
+    //   image: imgEducator1,
+    // },
   ]);
 
   useEffect(() => {

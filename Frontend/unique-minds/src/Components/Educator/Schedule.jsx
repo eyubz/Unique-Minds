@@ -1,20 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { FaCalendarAlt, FaUser, FaGoogle } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  isSameDay,
+  parseISO,
+} from "date-fns";
 
+// Sample schedules for demonstration
 const sampleSchedules = [
-  {
-    id: "1",
-    date: "2024-01-15T10:00:00",
-    studentName: "John Doe",
-    googleMeetLink: "https://meet.google.com/abc-defg-hij",
-  },
-  {
-    id: "2",
-    date: "2024-02-20T14:00:00",
-    studentName: "Jane Smith",
-    googleMeetLink: "https://meet.google.com/xyz-uvwz-klm",
-  },
+  // {
+  //   id: "1",
+  //   date: "2024-09-01",
+  //   task: "Complete AI Assignment",
+  //   educator: "Dr. Smith",
+  // },
+  // {
+  //   id: "2",
+  //   date: "2024-09-05",
+  //   task: "Attend Web Development Workshop",
+  //   educator: "Prof. Johnson",
+  // },
+  // {
+  //   id: "3",
+  //   date: "2024-09-10",
+  //   task: "Submit Data Science Project",
+  //   educator: "Dr. Adams",
+  // },
 ];
 
 const Schedule = () => {
@@ -67,11 +82,39 @@ const Schedule = () => {
     }
   };
 
+  const currentMonth = new Date(2024, 8); // September 2024
+  const daysInMonth = eachDayOfInterval({
+    start: startOfMonth(currentMonth),
+    end: endOfMonth(currentMonth),
+  });
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">
       <h2 className="text-3xl font-bold mb-6 text-customBlue">Schedule</h2>
+      <div className="grid grid-cols-7 gap-2 sm:gap-4">
+        {daysInMonth.map((day, index) => {
+          const scheduledTasks = schedules.filter((item) =>
+            isSameDay(parseISO(item.date), day)
+          );
+          return (
+            <div
+              key={index}
+              className={`p-2 h-24 border rounded-lg ${
+                scheduledTasks.length > 0 ? "bg-green-100" : "bg-gray-100"
+              }`}
+            >
+              <div className="text-sm font-bold">{format(day, "d")}</div>
+              {scheduledTasks.map((task) => (
+                <div key={task.id} className="text-xs mt-2 text-green-700">
+                  {task.task} with {task.educator}
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 mt-8">
         {schedules.length > 0 ? (
           schedules.map((schedule) => (
             <div
@@ -82,22 +125,13 @@ const Schedule = () => {
                 <div className="flex items-center space-x-2">
                   <FaUser className="text-white" />
                   <h3 className="text-xl font-semibold text-white">
-                    {schedule.studentName}
+                    {schedule.educator}
                   </h3>
                 </div>
                 <div className="flex items-center space-x-2 text-white">
                   <FaCalendarAlt />
                   <p>{new Date(schedule.date).toLocaleString()}</p>
                 </div>
-                <a
-                  href={schedule.googleMeetLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center text-white hover:underline"
-                >
-                  <FaGoogle className="mr-1" />
-                  Join via Google Meet
-                </a>
               </div>
 
               <button

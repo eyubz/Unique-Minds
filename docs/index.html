@@ -38,7 +38,7 @@
 
       /* Intro Section */
       #intro {
-        background: url("your-cover-image.jpg") no-repeat center center/cover;
+        background: url("./image1_0\ \(1\).jpg") no-repeat center center/cover;
         height: 100vh;
         display: flex;
         flex-direction: column;
@@ -75,27 +75,60 @@
       /* Feature Section */
       #features {
         padding: 50px 20px;
+        background-color: #f9f9f9;
         text-align: center;
       }
 
       #features h2 {
         margin-bottom: 30px;
+        font-size: 2.5rem;
+        color: #333;
+      }
+
+      .features-container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
       }
 
       .feature {
         display: flex;
-        margin: 20px 0;
+        flex-direction: column;
+        align-items: center;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .feature:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
       }
 
       .feature img {
-        width: 200px;
-        height: 150px;
+        width: 100%;
+        height: 200px;
         object-fit: cover;
-        margin-right: 20px;
+        border-bottom: 1px solid #ddd;
       }
 
-      .feature div {
-        text-align: left;
+      .feature-text {
+        padding: 20px;
+        text-align: center;
+      }
+
+      .feature-text h3 {
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+        color: #333;
+      }
+
+      .feature-text p {
+        font-size: 1rem;
+        color: #555;
+        line-height: 1.5;
       }
 
       /* About Section */
@@ -107,10 +140,15 @@
 
       #about h2 {
         margin-bottom: 20px;
+        font-size: 2rem;
+        color: #333;
       }
 
       #about p {
         margin-bottom: 20px;
+        font-size: 1rem;
+        color: #555;
+        line-height: 1.6;
       }
 
       .team {
@@ -121,6 +159,7 @@
         margin: 0 10px;
         text-decoration: none;
         color: #333;
+        font-weight: bold;
       }
 
       footer {
@@ -138,14 +177,15 @@
         <a href="#intro">Home</a>
         <a href="#features">Features</a>
         <a href="#about">About</a>
+        <a href="#video">Video</a>
       </nav>
     </header>
 
     <!-- Intro Section -->
     <section id="intro">
-      <h1>Your Project Name</h1>
-      <p>A short one-line phrase or description of your project</p>
-      <button onclick="window.location.href='your-deployed-project-link.com'">
+      <h1>UNIQUE MINDS</h1>
+      <p>An e-learning platform for children with down syndrome.</p>
+      <button onclick="window.location.href='https://youtu.be/3_LCUgMaozM '">
         View Project
       </button>
     </section>
@@ -154,27 +194,43 @@
     <section id="features">
       <h2>Key Features</h2>
 
-      <div class="feature">
-        <img src="feature1-image.jpg" alt="Feature 1" />
-        <div>
-          <h3>Feature 1</h3>
-          <p>Description of Feature 1.</p>
+      <div class="features-container">
+        <div class="feature">
+          <img src="./progress.png" alt="Progress Tracking" />
+          <div class="feature-text">
+            <h3>Progress Tracking</h3>
+            <p>
+              Track your progress effortlessly with visual indicators,
+              personalized goals, and real-time updates—stay motivated and
+              achieve your learning milestones!
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="feature">
-        <img src="feature2-image.jpg" alt="Feature 2" />
-        <div>
-          <h3>Feature 2</h3>
-          <p>Description of Feature 2.</p>
+        <div class="feature">
+          <img
+            src="./Screenshot 2024-09-12 212520.png"
+            alt="Schedule Management"
+          />
+          <div class="feature-text">
+            <h3>Schedule Management</h3>
+            <p>
+              Seamlessly manage your schedule with flexible booking and
+              real-time availability updates—ensuring you never miss a session!
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="feature">
-        <img src="feature3-image.jpg" alt="Feature 3" />
-        <div>
-          <h3>Feature 3</h3>
-          <p>Description of Feature 3.</p>
+        <div class="feature">
+          <img src="./courseupload.png" alt="Course Upload Functionality" />
+          <div class="feature-text">
+            <h3>Course Upload Functionality</h3>
+            <p>
+              Effortlessly upload and manage your courses with our intuitive
+              interface—streamline your content creation and keep everything
+              organized in one place!
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -183,20 +239,23 @@
     <section id="about">
       <h2>About the Project</h2>
       <p>
-        Your personal story and inspiration behind the project. You can mention
-        this is a portfolio project for Holberton School.
+        This project was inspired by a personal desire to create an inclusive
+        and accessible learning environment for children with Down syndrome.
+        Witnessing the challenges these children face in traditional learning
+        settings, I wanted to build a platform that caters specifically to their
+        needs. The journey began in early 2023, and after months of development
+        and testing, this platform has evolved into a comprehensive tool that
+        aims to enhance learning experiences for these children.
       </p>
       <p>
-        Link to the
-        <a href="https://github.com/your-project-repo">Github Repository</a>
+        This project is part of my portfolio for Holberton School, showcasing my
+        skills in web development and design. You can explore the code and more
+        details in the
+        <a href="https://github.com/eyubz/Unique-Minds">Github Repository</a>.
       </p>
-
       <div class="team">
-        <h3>Team Members</h3>
-        <p>Team Member Name</p>
         <a href="https://linkedin.com/in/member-linkedin">LinkedIn</a>
-        <a href="https://github.com/member-github">Github</a>
-        <a href="https://twitter.com/member-twitter">Twitter</a>
+        <a href="https://www.linkedin.com/in/eybz">Github</a>
       </div>
     </section>
 

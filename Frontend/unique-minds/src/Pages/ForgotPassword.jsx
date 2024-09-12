@@ -7,7 +7,6 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle forgot password request
     const response = await fetch("/api/auth/forgot-password", {
       method: "POST",
       headers: {

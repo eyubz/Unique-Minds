@@ -12,9 +12,9 @@ import {
 
 const ProgressBarChart = () => {
   const sampleCourses = [
-    { id: 1, title: "Introduction to AI", progress: 75 },
-    { id: 2, title: "Web Development Bootcamp", progress: 50 },
-    { id: 3, title: "Data Science Fundamentals", progress: 20 },
+    // { id: 1, title: "Introduction to AI", progress: 75 },
+    // { id: 2, title: "Web Development Bootcamp", progress: 50 },
+    // { id: 3, title: "Data Science Fundamentals", progress: 20 },
   ];
 
   const [courses, setCourses] = useState(sampleCourses);

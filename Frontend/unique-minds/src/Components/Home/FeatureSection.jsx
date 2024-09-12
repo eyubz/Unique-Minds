@@ -5,26 +5,26 @@ import img from "../../Assets/image0_0.jpg";
 
 const FeaturedCourses = () => {
   const [courses, setCourses] = useState([
-    {
-      id: 1,
-      name: "Introduction to Programming",
-      description: "Learn the basics of programming with hands-on examples.",
-      image: img,
-    },
-    {
-      id: 2,
-      title: "Advanced Mathematics",
-      description:
-        "Deep dive into advanced mathematical concepts and techniques.",
-      image: img,
-    },
-    {
-      id: 3,
-      title: "Creative Writing Workshop",
-      description:
-        "Enhance your writing skills through creative exercises and feedback.",
-      image: img,
-    },
+    // {
+    //   id: 1,
+    //   name: "Introduction to Programming",
+    //   description: "Learn the basics of programming with hands-on examples.",
+    //   image: img,
+    // },
+    // {
+    //   id: 2,
+    //   title: "Advanced Mathematics",
+    //   description:
+    //     "Deep dive into advanced mathematical concepts and techniques.",
+    //   image: img,
+    // },
+    // {
+    //   id: 3,
+    //   title: "Creative Writing Workshop",
+    //   description:
+    //     "Enhance your writing skills through creative exercises and feedback.",
+    //   image: img,
+    // },
   ]);
 
   // const [loading, setLoading] = useState(true);

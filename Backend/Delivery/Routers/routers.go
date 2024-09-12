@@ -72,7 +72,10 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     serverGroup.DELETE("/educators/schedules/:id", authMiddleWare, userControllers.CancelSchedule)
     serverGroup.GET("/educator/students", authMiddleWare, userControllers.GetStudentsByCourses)
 
+    serverGroup.GET("/student/schedules", authMiddleWare, userControllers.GetStudentSchedules)
+
     serverGroup.GET("/profile", authMiddleWare, userControllers.GetProfile)
+    
     serverGroup.POST("/upload", authMiddleWare, courseController.UploadFile)
     serverGroup.PUT("/profile", authMiddleWare, userControllers.UpdateProfile)
     serverGroup.PUT("/availability", authMiddleWare, userControllers.SetAvailability)

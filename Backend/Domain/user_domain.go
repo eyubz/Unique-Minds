@@ -146,6 +146,7 @@ type UserUseCaseInterface interface {
 	GetTopEducatorsUseCase() ([]EducatorProfile, error)
 	GetEnrolledCoursesProgress(userID string) ([]map[string]interface{}, error)
 	ScheduleSession(user_id string, educatorID string , availability time.Time) error
+	GetStudentSchedules(student_id string) (interface{}, error)
 }
 
 type UserRepositoryInterface interface {
@@ -173,6 +174,8 @@ type UserRepositoryInterface interface {
 	FetchCourseNameByID(courseID primitive.ObjectID) (string, error)
 	FetchUserEnrolledCourses(userID string) ([]CourseProgress, error)
 	UpdateSchedules(user_id string, educatorID string, availability time.Time) error
+	FindStudentSchedules(studentId string) (interface{}, error)
+	
 }
 
 type AdminUseCaseInterface interface {

@@ -45,7 +45,6 @@ func ExtractIDFromToken(requestToken string, secret string) (jwt.MapClaims, erro
 	if !ok && !token.Valid {
 		return jwt.MapClaims{}, fmt.Errorf("invalid token")
 	}
-
 	return claims, nil
 }
 

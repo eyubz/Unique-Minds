@@ -4,14 +4,14 @@ import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 const StudentDashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
-    profileImage: "https://via.placeholder.com/150",
-    name: "John Doe",
-    age: "16",
-    condition: "Down Syndrome",
-    bio: "Student bio goes here...",
-    guardianEmail: "guardian@example.com",
-    guardianPhone: "123-456-7890",
-    location: "City, Country",
+    // profileImage: "https://via.placeholder.com/150",
+    // name: "John Doe",
+    // age: "16",
+    // condition: "Down Syndrome",
+    // bio: "Student bio goes here...",
+    // guardianEmail: "guardian@example.com",
+    // guardianPhone: "123-456-7890",
+    // location: "City, Country",
   });
 
   useEffect(() => {

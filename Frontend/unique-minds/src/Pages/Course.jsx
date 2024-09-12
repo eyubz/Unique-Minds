@@ -4,71 +4,72 @@ import { FaSearch } from "react-icons/fa";
 import img from "../Assets/image0_0.jpg";
 
 const Courses = () => {
-  const [courses, setCourses] = useState([
-    {
-      id: 1,
-      title: "Introduction to AI",
-      description:
-        "Learn the basics of Artificial Intelligence, including key concepts and practical applications.",
-      image: img,
-    },
-    {
-      id: 2,
-      title: "Web Development Bootcamp",
-      description:
-        "A comprehensive bootcamp covering front-end and back-end web development techniques.",
-      image: img,
-    },
-    {
-      id: 3,
-      title: "Data Science Fundamentals",
-      description:
-        "Understand the core principles of data science, including data analysis and visualization techniques.",
-      image: img,
-    },
-    {
-      id: 4,
-      title: "Introduction to AI",
-      description:
-        "Learn the basics of Artificial Intelligence, including key concepts and practical applications.",
-      image: img,
-    },
-    {
-      id: 5,
-      title: "Web Development Bootcamp",
-      description:
-        "A comprehensive bootcamp covering front-end and back-end web development techniques.",
-      image: img,
-    },
-    {
-      id: 6,
-      title: "Data Science Fundamentals",
-      description:
-        "Understand the core principles of data science, including data analysis and visualization techniques.",
-      image: img,
-    },
-    {
-      id: 7,
-      title: "Introduction to AI",
-      description:
-        "Learn the basics of Artificial Intelligence, including key concepts and practical applications.",
-      image: img,
-    },
-    {
-      id: 8,
-      title: "Web Development Bootcamp",
-      description:
-        "A comprehensive bootcamp covering front-end and back-end web development techniques.",
-      image: img,
-    },
-    {
-      id: 9,
-      title: "Data Science Fundamentals",
-      description:
-        "Understand the core principles of data science, including data analysis and visualization techniques.",
-      image: img,
-    },
-  ]);
+  const [courses, setCourses] = useState([]);
+  //[
+  // {
+  //   id: 1,
+  //   title: "Introduction to AI",
+  //   description:
+  //     "Learn the basics of Artificial Intelligence, including key concepts and practical applications.",
+  //   image: img,
+  // },
+  // {
+  //   id: 2,
+  //   title: "Web Development Bootcamp",
+  //   description:
+  //     "A comprehensive bootcamp covering front-end and back-end web development techniques.",
+  //   image: img,
+  // },
+  // {
+  //   id: 3,
+  //   title: "Data Science Fundamentals",
+  //   description:
+  //     "Understand the core principles of data science, including data analysis and visualization techniques.",
+  //   image: img,
+  // },
+  // {
+  //   id: 4,
+  //   title: "Introduction to AI",
+  //   description:
+  //     "Learn the basics of Artificial Intelligence, including key concepts and practical applications.",
+  //   image: img,
+  // },
+  // {
+  //   id: 5,
+  //   title: "Web Development Bootcamp",
+  //   description:
+  //     "A comprehensive bootcamp covering front-end and back-end web development techniques.",
+  //   image: img,
+  // },
+  // {
+  //   id: 6,
+  //   title: "Data Science Fundamentals",
+  //   description:
+  //     "Understand the core principles of data science, including data analysis and visualization techniques.",
+  //   image: img,
+  // },
+  // {
+  //   id: 7,
+  //   title: "Introduction to AI",
+  //   description:
+  //     "Learn the basics of Artificial Intelligence, including key concepts and practical applications.",
+  //   image: img,
+  // },
+  // {
+  //   id: 8,
+  //   title: "Web Development Bootcamp",
+  //   description:
+  //     "A comprehensive bootcamp covering front-end and back-end web development techniques.",
+  //   image: img,
+  // },
+  // {
+  //   id: 9,
+  //   title: "Data Science Fundamentals",
+  //   description:
+  //     "Understand the core principles of data science, including data analysis and visualization techniques.",
+  //   image: img,
+  // },
+  //  ]
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -160,15 +161,16 @@ const Courses = () => {
 
     return (
       <div className="flex flex-wrap justify-around gap-6 p-4 bg-white rounded-lg shadow-md mt-10">
-        {tags.map((tag) => (
-          <button
-            key={tag}
-            onClick={() => handleTagSelect(tag)}
-            className="px-6 py-2 rounded-full bg-customBlue text-white border border-blue-300 hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
-          >
-            {tag}
-          </button>
-        ))}
+        {tags.length > 0 &&
+          tags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => handleTagSelect(tag)}
+              className="px-6 py-2 rounded-full bg-customBlue text-white border border-blue-300 hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+            >
+              {tag}
+            </button>
+          ))}
       </div>
     );
   };

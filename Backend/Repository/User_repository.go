@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"math"
 	"strings"
 	"time"
@@ -259,7 +260,6 @@ func (ur *UserRepository) SaveReview(review domain.Review) error {
 	return nil
 }
 
-
 func (ur *UserRepository) GetStudentById(id string) (domain.StudentProfile, error){
 	var student domain.StudentProfile
 	objID, err := primitive.ObjectIDFromHex(id)
@@ -339,6 +339,48 @@ func (ur *UserRepository) FindEducatorSchedules(educatorId string) (interface{},
         }
 
         err = ur.studentProfileCollection.FindOne(context.TODO(), bson.M{"_id": schedule.StudentID}).Decode(&student)
+        if err != nil {
+            return nil, err
+        }
+
+        scheduleWithStudent := ScheduleWithStudent{
+            ID:             schedule.ID,
+            Date:           schedule.Date.Format("2006-01-02 15:04"),
+            GoogleMeetLink: schedule.GoogleMeetLink,
+            StudentName:    student.Name,
+        }
+        schedulesWithStudent = append(schedulesWithStudent, scheduleWithStudent)
+    }
+    return schedulesWithStudent, nil
+}
+
+func (ur *UserRepository) FindStudentSchedules(studentId string) (interface{}, error) {
+    user_id, err := primitive.ObjectIDFromHex(studentId)
+    if err != nil {
+        return nil, err
+    }
+    var students struct {
+        Schedules []domain.Schedule `bson:"schedules"`
+    }
+    err = ur.studentProfileCollection.FindOne(context.TODO(), bson.M{"_id": user_id}).Decode(&students)
+    if err != nil {
+        return nil, err
+    }
+
+	type ScheduleWithStudent struct {
+		ID             primitive.ObjectID `json:"id" bson:"_id"`
+		Date           string             `json:"date"`
+		GoogleMeetLink string             `json:"googleMeetLink"`
+		StudentName    string             `json:"studentName"`
+	}
+    var schedulesWithStudent []ScheduleWithStudent
+
+    for _, schedule := range students.Schedules {
+        var student struct {
+            Name  string `bson:"name"`
+        }
+
+        err = ur.educatorProfileCollection.FindOne(context.TODO(), bson.M{"_id": schedule.EducatorId}).Decode(&student)
         if err != nil {
             return nil, err
         }
@@ -443,7 +485,7 @@ func (ur *UserRepository) FindById(userID string) (*domain.UserData, error) {
 	uid, _ := primitive.ObjectIDFromHex(userID)
 
 
-    err := ur.studentProfileCollection.FindOne(context.TODO(), bson.M{"id": uid}).Decode(&student)
+    err := ur.studentProfileCollection.FindOne(context.TODO(), bson.M{"_id": uid}).Decode(&student)
     if err == nil {
         return &domain.UserData{
             ProfileImage: student.ProfileImage,
@@ -451,13 +493,14 @@ func (ur *UserRepository) FindById(userID string) (*domain.UserData, error) {
         }, nil
     }
 
-    err = ur.educatorProfileCollection.FindOne(context.TODO(), bson.M{"id": uid}).Decode(&educator)
+    err = ur.educatorProfileCollection.FindOne(context.TODO(), bson.M{"_id": uid}).Decode(&educator)
     if err == nil {
         return &domain.UserData{
             ProfileImage: educator.ProfileImage,
             Role:         "educator",
         }, nil
     }
+	fmt.Println(err.Error())
     return nil, errors.New("user not found")
 }
 
@@ -480,7 +523,6 @@ func (ur *UserRepository) GetTopEducators() ([]domain.EducatorProfile, error) {
 
     return topEducators, nil
 }
-
 
 func (ur *UserRepository) FetchUserEnrolledCourses(userID string) ([]domain.CourseProgress, error) {
 	userObjID, err := primitive.ObjectIDFromHex(userID)

@@ -175,6 +175,7 @@ const Profile = () => {
       })
       .catch((error) => console.error("Error setting availability:", error));
   };
+  console.log(profile.availability);
 
   return (
     <div className="relative flex flex-col h-full p-8 bg-light-gray rounded shadow-md">

@@ -4,44 +4,45 @@ import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 
 const Educators = () => {
-  const [educators, setEducators] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      title: "AI Specialist",
-      image: img,
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      title: "Web Developer",
-      image: img,
-    },
-    {
-      id: 3,
-      name: "Alex Johnson",
-      title: "Cybersecurity Expert",
-      image: img,
-    },
-    {
-      id: 1,
-      name: "John Doe",
-      title: "AI Specialist",
-      image: img,
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      title: "Web Developer",
-      image: img,
-    },
-    {
-      id: 3,
-      name: "Alex Johnson",
-      title: "Cybersecurity Expert",
-      image: img,
-    },
-  ]);
+  const [educators, setEducators] = useState([]);
+  //   [
+  //   {
+  //     id: 1,
+  //     name: "John Doe",
+  //     title: "AI Specialist",
+  //     image: img,
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Jane Smith",
+  //     title: "Web Developer",
+  //     image: img,
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Alex Johnson",
+  //     title: "Cybersecurity Expert",
+  //     image: img,
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "John Doe",
+  //     title: "AI Specialist",
+  //     image: img,
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Jane Smith",
+  //     title: "Web Developer",
+  //     image: img,
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Alex Johnson",
+  //     title: "Cybersecurity Expert",
+  //     image: img,
+  //   },
+  // ]
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");

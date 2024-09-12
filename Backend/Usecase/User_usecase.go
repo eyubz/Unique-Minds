@@ -102,9 +102,8 @@ func (uc *UserUseCase) Login(user domain.User, user_agent string)(domain.LoginRe
 		newUser, err = uc.UserRepo.FindUserByEmail(user.Email)	
 	}else if user.UserName != ""{
 		newUser, err = uc.UserRepo.FindUserByUserName(user.UserName)
-	}else if user.UserName != ""{
-		newUser, err = uc.UserRepo.FindUserByUserName(user.UserName)
 	}
+	
 	if err != nil{
 		return domain.LoginResponse{}, errors.New("user not found")
 	}
@@ -143,6 +142,7 @@ func (uc *UserUseCase) CreateAccessToken(user *domain.User, secret string, expir
 	exp := time.Now().Add(time.Hour * time.Duration(expiry))
 	claims := &domain.JwtCustomClaims{
 		ID: user.ID.Hex(),
+		UserType: user.UserType,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(exp),
 		},
@@ -155,6 +155,7 @@ func (uc *UserUseCase) CreateRefreshToken(user *domain.User, secret string, expi
 
 	claims := &domain.JwtCustomClaims{
 		ID: user.ID.Hex(),
+		UserType: user.UserType,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(exp),
 		},
@@ -365,6 +366,10 @@ func (uc *UserUseCase) SetAvailability(userID string, availability string) error
 
 func (uc *UserUseCase) GetEducatorSchedules(educatorId string) (interface{}, error) {
 	return uc.UserRepo.FindEducatorSchedules(educatorId)
+}
+
+func (uc *UserUseCase) GetStudentSchedules(student_id string) (interface{}, error) {
+	return uc.UserRepo.FindStudentSchedules(student_id)
 }
 
 func (uc *UserUseCase) CancelEducatorSchedule(scheduleId string, user_id string) error {

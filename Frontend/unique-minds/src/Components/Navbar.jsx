@@ -4,18 +4,18 @@ import logo from "../Assets/logo.png";
 import defaultImg from "../Assets/image1_0.jpg";
 
 const Navbar = () => {
-  const [accessToken, setAccessToken] = useState(null);
+  const [accessToken, setAccessToken] = useState("oooo");
   const [profileImage, setProfileImage] = useState(defaultImg);
   const [role, setRole] = useState("student");
 
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+  // useEffect(() => {
+  //   const token = localStorage.getItem("access_token");
 
-    if (token) {
-      setAccessToken(token);
-      fetchUserProfile(token);
-    }
-  }, []);
+  //   if (token) {
+  //     setAccessToken(token);
+  //     fetchUserProfile(token);
+  //   }
+  // }, []);
 
   const fetchUserProfile = async (token) => {
     try {
@@ -38,6 +38,7 @@ const Navbar = () => {
     }
   };
 
+  console.log(profileImage, role);
   return (
     <nav className="bg-white shadow-md p-4">
       <div className="container mx-auto flex justify-between items-center">

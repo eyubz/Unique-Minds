@@ -5,71 +5,73 @@ import img1 from "../Assets/herosecrtion.jpg";
 const CourseDetail = () => {
   const { course_id } = useParams();
   const navigate = useNavigate();
-  const [course, setCourse] = useState({
-    id: "course_12345",
-    name: "Introduction to Web Development",
-    description:
-      "This course will teach you the basics of web development, including HTML, CSS, and JavaScript.",
-    image: "https://example.com/course-image.jpg",
-    parts: [
-      {
-        id: "part_1",
-        name: "Getting Started with HTML",
-        description:
-          "Learn the basics of HTML and how to structure your web pages.",
-        materials: [
-          {
-            name: "HTML Cheat Sheet",
-            type: "PDF",
-            content: "https://example.com/materials/html-cheat-sheet.pdf",
-          },
-          {
-            name: "HTML Tutorial Video",
-            type: "Video",
-            content: "https://example.com/materials/html-tutorial.mp4",
-          },
-        ],
-      },
-      {
-        id: "part_2",
-        name: "Introduction to CSS",
-        description: "Learn how to style your web pages with CSS.",
-        materials: [
-          {
-            name: "CSS Flexbox Guide",
-            type: "PDF",
-            content: "https://example.com/materials/css-flexbox-guide.pdf",
-          },
-          {
-            name: "CSS Tutorial Video",
-            type: "Video",
-            content: "https://example.com/materials/css-tutorial.mp4",
-          },
-        ],
-      },
-      {
-        id: "part_3",
-        name: "Getting Started with JavaScript",
-        description:
-          "Learn the basics of JavaScript and how to make your web pages interactive.",
-        materials: [
-          {
-            name: "JavaScript Basics",
-            type: "PDF",
-            content: "https://example.com/materials/js-basics.pdf",
-          },
-          {
-            name: "JavaScript Tutorial Video",
-            type: "Video",
-            content: "https://example.com/materials/js-tutorial.mp4",
-          },
-        ],
-      },
-    ],
-    progress: 60,
-    completed_parts: ["part_1"],
-    is_completed: false,
-  });
+  const [course, setCourse] =
+    useState();
+    //   {
+    //   id: "course_12345",
+    //   name: "Introduction to Web Development",
+    //   description:
+    //     "This course will teach you the basics of web development, including HTML, CSS, and JavaScript.",
+    //   image: "https://example.com/course-image.jpg",
+    //   parts: [
+    //     {
+    //       id: "part_1",
+    //       name: "Getting Started with HTML",
+    //       description:
+    //         "Learn the basics of HTML and how to structure your web pages.",
+    //       materials: [
+    //         {
+    //           name: "HTML Cheat Sheet",
+    //           type: "PDF",
+    //           content: "https://example.com/materials/html-cheat-sheet.pdf",
+    //         },
+    //         {
+    //           name: "HTML Tutorial Video",
+    //           type: "Video",
+    //           content: "https://example.com/materials/html-tutorial.mp4",
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       id: "part_2",
+    //       name: "Introduction to CSS",
+    //       description: "Learn how to style your web pages with CSS.",
+    //       materials: [
+    //         {
+    //           name: "CSS Flexbox Guide",
+    //           type: "PDF",
+    //           content: "https://example.com/materials/css-flexbox-guide.pdf",
+    //         },
+    //         {
+    //           name: "CSS Tutorial Video",
+    //           type: "Video",
+    //           content: "https://example.com/materials/css-tutorial.mp4",
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       id: "part_3",
+    //       name: "Getting Started with JavaScript",
+    //       description:
+    //         "Learn the basics of JavaScript and how to make your web pages interactive.",
+    //       materials: [
+    //         {
+    //           name: "JavaScript Basics",
+    //           type: "PDF",
+    //           content: "https://example.com/materials/js-basics.pdf",
+    //         },
+    //         {
+    //           name: "JavaScript Tutorial Video",
+    //           type: "Video",
+    //           content: "https://example.com/materials/js-tutorial.mp4",
+    //         },
+    //       ],
+    //     },
+    //   ],
+    //   progress: 60,
+    //   completed_parts: ["part_1"],
+    //   is_completed: false,
+    // }
 
   useEffect(() => {
     const fetchCourse = async () => {

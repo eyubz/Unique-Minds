@@ -2,46 +2,46 @@ import React, { useState, useEffect } from "react";
 import { FaUser } from "react-icons/fa";
 
 const sampleCoursesWithStudents = [
-  {
-    courseName: "Mathematics",
-    students: [
-      {
-        id: "1",
-        name: "John Doe",
-        description: "Down Syndrome",
-      },
-      {
-        id: "2",
-        name: "Jane Smith",
-        description: "Down Syndrome",
-      },
-      {
-        id: "2",
-        name: "Jane Smith",
-        description: "Down Syndrome",
-      },
-    ],
-  },
-  {
-    courseName: "History",
-    students: [
-      {
-        id: "3",
-        name: "Alice Johnson",
-        description: "Down Syndrome",
-      },
-      {
-        id: "4",
-        name: "Bob Lee",
-        description: "Down Syndrome",
-      },
-      {
-        id: "4",
-        name: "Bob Lee",
-        description: "Down Syndrome",
-      },
-    ],
-  },
+  // {
+  //   courseName: "Mathematics",
+  //   students: [
+  //     {
+  //       id: "1",
+  //       name: "John Doe",
+  //       description: "Down Syndrome",
+  //     },
+  //     {
+  //       id: "2",
+  //       name: "Jane Smith",
+  //       description: "Down Syndrome",
+  //     },
+  //     {
+  //       id: "2",
+  //       name: "Jane Smith",
+  //       description: "Down Syndrome",
+  //     },
+  //   ],
+  // },
+  // {
+  //   courseName: "History",
+  //   students: [
+  //     {
+  //       id: "3",
+  //       name: "Alice Johnson",
+  //       description: "Down Syndrome",
+  //     },
+  //     {
+  //       id: "4",
+  //       name: "Bob Lee",
+  //       description: "Down Syndrome",
+  //     },
+  //     {
+  //       id: "4",
+  //       name: "Bob Lee",
+  //       description: "Down Syndrome",
+  //     },
+  //   ],
+  // },
 ];
 
 const Students = () => {
