@@ -139,7 +139,7 @@ func (uc *UserUseCase) Login(user domain.User, user_agent string)(domain.LoginRe
 }
 
 func (uc *UserUseCase) CreateAccessToken(user *domain.User, secret string, expiry int) (accessToken string, err error) {
-	exp := time.Now().Add(time.Hour * time.Duration(expiry))
+	exp := time.Now().Add(5 * time.Hour * time.Duration(expiry))
 	claims := &domain.JwtCustomClaims{
 		ID: user.ID.Hex(),
 		UserType: user.UserType,
@@ -332,9 +332,8 @@ func (uc *UserUseCase) UpdateEducatorProfile(user_id string, updatedProfile doma
 	educator.Availability = updatedProfile.Availability
 	educator.UpdateAt = time.Now()
 	
-
-	result := uc.UserRepo.UpdateEducatorProfile(user_id, educator)
-	return result, nil
+	result, err := uc.UserRepo.UpdateEducatorProfile(user_id, educator)
+	return result, err
 }
 
 func (uc *UserUseCase) UpdateStudentProfile(user_id string, updatedProfile domain.StudentProfile)(domain.StudentProfile, error){
@@ -414,4 +413,9 @@ func (uc *UserUseCase) GetEnrolledCoursesProgress(userID string) ([]map[string]i
 
 func (uc *UserUseCase) ScheduleSession(user_id string, educatorID string , availability time.Time) error {
 	return uc.UserRepo.UpdateSchedules(user_id, educatorID, availability)
+}
+
+
+func (uc *UserUseCase) SaveProfileImage(user_id string, user_type string, profileImage string) error {
+	return uc.UserRepo.UpdateProfileImage(user_id, user_type, profileImage)
 }

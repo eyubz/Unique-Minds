@@ -61,7 +61,7 @@ func (uc *UserControllers) RegisterUser(c *gin.Context){
 
 }
 
-func (uc *UserControllers)VerifyEmail(c *gin.Context){
+func (uc *UserControllers) VerifyEmail(c *gin.Context){
 	token := c.Query("token")
 	email := c.Query("email")
 
@@ -84,7 +84,7 @@ func (uc *UserControllers)VerifyEmail(c *gin.Context){
 	c.Redirect(http.StatusFound, "http://localhost:3000/verification")
 }
 
-func (uc *UserControllers)Login(c *gin.Context){
+func (uc *UserControllers) Login(c *gin.Context){
 	var loginRequest domain.LoginRequest
 	var user domain.User
 
@@ -123,7 +123,7 @@ func (uc *UserControllers)Login(c *gin.Context){
 }
 
 
-func (uc *UserControllers)RefreshToken(c *gin.Context){
+func (uc *UserControllers) RefreshToken(c *gin.Context){
 	var request domain.RefreshTokenRequest
 	err := c.ShouldBind(&request)
 	if err != nil {
@@ -157,7 +157,7 @@ func (uc *UserControllers)RefreshToken(c *gin.Context){
 	)
 
 }
-func (uc *UserControllers)ResetPassword(c *gin.Context){
+func (uc *UserControllers) ResetPassword(c *gin.Context){
 	var request domain.ResetPasswordRequest
 	err := c.ShouldBind(&request)
 	if err != nil {
@@ -249,6 +249,7 @@ func (uc *UserControllers) Logout(c *gin.Context) {
 
 func (uc *UserControllers) UploadProfileImage (ctx *gin.Context) {
     file, err := ctx.FormFile("file")
+
     if err != nil {
         ctx.JSON(http.StatusBadRequest, gin.H{"error": "No file uploaded"})
         return
@@ -264,6 +265,12 @@ func (uc *UserControllers) UploadProfileImage (ctx *gin.Context) {
     }
 
     fileURL := fmt.Sprintf("http://localhost:8080/uploads/%s", filename)
+
+	err = uc.userUserCase.SaveProfileImage(ctx.GetString("user_id"), ctx.GetString("user_type"), fileURL)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to save file"})
+		return
+	}
 
     ctx.JSON(http.StatusOK, gin.H{"fileUrl": fileURL})
 }
@@ -408,7 +415,7 @@ func (uc *UserControllers) SetAvailability(c *gin.Context) {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
         return
     }
-
+	fmt.Printf(requestBody.Availability)
     err := uc.userUserCase.SetAvailability(user_id, requestBody.Availability)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to set availability", "details": err.Error()})

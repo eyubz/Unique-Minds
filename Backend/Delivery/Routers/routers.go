@@ -77,16 +77,17 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     serverGroup.GET("/profile", authMiddleWare, userControllers.GetProfile)
     
     serverGroup.POST("/upload", authMiddleWare, courseController.UploadFile)
+
     serverGroup.PUT("/profile", authMiddleWare, userControllers.UpdateProfile)
+
     serverGroup.PUT("/availability", authMiddleWare, userControllers.SetAvailability)
 
-    serverGroup.POST("schedule", authMiddleWare, userControllers.ScheduleSession)
+    serverGroup.POST("/schedule", authMiddleWare, userControllers.ScheduleSession)
 
     studentServer := serverGroup.Group("student")
     studentServer.Use(authMiddleWare)
-    //studentServer.GET("/profile", userControllers.GetStudentProfile)
-    //studentServer.PUT("/profile", userControllers.UpdateStudentProfile)
-    studentServer.POST("/upload", userControllers.UploadProfileImage)
+   
+    serverGroup.POST("/profile/upload", authMiddleWare, userControllers.UploadProfileImage)
 
 
 }

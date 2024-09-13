@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useNavigate } from "react";
 import { format } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import img from "../../Assets/educator.jpg";
 
 import {
   FaCalendarAlt,
@@ -29,13 +28,14 @@ const StarRating = ({ rating }) => {
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
+    id: 1,
     name: "John Doe",
     title: "Speech Therapist",
-    image: img,
+    profileImage: "https://via.placeholder.com/150",
     email: "bezueyerusalem@gmail.com",
     phone: "0957575757",
     bio: "John Doe has over 15 years of experience in special education...",
-    availability: [{ start: new Date(), end: new Date() }],
+    availability: [],
     address: "Addis Ababa, Ethiopia",
     rating: 3,
   });
@@ -76,12 +76,14 @@ const Profile = () => {
   const handleImageUpload = () => {
     if (!imageFile) return;
     const formData = new FormData();
-    formData.append("image", imageFile);
+    formData.append("file", imageFile);
+    console.log(imageFile);
 
-    fetch("http://localhost:8080/api/upload", {
+    fetch("http://localhost:8080/api/profile/upload", {
       method: "POST",
       body: formData,
       headers: {
+        Accept: "application/json",
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
     })
@@ -89,7 +91,7 @@ const Profile = () => {
       .then((data) => {
         setProfile({
           ...profile,
-          image: data.imageUrl,
+          image: data.fileUrl,
         });
         setImageFile(null);
       })
@@ -134,10 +136,16 @@ const Profile = () => {
   };
 
   const formatAvailability = (start, end) => {
-    return `${format(start, "eeee")} ${format(start, "h:mm a")} - ${format(
-      end,
+    if (!start || !end || isNaN(new Date(start)) || isNaN(new Date(end))) {
+      return "";
+    }
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    return `${format(startDate, "eeee MMM d")} ${format(
+      startDate,
       "h:mm a"
-    )}`;
+    )} - ${format(endDate, "h:mm a")}`;
   };
 
   const handleAvailabilitySubmit = (e) => {
@@ -147,17 +155,15 @@ const Profile = () => {
       alert("Please select both start and end dates.");
       return;
     }
-
     const newAvailability = formatAvailability(startDate, endDate);
-    const updatedAvailability = [
-      ...profile.availability,
-      { start: startDate, end: endDate },
-    ];
+
+    const updatedAvailability = [...profile.availability, newAvailability];
 
     setProfile({
       ...profile,
       availability: updatedAvailability,
     });
+    console.log(profile.availability);
     fetch("http://localhost:8080/api/availability", {
       method: "PUT",
       headers: {
@@ -175,7 +181,6 @@ const Profile = () => {
       })
       .catch((error) => console.error("Error setting availability:", error));
   };
-  console.log(profile.availability);
 
   return (
     <div className="relative flex flex-col h-full p-8 bg-light-gray rounded shadow-md">
@@ -200,7 +205,7 @@ const Profile = () => {
       <div className="flex items-start space-x-6 mb-8">
         <div className="w-32 h-32">
           <img
-            src={profile.image || "default-profile.png"}
+            src={profile.profileImage}
             alt="Profile"
             className="w-full h-full rounded-full object-cover shadow-lg cursor-pointer"
             onClick={handleProfileImageClick}
@@ -271,25 +276,25 @@ const Profile = () => {
                   <input
                     type="input"
                     name={`availability-${index}`}
-                    value={formatAvailability(avail.start, avail.end)}
+                    value={avail}
                     onChange={(e) => {
                       const updatedAvailability = [...profile.availability];
                       const [newStart, newEnd] = e.target.value.split(" - ");
-                      updatedAvailability[index] = {
-                        start: new Date(newStart),
-                        end: new Date(newEnd),
-                      };
-                      setProfile({
-                        ...profile,
-                        availability: updatedAvailability,
-                      });
+                      updatedAvailability[index] = formatAvailability(
+                        newStart,
+                        newEnd
+                      );
+                      // setProfile({
+                      //   ...profile,
+                      //   availability: updatedAvailability,
+                      // });
                     }}
                     className="w-full bg-white border border-gray-300 rounded p-2 mb-2 text-customBlue"
                   />
                 ) : (
                   <span className="flex items-center text-white">
                     <FaCalendarAlt className="text-white mr-2" />
-                    {formatAvailability(avail.start, avail.end)}
+                    {avail}
                   </span>
                 )}
               </li>

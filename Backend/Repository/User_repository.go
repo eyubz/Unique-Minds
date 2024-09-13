@@ -274,15 +274,16 @@ func (ur *UserRepository) GetStudentById(id string) (domain.StudentProfile, erro
 	return student, nil
 }
 
-func (ur *UserRepository) UpdateEducatorProfile(user_id string, educator domain.EducatorProfile) domain.EducatorProfile{
+func (ur *UserRepository) UpdateEducatorProfile(user_id string, educator domain.EducatorProfile) (domain.EducatorProfile, error){
 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
 	defer cancel()
-	filter := bson.M{"_id": user_id}
+	uid, _ := primitive.ObjectIDFromHex(user_id)
+	filter := bson.M{"_id": uid}
 	_, err := ur.educatorProfileCollection.UpdateOne(context, filter, bson.M{"$set": educator})
 	if err != nil {
-		return domain.EducatorProfile{}
+		return domain.EducatorProfile{}, err
 	}
-	return educator
+	return educator, nil
 }
 
 func (ur *UserRepository)  UpdateStudentProfile(user_id string, student domain.StudentProfile) domain.StudentProfile{
@@ -297,7 +298,8 @@ func (ur *UserRepository)  UpdateStudentProfile(user_id string, student domain.S
 }
 
 func (ur *UserRepository) SetAvailability(userID, availability string) error {
-	filter := bson.M{"user_id": userID}
+	uid, _ := primitive.ObjectIDFromHex(userID)
+	filter := bson.M{"_id": uid}
     update := bson.M{
         "$push": bson.M{
             "availability": availability,
@@ -591,4 +593,19 @@ func (ur *UserRepository) UpdateSchedules(user_id string, educatorID string, ava
 		return err
 	}
 	return nil
+}
+
+
+
+func (ur *UserRepository) UpdateProfileImage(user_id string, user_type, profileImage string) error {
+	uid, _ := primitive.ObjectIDFromHex(user_id)
+	filter := bson.M{"_id": uid}
+	update := bson.M{"$set": bson.M{"profileImage": profileImage}}
+	if user_type == "student"{
+		_, err := ur.studentProfileCollection.UpdateOne(context.TODO(), filter, update)
+		return err
+	}else{
+		_, err := ur.educatorProfileCollection.UpdateOne(context.TODO(), filter, update)
+		return err
+	}
 }

@@ -4,18 +4,18 @@ import logo from "../Assets/logo.png";
 import defaultImg from "../Assets/image1_0.jpg";
 
 const Navbar = () => {
-  const [accessToken, setAccessToken] = useState("oooo");
+  const [accessToken, setAccessToken] = useState();
   const [profileImage, setProfileImage] = useState(defaultImg);
-  const [role, setRole] = useState("student");
+  const [role, setRole] = useState();
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("access_token");
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
 
-  //   if (token) {
-  //     setAccessToken(token);
-  //     fetchUserProfile(token);
-  //   }
-  // }, []);
+    if (token) {
+      setAccessToken(token);
+      fetchUserProfile(token);
+    }
+  }, []);
 
   const fetchUserProfile = async (token) => {
     try {

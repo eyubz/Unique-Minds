@@ -116,11 +116,6 @@ type CourseWithStudents struct {
 	Students   []StudentProfile `json:"students"`
 }
 
-type Avail struct {
-    Start time.Time `json:"start" bson:"start"`
-    End   time.Time `json:"end" bson:"end"`
-}
-
 type UserUseCaseInterface interface {
 	RegisterUser(user User) error
 	VerifyEmail(email string, token string) error
@@ -147,6 +142,7 @@ type UserUseCaseInterface interface {
 	GetEnrolledCoursesProgress(userID string) ([]map[string]interface{}, error)
 	ScheduleSession(user_id string, educatorID string , availability time.Time) error
 	GetStudentSchedules(student_id string) (interface{}, error)
+	SaveProfileImage(user_id string, user_type string, profileImage string) error
 }
 
 type UserRepositoryInterface interface {
@@ -163,7 +159,7 @@ type UserRepositoryInterface interface {
 	GetEducatorsById(id string) (EducatorProfile, error)
 	SaveReview(review Review) error
 	GetStudentById(id string) (StudentProfile, error)
-	UpdateEducatorProfile(user_id string, educator EducatorProfile)EducatorProfile
+	UpdateEducatorProfile(user_id string, educator EducatorProfile)(EducatorProfile, error)
 	UpdateStudentProfile(user_id string, student StudentProfile)StudentProfile
 	SetAvailability(userID, availability string) error 
 	FindEducatorSchedules(educatorId string) (interface{}, error)
@@ -175,6 +171,7 @@ type UserRepositoryInterface interface {
 	FetchUserEnrolledCourses(userID string) ([]CourseProgress, error)
 	UpdateSchedules(user_id string, educatorID string, availability time.Time) error
 	FindStudentSchedules(studentId string) (interface{}, error)
+	UpdateProfileImage(user_id string, user_type, profileImage string) error 
 	
 }
 
