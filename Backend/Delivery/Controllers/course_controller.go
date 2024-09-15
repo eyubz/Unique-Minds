@@ -170,23 +170,23 @@ func (c *CourseController) GetCourseById(ctx *gin.Context) {
 }
 
 func (c *CourseController) UpdateProgress(ctx *gin.Context) {
-    var progressRequest domain.ProgressRequest
+    var progressRequest []string
     if err := ctx.ShouldBindJSON(&progressRequest); err != nil {
         ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
 
     courseID := ctx.Param("id")
-    userID := ctx.GetString("userID")
+    userID := ctx.GetString("user_id")
 
-    err := c.courseUsecase.UpdateProgress(courseID, userID, progressRequest.CompletedParts)
+    progress, err := c.courseUsecase.UpdateProgress(courseID, userID, progressRequest)
       
     if err != nil {
         ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
 
-    ctx.JSON(http.StatusOK, gin.H{"message": "Progress updated successfully"})
+    ctx.JSON(http.StatusOK, progress)
 }
 
 func (c *CourseController) SaveCourse(ctx *gin.Context) {

@@ -50,7 +50,7 @@ type CourseRepository interface {
     Save(course *Course, user_id string) error
     DeleteCourse(courseID string) error
     GetCoursesByEducator(userID string) ([]Course, error)
-    UpdateCourseProgress(courseID, userID string, completedParts []string) error
+    UpdateCourseProgress(courseID, userID string, completedParts []string) (CourseProgress, error)
     GetCourseProgress(courseID, userID string) (*CourseProgress, error) 
 }
 type CourseUseCaseInterface interface {
@@ -61,6 +61,6 @@ type CourseUseCaseInterface interface {
     UploadCourse(course *Course, user_id string) error
     GetEducatorCourses(id string) ([]Course, error)
     DeleteCourse(id string) error
-    UpdateProgress(courseID, userID string, completedParts []string) error
+    UpdateProgress(courseID, userID string, completedParts []string) (CourseProgress, error)
     GetCourseByID(courseID, userID string) (*CourseDetailResponse, error)
 }

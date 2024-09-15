@@ -68,7 +68,6 @@ func (uc *UserUseCase) RegisterUser(user domain.User) error {
 	return nil
 }
 
-
 func (uc *UserUseCase) VerifyEmail(email string, token string)error{
 	user, err := uc.UserRepo.FindUserByEmail(email)
 	if err != nil {
@@ -371,8 +370,8 @@ func (uc *UserUseCase) GetStudentSchedules(student_id string) (interface{}, erro
 	return uc.UserRepo.FindStudentSchedules(student_id)
 }
 
-func (uc *UserUseCase) CancelEducatorSchedule(scheduleId string, user_id string) error {
-    return uc.UserRepo.DeleteSchedule(scheduleId, user_id)
+func (uc *UserUseCase) CancelEducatorSchedule(scheduleId string, user_id string, educatorId string) error {
+    return uc.UserRepo.DeleteSchedule(scheduleId, user_id, educatorId)
 }
 
 func (uc *UserUseCase) FetchStudentsByCourses(educatorID string) ([]domain.CourseWithStudents, error) {
@@ -411,7 +410,7 @@ func (uc *UserUseCase) GetEnrolledCoursesProgress(userID string) ([]map[string]i
 }
 
 
-func (uc *UserUseCase) ScheduleSession(user_id string, educatorID string , availability time.Time) error {
+func (uc *UserUseCase) ScheduleSession(user_id string, educatorID string , availability string) error {
 	return uc.UserRepo.UpdateSchedules(user_id, educatorID, availability)
 }
 

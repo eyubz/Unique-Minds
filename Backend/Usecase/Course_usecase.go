@@ -89,7 +89,7 @@ func (u *courseUseCase) GetCourseByID(courseID, userID string) (*domain.CourseDe
     return &courseDetail, nil
 }
 
-func  (u *courseUseCase) UpdateProgress(courseID, userID string, completedParts []string) error {
+func  (u *courseUseCase) UpdateProgress(courseID, userID string, completedParts []string) (domain.CourseProgress, error) {
     return u.courseRepo.UpdateCourseProgress(courseID, userID, completedParts)
 }
 

@@ -10,27 +10,7 @@ import {
   parseISO,
 } from "date-fns";
 
-// Sample schedules for demonstration
-const sampleSchedules = [
-  // {
-  //   id: "1",
-  //   date: "2024-09-01",
-  //   task: "Complete AI Assignment",
-  //   educator: "Dr. Smith",
-  // },
-  // {
-  //   id: "2",
-  //   date: "2024-09-05",
-  //   task: "Attend Web Development Workshop",
-  //   educator: "Prof. Johnson",
-  // },
-  // {
-  //   id: "3",
-  //   date: "2024-09-10",
-  //   task: "Submit Data Science Project",
-  //   educator: "Dr. Adams",
-  // },
-];
+const sampleSchedules = [];
 
 const Schedule = () => {
   const [schedules, setSchedules] = useState(sampleSchedules);

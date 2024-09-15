@@ -1,33 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import img from "../Assets/educator.jpg";
-const EducatorProfileDetail = ({ userId }) => {
+import { useNavigate, useParams } from "react-router-dom";
+import { FaEnvelope, FaPhoneAlt } from "react-icons/fa";
+
+const EducatorProfileDetail = () => {
+  const { id } = useParams();
   const [educator, setEducator] = useState({
     name: "Ford Antonette",
     title: "Senior Response Strategist, Executive Vice President of Admissions",
     phone: "(400) 139-9865",
     email: "fordantonette5@yahoo.com",
     availability: ["Monday - Friday: 9 AM - 5 PM", "Saturday: 10 AM - 2 PM"],
-    about:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quia, earum! Dolorum delectus magni aliquam nisi tempora quisquam ut? Odit placeat nam hic quia distinctio. Perferendis excepturi velit consectetur consequuntur rerum.",
+    about: "",
     rating: 4.8,
     reviews: [
       {
         name: "John Doe",
         text: "Great educator! Very knowledgeable and helpful.",
         date: "August 22, 2023",
-        rating: 5,
-      },
-      {
-        name: "Jane Smith",
-        text: "Engaging sessions and always willing to provide extra resources.",
-        date: "July 15, 2023",
-        rating: 4,
-      },
-      {
-        name: "Michael Johnson",
-        text: "I highly recommend learning from Ford. Excellent teaching style.",
-        date: "June 12, 2023",
         rating: 5,
       },
     ],
@@ -56,7 +45,7 @@ const EducatorProfileDetail = ({ userId }) => {
 
       try {
         const response = await fetch(
-          `https://localhost:8080/api/educators/${userId}`,
+          `http://localhost:8080/api/educators/${id}`,
           {
             method: "GET",
             headers: {
@@ -83,7 +72,7 @@ const EducatorProfileDetail = ({ userId }) => {
     };
 
     fetchEducatorDetails();
-  }, [userId, navigate]);
+  }, [id, navigate]);
 
   const handleStarClick = (rating) => {
     setUserRating(rating);
@@ -100,7 +89,7 @@ const EducatorProfileDetail = ({ userId }) => {
     const reviewToSubmit = {
       ...newReview,
       rating: userRating,
-      educatorId: userId,
+      educatorId: id,
     };
 
     try {
@@ -157,14 +146,20 @@ const EducatorProfileDetail = ({ userId }) => {
 
     try {
       const token = localStorage.getItem("access_token");
-      const response = await fetch(`https://localhost:8080/api/schedule`, {
+      console.log(
+        JSON.stringify({
+          educatorId: id,
+          availability: selectedAvailability,
+        })
+      );
+      const response = await fetch(`http://localhost:8080/api/schedule`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          educatorId: userId,
+          educatorId: id,
           availability: selectedAvailability,
         }),
       });
@@ -219,17 +214,17 @@ const EducatorProfileDetail = ({ userId }) => {
     );
   };
 
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  // if (error) {
-  //   return <div>{error}</div>;
-  // }
+  if (error) {
+    return <div>{error}</div>;
+  }
 
-  // if (!educator) {
-  //   return <div>No educator data available</div>;
-  // }
+  if (!educator) {
+    return <div>No educator data available</div>;
+  }
 
   const {
     name,
@@ -237,19 +232,19 @@ const EducatorProfileDetail = ({ userId }) => {
     phone,
     email,
     availability,
-    about,
+    bio,
     rating,
     reviews,
-    image,
+    profileImage,
   } = educator;
 
   return (
     <div className="container mx-auto px-4 py-12 w-3/4 mt-16 shadow-lg">
       <div className="flex flex-col lg:flex-row p-10">
-        <div className="w-full lg:w-1/4 lg:pr-8 mr-10">
+        <div className="w-full lg:w-1/3 lg:pr-8 mr-10">
           <div className="flex flex-col items-center lg:items-start">
             <img
-              src={image || img}
+              src={profileImage}
               alt="Profile"
               className="rounded-full w-40 h-40 mb-4"
             />
@@ -260,9 +255,17 @@ const EducatorProfileDetail = ({ userId }) => {
               {title}
             </h2>
             <p className="text-gray-600 text-center lg:text-left mt-2">
-              {phone}
+              <span className="flex items-center">
+                <FaPhoneAlt className=" mr-2" />
+                {phone}
+              </span>
             </p>
-            <p className="text-customBlue text-center lg:text-left">{email}</p>
+            <p className="text-customBlue text-center lg:text-left">
+              <span className="flex items-center">
+                <FaEnvelope className=" mr-2" />
+                {email}
+              </span>
+            </p>
           </div>
         </div>
         <div className="w-full lg:w-3/4">
@@ -304,7 +307,7 @@ const EducatorProfileDetail = ({ userId }) => {
 
           <div className="bg-customBlue shadow-lg rounded-lg p-6 mb-6 ">
             <h3 className="text-2xl font-bold text-white mb-4">About</h3>
-            <p className="text-white">{about}</p>
+            <p className="text-white">{bio}</p>
           </div>
 
           <div className="bg-gray-100 shadow-lg rounded-lg p-6 mb-6">

@@ -203,9 +203,7 @@ func (r *CourseRepository) GerCourseById(id string) (domain.Course, error) {
 }
 
 func (r *CourseRepository) GetCourseProgress(courseID, userID string) (*domain.CourseProgress, error) {
-	var user struct {
-		EnrolledCourses []domain.CourseProgress `bson:"courses"`
-	}
+	var user domain.StudentProfile
 
 	cid, err := primitive.ObjectIDFromHex(courseID)
 	if err != nil {
@@ -216,7 +214,7 @@ func (r *CourseRepository) GetCourseProgress(courseID, userID string) (*domain.C
 		return nil, errors.New("invalid user ID")
 	}
 
-	err = r.collection.FindOne(context.TODO(), bson.M{"_id": uid}).Decode(&user)
+	err = r.studentColl.FindOne(context.TODO(), bson.M{"_id": uid}).Decode(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -228,19 +226,19 @@ func (r *CourseRepository) GetCourseProgress(courseID, userID string) (*domain.C
 	return nil, errors.New("course progress not found")
 }
 
-func (r *CourseRepository) UpdateCourseProgress(courseID, userID string, completedParts []string) error {
+func (r *CourseRepository) UpdateCourseProgress(courseID, userID string, completedParts []string) (domain.CourseProgress, error) {
 	cid, err := primitive.ObjectIDFromHex(courseID)
 	if err != nil {
-		return errors.New("invalid course ID")
+		return domain.CourseProgress{}, err
 	}
 	uid, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
-		return errors.New("invalid user ID")
+		return domain.CourseProgress{}, err
 	}
 
 	course, err := r.GerCourseById(cid.Hex())
 	if err != nil{
-		return errors.New("course not found")
+		return domain.CourseProgress{}, err
 	}
 
 	total_parts := len(course.Parts)
@@ -253,12 +251,18 @@ func (r *CourseRepository) UpdateCourseProgress(courseID, userID string, complet
 			"courses.$.is_completed":    len(completedParts) == total_parts,
 		},
 	}
-	_, err = r.collection.UpdateOne(context.TODO(), filter, update)
+	_, err = r.studentColl.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		return err
+		return domain.CourseProgress{}, err
 	}
-
-	return nil
+	var student domain.StudentProfile
+	err = r.studentColl.FindOne(context.TODO(), bson.M{"_id":uid}).Decode(&student)
+	for _, course := range student.EnrolledCourses{
+		if course.CourseID == cid{
+			return course, nil
+		}
+	}
+	return domain.CourseProgress{}, errors.New("Progress not found")
 }
 
 func (r *CourseRepository) SaveCourse(userID string, courseID string) error {
@@ -287,5 +291,11 @@ func (r *CourseRepository) SaveCourse(userID string, courseID string) error {
 	}
 
 	_, err = r.studentColl.UpdateOne(context.TODO(), filter, update)
+	if err != nil{
+		return err
+	}
+	_, err = r.collection.UpdateOne(context.TODO(), bson.M{"_id" : courseObjID},  bson.M{
+        "$inc": bson.M{"count": 1},
+    })
 	return err
 }

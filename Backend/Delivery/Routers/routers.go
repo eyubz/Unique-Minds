@@ -37,7 +37,7 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     auth.Use(authMiddleWare)
     auth.POST("/forgot-password", userControllers.ResetPassword)
     auth.POST("/reset-password", userControllers.ResetPasswordVerify)
-    auth.GET("logout", userControllers.Logout)
+    auth.POST("/logout", userControllers.Logout)
     auth.GET("/user-profile", authMiddleWare, userControllers.GetUserProfile)
 
 
@@ -56,12 +56,11 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     serverGroup.GET("/courses/my", authMiddleWare, courseController.GetMyCourse)
 
     serverGroup.GET("/courses/:id", authMiddleWare, courseController.GetCourseById)
-    serverGroup.POST("/:id/progress", authMiddleWare, courseController.UpdateProgress)
-
+   
+    serverGroup.POST("/courses/progress/:id", authMiddleWare, courseController.UpdateProgress)
 
     serverGroup.POST("/courses/:id", authMiddleWare, courseController.SaveCourse)
 
-    
     serverGroup.GET("/courses/progress", authMiddleWare, userControllers.GetCourseProgress)
 
     serverGroup.GET("/top-educators", userControllers.GetTopEducators)    
@@ -75,7 +74,7 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     
     serverGroup.GET("/educator/schedules", authMiddleWare, userControllers.GetSchedules)
     serverGroup.DELETE("/educators/schedules/:id", authMiddleWare, userControllers.CancelSchedule)
-    serverGroup.GET("/educator/students", authMiddleWare, userControllers.GetStudentsByCourses)
+    serverGroup.GET("/educator/students", authMiddleWare, userControllers.GetStudentsByCourses) 
 
     serverGroup.GET("/student/schedules", authMiddleWare, userControllers.GetStudentSchedules)
 
@@ -88,11 +87,6 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     serverGroup.PUT("/availability", authMiddleWare, userControllers.SetAvailability)
 
     serverGroup.POST("/schedule", authMiddleWare, userControllers.ScheduleSession)
-
-    studentServer := serverGroup.Group("student")
-    studentServer.Use(authMiddleWare)
    
     serverGroup.POST("/profile/upload", authMiddleWare, userControllers.UploadProfileImage)
-
-
 }

@@ -66,7 +66,7 @@ const CourseDetail = () => {
       },
     ],
   });
-  const [progress, setProgress] = useState({
+  const [progressData, setProgress] = useState({
     id: "progress_12345",
     progress: 60,
     completed_parts: ["part_1"],
@@ -88,7 +88,6 @@ const CourseDetail = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        // body: JSON.stringify({ progress: progress.progress }),
       });
 
       alert("Course saved successfully!");
@@ -121,8 +120,6 @@ const CourseDetail = () => {
         const data = await response.json();
 
         if (response.ok) {
-          console.log(data);
-
           setCourse(data.course);
           setProgress(data.progress);
         } else {
@@ -137,22 +134,34 @@ const CourseDetail = () => {
   }, [id, navigate]);
 
   const togglePartCompletion = async (partId) => {
-    const updatedCompletedParts = course.completed_parts.includes(partId)
-      ? course.completed_parts.filter((id) => id !== partId)
-      : [...course.completed_parts, partId];
+    const updatedCompletedParts =
+      progressData.completed_parts &&
+      progressData.completed_parts.includes(partId)
+        ? progressData.completed_parts.filter((id) => id !== partId)
+        : [...progressData.completed_parts, partId];
 
-    setCourse({ ...course, completed_parts: updatedCompletedParts });
+    setProgress({ ...progressData, completed_parts: updatedCompletedParts });
 
     try {
       const token = localStorage.getItem("access_token");
-      await fetch(`http://localhost:8080/api/courses/${id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ completed_parts: updatedCompletedParts }),
-      });
+      const response = await fetch(
+        `http://localhost:8080/api/courses/progress/${id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updatedCompletedParts),
+        }
+      );
+      const data = await response.json();
+
+      if (response.ok) {
+        setProgress(data);
+      } else {
+        console.error("Failed to fetch course");
+      }
     } catch (error) {
       console.error("Error updating progress:", error);
     }
@@ -186,8 +195,8 @@ const CourseDetail = () => {
                 <div
                   key={part._id}
                   className={`p-6 rounded-lg shadow-md ${
-                    progress.completed_parts !== null &&
-                    progress.completed_parts.includes(part._id)
+                    progressData.completed_parts !== null &&
+                    progressData.completed_parts.includes(part._id)
                       ? "bg-customBlue text-white"
                       : "bg-gray-100 text-customBlue"
                   }`}
@@ -196,10 +205,10 @@ const CourseDetail = () => {
                     <input
                       type="checkbox"
                       checked={
-                        progress.completed_parts !== null &&
-                        progress.completed_parts.includes(part.id)
+                        progressData.completed_parts !== null &&
+                        progressData.completed_parts.includes(part._id)
                       }
-                      onChange={() => togglePartCompletion(part.id)}
+                      onChange={() => togglePartCompletion(part._id)}
                       className="mr-3"
                     />
                     <h3 className="text-xl font-semibold mb-2">{part.name}</h3>
@@ -229,7 +238,7 @@ const CourseDetail = () => {
 
           <div className="flex justify-between mt-8">
             <div className="text-lg font-semibold">
-              Progress: {course.progress}%
+              Progress: {progressData.progress}%
             </div>
 
             <button

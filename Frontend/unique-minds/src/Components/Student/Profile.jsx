@@ -57,7 +57,7 @@ const StudentDashboard = () => {
             ...prevProfile,
             profileImage: data.fileUrl,
           }));
-          setImageFile(null); // Reset image file
+          setImageFile(null);
         } catch (error) {
           console.error("Error uploading image:", error);
         }
@@ -65,7 +65,7 @@ const StudentDashboard = () => {
 
       handleImageUpload();
     }
-  }, [imageFile]); // Run when imageFile changes
+  }, [imageFile]);
 
   const handleEditClick = () => {
     if (isEditing) {

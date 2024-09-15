@@ -11,27 +11,29 @@ import {
 } from "recharts";
 
 const ProgressBarChart = () => {
-  const sampleCourses = [
-    // { id: 1, title: "Introduction to AI", progress: 75 },
-    // { id: 2, title: "Web Development Bootcamp", progress: 50 },
-    // { id: 3, title: "Data Science Fundamentals", progress: 20 },
-  ];
+  const sampleCourses = [];
 
   const [courses, setCourses] = useState(sampleCourses);
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   fetch("http://localhost:8080/api/courses/progress")
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setCourses(data);
-  //       setLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching course progress data:", error);
-  //       setLoading(false);
-  //     });
-  // }, []);
+  useEffect(() => {
+    fetch("http://localhost:8080/api/courses/progress", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setCourses(data);
+        console.log(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching course progress data:", error);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -40,7 +42,7 @@ const ProgressBarChart = () => {
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="title" />
+        <XAxis dataKey="name" />
         <YAxis />
         <Tooltip />
         <Legend />

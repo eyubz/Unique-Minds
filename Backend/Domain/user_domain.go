@@ -91,7 +91,7 @@ type Schedule struct {
 	ID 		  primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	StudentID primitive.ObjectID `json:"student_id" bson:"student_id"`
 	EducatorId primitive.ObjectID `json:"educator_id" bson:"educator_id"`
-	Date 	  time.Time          `json:"date" bson:"date"`
+	Date 	  string          `json:"date" bson:"date"`
 	GoogleMeetLink string       `json:"googleMeetLink" bson:"googleMeetLink"`
 }
 type Address struct {
@@ -135,12 +135,12 @@ type UserUseCaseInterface interface {
 	GetEducatorProfile(user_id string) (EducatorProfile, error)
 	SetAvailability(userID string, availability string) error
 	GetEducatorSchedules(educatorId string) (interface{}, error)
-	CancelEducatorSchedule(scheduleId string, user_id string) error
+	CancelEducatorSchedule(scheduleId string, user_id string, educatorId string) error
 	FetchStudentsByCourses(educatorID string) ([]CourseWithStudents, error)
 	GetUserProfile(userID string) (*UserData, error)
 	GetTopEducatorsUseCase() ([]EducatorProfile, error)
 	GetEnrolledCoursesProgress(userID string) ([]map[string]interface{}, error)
-	ScheduleSession(user_id string, educatorID string , availability time.Time) error
+	ScheduleSession(user_id string, educatorID string , availability string) error
 	GetStudentSchedules(student_id string) (interface{}, error)
 	SaveProfileImage(user_id string, user_type string, profileImage string) error
 }
@@ -163,13 +163,13 @@ type UserRepositoryInterface interface {
 	UpdateStudentProfile(user_id string, student StudentProfile) (StudentProfile, error)
 	SetAvailability(userID, availability string) error 
 	FindEducatorSchedules(educatorId string) (interface{}, error)
-	DeleteSchedule(scheduleId string, userId string) error
+	DeleteSchedule(scheduleId string, userId string, educatorId string) error
 	GetStudentsFromEducatorProfile(educatorID string) ([]CourseWithStudents, error)
 	FindById(userID string) (*UserData, error)
 	GetTopEducators() ([]EducatorProfile, error)
 	FetchCourseNameByID(courseID primitive.ObjectID) (string, error)
 	FetchUserEnrolledCourses(userID string) ([]CourseProgress, error)
-	UpdateSchedules(user_id string, educatorID string, availability time.Time) error
+	UpdateSchedules(user_id string, educatorID string, availability string) error
 	FindStudentSchedules(studentId string) (interface{}, error)
 	UpdateProfileImage(user_id string, user_type, profileImage string) error 
 	

@@ -1,48 +1,10 @@
 import React, { useEffect, useState } from "react";
-import img from "../Assets/educator.jpg";
 import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 
 const Educators = () => {
   const [educators, setEducators] = useState([]);
-  //   [
-  //   {
-  //     id: 1,
-  //     name: "John Doe",
-  //     title: "AI Specialist",
-  //     image: img,
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Jane Smith",
-  //     title: "Web Developer",
-  //     image: img,
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Alex Johnson",
-  //     title: "Cybersecurity Expert",
-  //     image: img,
-  //   },
-  //   {
-  //     id: 1,
-  //     name: "John Doe",
-  //     title: "AI Specialist",
-  //     image: img,
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Jane Smith",
-  //     title: "Web Developer",
-  //     image: img,
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Alex Johnson",
-  //     title: "Cybersecurity Expert",
-  //     image: img,
-  //   },
-  // ]
+
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,7 +15,6 @@ const Educators = () => {
         `http://localhost:8080/api/educators?search=${query}&page=${page}&limit=6`
       );
       const data = await response.json();
-
       if (response.ok) {
         setEducators((prevEducators) =>
           page === 1
@@ -134,12 +95,12 @@ const Educators = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-3/4 mx-auto">
           {educators.map((educator) => (
             <div
-              key={educator.id}
+              key={educator._id}
               className="bg-customBlue rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl"
             >
               <div className="p-6 text-center">
                 <img
-                  src={educator.image || img}
+                  src={educator.profileImage}
                   alt={educator.name}
                   className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
                 />

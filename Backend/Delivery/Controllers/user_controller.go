@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
-	"time"
 	domain "unique-minds/Domain"
 
 	"github.com/gin-gonic/gin"
@@ -460,8 +459,16 @@ func (uc *UserControllers) CancelSchedule(ctx *gin.Context) {
         ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unauthorized"})
     }
     scheduleId := ctx.Param("id")
-
-    err := uc.userUserCase.CancelEducatorSchedule(scheduleId, user_id)
+	var educator struct {
+		EducatorID string `bson:"educatorID"`
+	}
+	err := ctx.ShouldBind(&educator)
+	if err != nil{
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
+        return
+	}
+	fmt.Println(educator.EducatorID)
+    err = uc.userUserCase.CancelEducatorSchedule(scheduleId, user_id, educator.EducatorID)
     if err != nil {
         ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to cancel schedule"})
         return
@@ -493,6 +500,7 @@ func (uc *UserControllers) GetUserProfile(c *gin.Context) {
         c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
         return
     }
+	
     user, err := uc.userUserCase.GetUserProfile(userID)
     if err != nil || user == nil {
 		fmt.Println(err.Error())
@@ -517,7 +525,11 @@ func (uc *UserControllers) GetTopEducators(c *gin.Context) {
 }
 
 func (uc *UserControllers) GetCourseProgress(c *gin.Context) {
-	userID := c.Param("user_id")
+	userID := c.GetString("user_id")
+	if userID == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
 	
 	courseProgress, err := uc.userUserCase.GetEnrolledCoursesProgress(userID)
 	if err != nil {
@@ -536,7 +548,7 @@ func  (uc *UserControllers) ScheduleSession(c *gin.Context) {
 	}
 	var req struct {
 		EducatorID        string `json:"educatorId"`
-		Availability      time.Time `json:"availability"`
+		Availability      string `json:"availability"`
 	}
 
 	if err := c.BindJSON(&req); err != nil {

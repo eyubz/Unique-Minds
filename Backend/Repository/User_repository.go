@@ -283,7 +283,7 @@ func (ur *UserRepository) UpdateEducatorProfile(user_id string, educator domain.
 	return educator, nil
 }
 
-func (ur *UserRepository)  UpdateStudentProfile(user_id string, student domain.StudentProfile) (domain.StudentProfile, error){
+func (ur *UserRepository) UpdateStudentProfile(user_id string, student domain.StudentProfile) (domain.StudentProfile, error){
 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
 	defer cancel()
 	uid, _ := primitive.ObjectIDFromHex(user_id)
@@ -345,7 +345,7 @@ func (ur *UserRepository) FindEducatorSchedules(educatorId string) (interface{},
 
         scheduleWithStudent := ScheduleWithStudent{
             ID:             schedule.ID,
-            Date:           schedule.Date.Format("2006-01-02 15:04"),
+            Date:           schedule.Date, //schedule.Date.Format("2006-01-02 15:04"),
             GoogleMeetLink: schedule.GoogleMeetLink,
             StudentName:    student.Name,
         }
@@ -368,10 +368,12 @@ func (ur *UserRepository) FindStudentSchedules(studentId string) (interface{}, e
     }
 
 	type ScheduleWithStudent struct {
-		ID             primitive.ObjectID `json:"id" bson:"_id"`
-		Date           string             `json:"date"`
-		GoogleMeetLink string             `json:"googleMeetLink"`
-		StudentName    string             `json:"studentName"`
+		ID              primitive.ObjectID `json:"id" bson:"_id"`
+		Date            string             `json:"date"`
+		GoogleMeetLink  string             `json:"googleMeetLink"`
+		EducatorName    string            `json:"educatorName"`
+		EducatorID		string            `json:"educatorID"`
+		StudentID       string            `json:"studentID"`
 	}
     var schedulesWithStudent []ScheduleWithStudent
 
@@ -387,21 +389,24 @@ func (ur *UserRepository) FindStudentSchedules(studentId string) (interface{}, e
 
         scheduleWithStudent := ScheduleWithStudent{
             ID:             schedule.ID,
-            Date:           schedule.Date.Format("2006-01-02 15:04"),
+            Date:           schedule.Date,  
             GoogleMeetLink: schedule.GoogleMeetLink,
-            StudentName:    student.Name,
+            EducatorName:   student.Name,
+			EducatorID: schedule.EducatorId.Hex(),
+			StudentID: studentId,
         }
         schedulesWithStudent = append(schedulesWithStudent, scheduleWithStudent)
     }
     return schedulesWithStudent, nil
 }
 
-func (ur *UserRepository) DeleteSchedule(scheduleId string, userId string) error {
+func (ur *UserRepository) DeleteSchedule(scheduleId string, userId string, educatorId string) error {
     scheduleObjID, _ := primitive.ObjectIDFromHex(scheduleId)
     userObjID, _ := primitive.ObjectIDFromHex(userId)
+	eduId, _ := primitive.ObjectIDFromHex(educatorId)
 
     educatorFilter := bson.M{
-        "_id":           userObjID,
+        "_id":           eduId,
         "schedules._id": scheduleObjID,
     }
     update := bson.M{
@@ -559,7 +564,7 @@ func (ur *UserRepository) FetchCourseNameByID(courseID primitive.ObjectID) (stri
 }
 
 
-func (ur *UserRepository) UpdateSchedules(user_id string, educatorID string, availability time.Time) error {
+func (ur *UserRepository) UpdateSchedules(user_id string, educatorID string, availability string) error {
 	uid, _ := primitive.ObjectIDFromHex(user_id)
 	educator_id, _ := primitive.ObjectIDFromHex(educatorID)
 
@@ -590,8 +595,6 @@ func (ur *UserRepository) UpdateSchedules(user_id string, educatorID string, ava
 	}
 	return nil
 }
-
-
 
 func (ur *UserRepository) UpdateProfileImage(user_id string, user_type, profileImage string) error {
 	uid, _ := primitive.ObjectIDFromHex(user_id)
