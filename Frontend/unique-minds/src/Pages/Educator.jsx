@@ -50,7 +50,7 @@ const Educators = () => {
   const fetchEducators = async (query = "", page = 1) => {
     try {
       const response = await fetch(
-        `https://localhost:8080/api/educators?search=${query}&page=${page}&limit=6`
+        `http://localhost:8080/api/educators?search=${query}&page=${page}&limit=6`
       );
       const data = await response.json();
 

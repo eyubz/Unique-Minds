@@ -30,7 +30,7 @@ type UserData struct {
 type StudentProfile struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	FullName      string             `bson:"name" json:"name"`
-	Age           int                `json:"age" bson:"age"`
+	Age           string                `json:"age" bson:"age"`
 	Bio           string             `json:"bio" bson:"bio"`
 	GuardianEmail string             `json:"guardianEmail" bson:"guardianEmail"`
 	GuardianPhone string             `json:"guardianPhone" bson:"guardianPhone"`
@@ -160,7 +160,7 @@ type UserRepositoryInterface interface {
 	SaveReview(review Review) error
 	GetStudentById(id string) (StudentProfile, error)
 	UpdateEducatorProfile(user_id string, educator EducatorProfile)(EducatorProfile, error)
-	UpdateStudentProfile(user_id string, student StudentProfile)StudentProfile
+	UpdateStudentProfile(user_id string, student StudentProfile) (StudentProfile, error)
 	SetAvailability(userID, availability string) error 
 	FindEducatorSchedules(educatorId string) (interface{}, error)
 	DeleteSchedule(scheduleId string, userId string) error

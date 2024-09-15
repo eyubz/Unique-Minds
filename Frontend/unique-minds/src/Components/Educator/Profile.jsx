@@ -67,6 +67,7 @@ const Profile = () => {
       console.error("No token found in local storage");
     }
   }, []);
+
   const handleProfileImageClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -214,7 +215,6 @@ const Profile = () => {
           <input
             type="file"
             ref={fileInputRef}
-            style={{ display: "none" }}
             accept="image/*"
             onChange={handleFileChange}
             className="hidden"

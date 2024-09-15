@@ -388,6 +388,7 @@ func  (uc *UserControllers) UpdateProfile(c *gin.Context) {
 		c.JSON(http.StatusOK, updatedProfile)
 	} else {
 		if err := c.BindJSON(&student); err != nil {
+			fmt.Println(err.Error())
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 			return
 		}

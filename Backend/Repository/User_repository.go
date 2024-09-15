@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"errors"
-	"fmt"
 	"math"
 	"strings"
 	"time"
@@ -70,12 +69,12 @@ func (ur *UserRepository) RegisterUser(user domain.User) error {
 	if strings.ToLower(user.UserType) == "student"{
 		var student = domain.StudentProfile{
 			ID: user.ID,
-			FullName: "Enter Your Full Name Here",
-			Age: 0,
-			Bio: "Enter Your Bio Here",
+			FullName: "Your Full Name Here",
+			Age: "Your",
+			Bio: "Your Bio Here",
 			GuardianEmail: user.Email,
-			GuardianPhone: "Enter Your Guardian Phone Number Here",
-			Location: "Enter Your Location Here",
+			GuardianPhone: "Your Guardian Phone Number Here",
+			Location: "Your Location Here",
 			ProfileImage: "../../Assets/educator.jpg",
 			Created_At: user.Created_At,
 			UpdateAt: user.Created_At,
@@ -83,34 +82,32 @@ func (ur *UserRepository) RegisterUser(user domain.User) error {
 			EnrolledCourses: []domain.CourseProgress{},
 			Schedule: []domain.Schedule{},
 			Courses: []domain.Course{},
-			Condition: "Enter Your Condition Here",
+			Condition: "Your Condition Here",
 		}
 		_, err = ur.studentProfileCollection.InsertOne(context, student)
 
 	}else{
 		var educator = domain.EducatorProfile{
 			ID: user.ID,
-			FullName: "Enter Your Full Name Here",
-			Title: "Enter Your Title Here",
+			FullName: "Your Full Name Here",
+			Title: "Your Title Here",
 			ProfileImage: "../../Assets/educator.jpg",
-			Phone: "Enter Your Phone Number Here",
-			Bio: "Enter Your Bio Here",
+			Phone: "Your Phone Number Here",
+			Bio: "Your Bio Here",
 			Rating: 0,
 			Reviews: []domain.Review{},
 			Availability: []string{},
 			Email: user.Email,
 			Created_At: user.Created_At,
 			UpdateAt: user.Created_At,
-			Address: "Enter Your Address Here",
+			Address: "Your Address Here",
 			Schedules: []domain.Schedule{},
 			Students: []domain.Student{},
 		}
 		_, err = ur.educatorProfileCollection.InsertOne(context, educator)
+
 	}
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func (ur *UserRepository) UpdateUser(id string, user domain.User) error {
@@ -286,15 +283,16 @@ func (ur *UserRepository) UpdateEducatorProfile(user_id string, educator domain.
 	return educator, nil
 }
 
-func (ur *UserRepository)  UpdateStudentProfile(user_id string, student domain.StudentProfile) domain.StudentProfile{
+func (ur *UserRepository)  UpdateStudentProfile(user_id string, student domain.StudentProfile) (domain.StudentProfile, error){
 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
 	defer cancel()
-	filter := bson.M{"_id": user_id}
+	uid, _ := primitive.ObjectIDFromHex(user_id)
+	filter := bson.M{"_id": uid}
 	_, err := ur.studentProfileCollection.UpdateOne(context, filter, bson.M{"$set": student})
 	if err != nil {
-		return domain.StudentProfile{}
+		return domain.StudentProfile{}, err
 	}
-	return student
+	return student, nil
 }
 
 func (ur *UserRepository) SetAvailability(userID, availability string) error {
@@ -485,8 +483,7 @@ func (ur *UserRepository) FindById(userID string) (*domain.UserData, error) {
     var student domain.StudentProfile
     var educator domain.EducatorProfile
 	uid, _ := primitive.ObjectIDFromHex(userID)
-
-
+	
     err := ur.studentProfileCollection.FindOne(context.TODO(), bson.M{"_id": uid}).Decode(&student)
     if err == nil {
         return &domain.UserData{
@@ -502,8 +499,7 @@ func (ur *UserRepository) FindById(userID string) (*domain.UserData, error) {
             Role:         "educator",
         }, nil
     }
-	fmt.Println(err.Error())
-    return nil, errors.New("user not found")
+    return nil, err
 }
 
 func (ur *UserRepository) GetTopEducators() ([]domain.EducatorProfile, error) {

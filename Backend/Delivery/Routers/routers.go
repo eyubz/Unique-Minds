@@ -38,7 +38,7 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     auth.POST("/forgot-password", userControllers.ResetPassword)
     auth.POST("/reset-password", userControllers.ResetPasswordVerify)
     auth.GET("logout", userControllers.Logout)
-    auth.GET("/user-profile", userControllers.GetUserProfile)
+    auth.GET("/user-profile", authMiddleWare, userControllers.GetUserProfile)
 
 
     tokenGroup := serverGroup.Group("token")
@@ -49,7 +49,7 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     
     serverGroup.GET("/featured-courses", courseController.GetFeaturedCourses)
     
-    serverGroup.GET("/courses", authMiddleWare, courseController.GetCourses)
+    serverGroup.GET("/courses", courseController.GetCourses)
 
     serverGroup.POST("/courses/reviews", authMiddleWare, userControllers.SaveReview)
 
@@ -57,7 +57,11 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
 
     serverGroup.GET("/courses/:id", authMiddleWare, courseController.GetCourseById)
     serverGroup.POST("/:id/progress", authMiddleWare, courseController.UpdateProgress)
+
+
     serverGroup.POST("/courses/:id", authMiddleWare, courseController.SaveCourse)
+
+    
     serverGroup.GET("/courses/progress", authMiddleWare, userControllers.GetCourseProgress)
 
     serverGroup.GET("/top-educators", userControllers.GetTopEducators)    
@@ -66,6 +70,7 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     serverGroup.GET("/educators/:id", authMiddleWare, userControllers.GetEducatorById)
 
     serverGroup.GET("/educator/courses", authMiddleWare, courseController.GetEducatorCourses)
+
     serverGroup.DELETE("/educator/courses/:id", authMiddleWare, courseController.DeleteCourse)
     
     serverGroup.GET("/educator/schedules", authMiddleWare, userControllers.GetSchedules)

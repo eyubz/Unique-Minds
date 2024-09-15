@@ -350,8 +350,8 @@ func (uc *UserUseCase) UpdateStudentProfile(user_id string, updatedProfile domai
 	student.Location = updatedProfile.Location
 	student.ProfileImage = updatedProfile.ProfileImage
 	student.UpdateAt = time.Now()
-	result := uc.UserRepo.UpdateStudentProfile(user_id, student)
-	return result, nil
+	result, err := uc.UserRepo.UpdateStudentProfile(user_id, student)
+	return result, err
 }
 
 func (uc *UserUseCase) SetAvailability(userID string, availability string) error {

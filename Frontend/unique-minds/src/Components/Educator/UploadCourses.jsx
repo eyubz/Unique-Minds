@@ -103,6 +103,7 @@ const UploadCourse = () => {
 
       if (response.ok) {
         const data = await response.json();
+
         return data.fileUrl;
       } else {
         console.error("Failed to upload file:", response.statusText);
@@ -168,7 +169,7 @@ const UploadCourse = () => {
 
       if (response.ok) {
         const result = await response.json();
-        console.log("Course uploaded successfully:", result);
+        alert("Course uploaded successfully.");
       } else {
         console.error("Failed to upload course:", response.statusText);
       }

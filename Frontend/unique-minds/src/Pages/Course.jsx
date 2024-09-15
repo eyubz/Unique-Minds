@@ -78,7 +78,7 @@ const Courses = () => {
   const fetchCourses = async (query = "", tag = "", page = 1) => {
     try {
       const response = await fetch(
-        `https://localhost:8080/api/courses?search=${query}&category=${tag}&page=${page}&limit=10`
+        `http://localhost:8080/api/courses?search=${query}&category=${tag}&page=${page}&limit=10`
       );
       const data = await response.json();
 
@@ -186,10 +186,10 @@ const Courses = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {courses.map((course) => (
             <div
-              key={course.id}
+              key={course._id}
               className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl"
             >
-              <CourseCard course={course} />
+              <CourseCard course={course} key={course._id} />
             </div>
           ))}
         </div>

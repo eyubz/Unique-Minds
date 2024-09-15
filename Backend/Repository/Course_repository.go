@@ -130,38 +130,33 @@ func (r *CourseRepository) GetCourses(pageNo int64, pageSize int64, search strin
 }
 
 func (r *CourseRepository) GetMyCourse(id string) ([]domain.Course, error) {
+	var courses []domain.Course
+	var student domain.StudentProfile
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
 
-	pipeline := mongo.Pipeline{
-		bson.D{{Key : "$match", Value: bson.D{{Key:"_id", Value: objID}}}},
-		bson.D{{Key: "$lookup", Value: bson.D{
-			{Key: "from", Value: "courses"},
-			{Key: "localField", Value: "course_ids"},
-			{Key: "foreignField", Value: "_id"},
-			{Key: "as", Value: "course_s"},
-		}}},
-	}
-	cursor, err := r.studentColl.Aggregate(context.TODO(), pipeline)
+	err = r.studentColl.FindOne(context.TODO(), bson.M{"_id": objID}).Decode(&student)
 	if err != nil {
 		return nil, err
 	}
 
-	var student domain.StudentProfile
-	if cursor.Next(context.TODO()) {
-		if err := cursor.Decode(&student); err != nil {
+	for id := range student.CourseIds {
+		var course domain.Course
+		err = r.collection.FindOne(context.TODO(), bson.M{"_id": student.CourseIds[id]}).Decode(&course)
+		if err != nil {
 			return nil, err
 		}
+		courses = append(courses, course)
 	}
-	return student.Courses, nil
+	return courses, nil
 }
 
 func (r *CourseRepository) GetCoursesByEducator(userID string) ([]domain.Course, error) {
 	uid, _ := primitive.ObjectIDFromHex(userID)
     var courses []domain.Course
-    filter := bson.M{"creator_id": uid}
+    filter := bson.M{"user_id": uid}
 
     cursor, err := r.collection.Find(context.TODO(), filter)
     if err != nil {
@@ -266,7 +261,6 @@ func (r *CourseRepository) UpdateCourseProgress(courseID, userID string, complet
 	return nil
 }
 
-
 func (r *CourseRepository) SaveCourse(userID string, courseID string) error {
 	studentObjID, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
@@ -292,6 +286,6 @@ func (r *CourseRepository) SaveCourse(userID string, courseID string) error {
 		},
 	}
 
-	_, err = r.userCollection.UpdateOne(context.TODO(), filter, update)
+	_, err = r.studentColl.UpdateOne(context.TODO(), filter, update)
 	return err
 }

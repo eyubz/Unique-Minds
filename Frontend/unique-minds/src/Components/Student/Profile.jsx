@@ -1,18 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 
 const StudentDashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState({
-    // profileImage: "https://via.placeholder.com/150",
-    // name: "John Doe",
-    // age: "16",
-    // condition: "Down Syndrome",
-    // bio: "Student bio goes here...",
-    // guardianEmail: "guardian@example.com",
-    // guardianPhone: "123-456-7890",
-    // location: "City, Country",
-  });
+  const [profile, setProfile] = useState({});
+  const [imageFile, setImageFile] = useState(null);
+
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -34,6 +28,44 @@ const StudentDashboard = () => {
 
     fetchProfile();
   }, []);
+
+  useEffect(() => {
+    if (imageFile) {
+      const handleImageUpload = async () => {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+
+        try {
+          const response = await fetch(
+            "http://localhost:8080/api/profile/upload",
+            {
+              method: "POST",
+              body: formData,
+              headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Error uploading image");
+          }
+
+          const data = await response.json();
+          setProfile((prevProfile) => ({
+            ...prevProfile,
+            profileImage: data.fileUrl,
+          }));
+          setImageFile(null); // Reset image file
+        } catch (error) {
+          console.error("Error uploading image:", error);
+        }
+      };
+
+      handleImageUpload();
+    }
+  }, [imageFile]); // Run when imageFile changes
 
   const handleEditClick = () => {
     if (isEditing) {
@@ -64,17 +96,16 @@ const StudentDashboard = () => {
     }));
   };
 
-  const handleImageChange = (e) => {
+  const handleProfileImageClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfile((prevProfile) => ({
-          ...prevProfile,
-          profileImage: reader.result,
-        }));
-      };
-      reader.readAsDataURL(file);
+      setImageFile(file);
     }
   };
 
@@ -110,14 +141,18 @@ const StudentDashboard = () => {
                   src={profile.profileImage}
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover shadow-lg"
+                  onClick={handleProfileImageClick}
+                  style={{ cursor: "pointer" }}
                 />
               </div>
               {isEditing && (
                 <input
+                  ref={fileInputRef}
                   id="imageUpload"
                   type="file"
+                  accept="image/*"
                   className="hidden"
-                  onChange={handleImageChange}
+                  onChange={handleFileChange}
                 />
               )}
             </label>
@@ -127,7 +162,7 @@ const StudentDashboard = () => {
                 <input
                   type="text"
                   name="name"
-                  value={profile.name}
+                  value={profile.name || ""}
                   onChange={handleChange}
                   className="text-3xl font-semibold text-customBlue bg-white border border-gray-300 rounded-lg p-3 mb-3 w-full"
                 />
@@ -142,7 +177,7 @@ const StudentDashboard = () => {
                   <input
                     type="text"
                     name="age"
-                    value={profile.age}
+                    value={profile.age || ""}
                     onChange={handleChange}
                     className="text-customBlue bg-white border border-gray-300 rounded-lg p-2"
                   />
@@ -154,7 +189,7 @@ const StudentDashboard = () => {
                   <input
                     type="text"
                     name="condition"
-                    value={profile.condition}
+                    value={profile.condition || ""}
                     onChange={handleChange}
                     className="text-customBlue bg-white border border-gray-300 rounded-lg p-2"
                   />
@@ -170,7 +205,7 @@ const StudentDashboard = () => {
                 {isEditing ? (
                   <textarea
                     name="bio"
-                    value={profile.bio}
+                    value={profile.bio || ""}
                     onChange={handleChange}
                     className="w-full h-32 bg-white border border-gray-300 rounded-lg p-3 text-gray-800"
                   />
@@ -191,7 +226,7 @@ const StudentDashboard = () => {
                 <input
                   type="email"
                   name="guardianEmail"
-                  value={profile.guardianEmail}
+                  value={profile.guardianEmail || ""}
                   onChange={handleChange}
                   className="w-full bg-white border border-gray-300 rounded-lg p-3 text-customBlue"
                   placeholder="Email"
@@ -209,7 +244,7 @@ const StudentDashboard = () => {
                 <input
                   type="text"
                   name="guardianPhone"
-                  value={profile.guardianPhone}
+                  value={profile.guardianPhone || ""}
                   onChange={handleChange}
                   placeholder="Phone"
                   className="w-full bg-white border border-gray-300 rounded-lg p-3 text-customBlue"
@@ -227,7 +262,7 @@ const StudentDashboard = () => {
                 <input
                   type="text"
                   name="location"
-                  value={profile.location}
+                  value={profile.location || ""}
                   onChange={handleChange}
                   placeholder="Address"
                   className="w-full bg-white border border-gray-300 rounded-lg p-3 text-customBlue"

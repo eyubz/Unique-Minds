@@ -166,7 +166,6 @@ func (c *CourseController) GetCourseById(ctx *gin.Context) {
         ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
-
     ctx.JSON(http.StatusOK, course)
 }
 
@@ -192,7 +191,7 @@ func (c *CourseController) UpdateProgress(ctx *gin.Context) {
 
 func (c *CourseController) SaveCourse(ctx *gin.Context) {
 	studentID := ctx.GetString("user_id")
-	courseID := ctx.Param("course_id")
+	courseID := ctx.Param("id")
 
     if studentID == ""{
         ctx.JSON(500, domain.ErrorResponse{
