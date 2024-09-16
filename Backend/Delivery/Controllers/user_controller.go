@@ -458,17 +458,25 @@ func (uc *UserControllers) CancelSchedule(ctx *gin.Context) {
     if user_id == ""{
         ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unauthorized"})
     }
-    scheduleId := ctx.Param("id")
-	var educator struct {
-		EducatorID string `bson:"educatorID"`
-	}
-	err := ctx.ShouldBind(&educator)
-	if err != nil{
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
+    scheduleId := ctx.Param("id") 
+
+    err := uc.userUserCase.CancelEducatorSchedule(scheduleId, user_id)
+    if err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to cancel schedule"})
         return
-	}
-	fmt.Println(educator.EducatorID)
-    err = uc.userUserCase.CancelEducatorSchedule(scheduleId, user_id, educator.EducatorID)
+    }
+
+    ctx.JSON(http.StatusOK, gin.H{"message": "Schedule canceled successfully"})
+}
+
+func (uc *UserControllers) CancelEducatorSchedule(ctx *gin.Context) {
+	user_id := ctx.GetString("user_id")
+    if user_id == ""{
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unauthorized"})
+    }
+    scheduleId := ctx.Param("id") 
+
+    err := uc.userUserCase.CancelSchedule(scheduleId, user_id)
     if err != nil {
         ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to cancel schedule"})
         return

@@ -135,7 +135,7 @@ type UserUseCaseInterface interface {
 	GetEducatorProfile(user_id string) (EducatorProfile, error)
 	SetAvailability(userID string, availability string) error
 	GetEducatorSchedules(educatorId string) (interface{}, error)
-	CancelEducatorSchedule(scheduleId string, user_id string, educatorId string) error
+	CancelEducatorSchedule(scheduleId string, user_id string) error
 	FetchStudentsByCourses(educatorID string) ([]CourseWithStudents, error)
 	GetUserProfile(userID string) (*UserData, error)
 	GetTopEducatorsUseCase() ([]EducatorProfile, error)
@@ -143,6 +143,7 @@ type UserUseCaseInterface interface {
 	ScheduleSession(user_id string, educatorID string , availability string) error
 	GetStudentSchedules(student_id string) (interface{}, error)
 	SaveProfileImage(user_id string, user_type string, profileImage string) error
+	CancelSchedule(scheduleId string, user_id string) error
 }
 
 type UserRepositoryInterface interface {
@@ -163,7 +164,7 @@ type UserRepositoryInterface interface {
 	UpdateStudentProfile(user_id string, student StudentProfile) (StudentProfile, error)
 	SetAvailability(userID, availability string) error 
 	FindEducatorSchedules(educatorId string) (interface{}, error)
-	DeleteSchedule(scheduleId string, userId string, educatorId string) error
+	DeleteSchedule(scheduleId string, userId string) error
 	GetStudentsFromEducatorProfile(educatorID string) ([]CourseWithStudents, error)
 	FindById(userID string) (*UserData, error)
 	GetTopEducators() ([]EducatorProfile, error)
@@ -172,7 +173,7 @@ type UserRepositoryInterface interface {
 	UpdateSchedules(user_id string, educatorID string, availability string) error
 	FindStudentSchedules(studentId string) (interface{}, error)
 	UpdateProfileImage(user_id string, user_type, profileImage string) error 
-	
+	DeleteEducatorSchedule(scheduleId string, userId string) error
 }
 
 type AdminUseCaseInterface interface {

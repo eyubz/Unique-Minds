@@ -177,7 +177,6 @@ const Profile = () => {
     })
       .then((response) => response.json())
       .then(() => {
-        alert("Availability set successfully!");
         setIsOverlayOpen(false);
       })
       .catch((error) => console.error("Error setting availability:", error));

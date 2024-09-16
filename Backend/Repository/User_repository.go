@@ -400,11 +400,24 @@ func (ur *UserRepository) FindStudentSchedules(studentId string) (interface{}, e
     return schedulesWithStudent, nil
 }
 
-func (ur *UserRepository) DeleteSchedule(scheduleId string, userId string, educatorId string) error {
+func (ur *UserRepository) DeleteSchedule(scheduleId string, userId string) error {
     scheduleObjID, _ := primitive.ObjectIDFromHex(scheduleId)
     userObjID, _ := primitive.ObjectIDFromHex(userId)
-	eduId, _ := primitive.ObjectIDFromHex(educatorId)
+	var eduId primitive.ObjectID
 
+	var student domain.StudentProfile
+
+	err := ur.studentProfileCollection.FindOne(context.TODO(), bson.M{"_id": userObjID, "schedules._id": scheduleObjID}).Decode(&student)
+	if err != nil {
+		return err
+	}
+
+	for _, schedule := range student.Schedule {
+		if schedule.ID == scheduleObjID {
+			eduId = schedule.EducatorId
+			break
+		}
+	}
     educatorFilter := bson.M{
         "_id":           eduId,
         "schedules._id": scheduleObjID,
@@ -415,13 +428,60 @@ func (ur *UserRepository) DeleteSchedule(scheduleId string, userId string, educa
         },
     }
 
-    _, err := ur.educatorProfileCollection.UpdateOne(context.TODO(), educatorFilter, update)
+    _, err = ur.educatorProfileCollection.UpdateOne(context.TODO(), educatorFilter, update)
     if err != nil {
         return err
     }
 
     studentFilter := bson.M{
         "_id":           userObjID,
+        "schedules._id": scheduleObjID,
+    }
+
+    _, err = ur.studentProfileCollection.UpdateOne(context.TODO(), studentFilter, update)
+    if err != nil {
+        return err
+    }
+
+    return nil
+}
+
+
+func (ur *UserRepository) DeleteEducatorSchedule(scheduleId string, userId string) error {
+    scheduleObjID, _ := primitive.ObjectIDFromHex(scheduleId)
+    userObjID, _ := primitive.ObjectIDFromHex(userId)
+	var stuId primitive.ObjectID
+
+	var educator domain.EducatorProfile
+
+	err := ur.educatorProfileCollection.FindOne(context.TODO(), bson.M{"_id": userObjID, "schedules._id": scheduleObjID}).Decode(&educator)
+	if err != nil {
+		return err
+	}
+
+	for _, schedule := range educator.Schedules {
+		if schedule.ID == scheduleObjID {
+			stuId = schedule.StudentID
+			break
+		}
+	}
+    educatorFilter := bson.M{
+        "_id":           userObjID,
+        "schedules._id": scheduleObjID,
+    }
+    update := bson.M{
+        "$pull": bson.M{
+            "schedules": bson.M{"_id": scheduleObjID},
+        },
+    }
+
+    _, err = ur.educatorProfileCollection.UpdateOne(context.TODO(), educatorFilter, update)
+    if err != nil {
+        return err
+    }
+
+    studentFilter := bson.M{
+        "_id":           stuId,
         "schedules._id": scheduleObjID,
     }
 

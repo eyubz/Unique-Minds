@@ -73,7 +73,9 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     serverGroup.DELETE("/educator/courses/:id", authMiddleWare, courseController.DeleteCourse)
     
     serverGroup.GET("/educator/schedules", authMiddleWare, userControllers.GetSchedules)
-    serverGroup.DELETE("/educators/schedules/:id", authMiddleWare, userControllers.CancelSchedule)
+    serverGroup.DELETE("/educators/schedules/:id", authMiddleWare, userControllers.CancelEducatorSchedule)
+    serverGroup.DELETE("/students/schedules/:id", authMiddleWare, userControllers.CancelSchedule)
+
     serverGroup.GET("/educator/students", authMiddleWare, userControllers.GetStudentsByCourses) 
 
     serverGroup.GET("/student/schedules", authMiddleWare, userControllers.GetStudentSchedules)

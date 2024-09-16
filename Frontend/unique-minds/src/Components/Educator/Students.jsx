@@ -1,48 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaUser } from "react-icons/fa";
 
-const sampleCoursesWithStudents = [
-  // {
-  //   courseName: "Mathematics",
-  //   students: [
-  //     {
-  //       id: "1",
-  //       name: "John Doe",
-  //       description: "Down Syndrome",
-  //     },
-  //     {
-  //       id: "2",
-  //       name: "Jane Smith",
-  //       description: "Down Syndrome",
-  //     },
-  //     {
-  //       id: "2",
-  //       name: "Jane Smith",
-  //       description: "Down Syndrome",
-  //     },
-  //   ],
-  // },
-  // {
-  //   courseName: "History",
-  //   students: [
-  //     {
-  //       id: "3",
-  //       name: "Alice Johnson",
-  //       description: "Down Syndrome",
-  //     },
-  //     {
-  //       id: "4",
-  //       name: "Bob Lee",
-  //       description: "Down Syndrome",
-  //     },
-  //     {
-  //       id: "4",
-  //       name: "Bob Lee",
-  //       description: "Down Syndrome",
-  //     },
-  //   ],
-  // },
-];
+const sampleCoursesWithStudents = [];
 
 const Students = () => {
   const [coursesWithStudents, setCoursesWithStudents] = useState(
@@ -77,9 +36,8 @@ const Students = () => {
   return (
     <div className="bg-customBlue p-8 rounded-lg shadow-lg">
       <h2 className="text-3xl font-bold mb-6 text-white">Students Overview</h2>
-
       <div className="space-y-8">
-        {coursesWithStudents.length > 0 ? (
+        {coursesWithStudents != null && coursesWithStudents.length > 0 ? (
           coursesWithStudents.map((course) => (
             <div
               key={course.courseName}
@@ -113,7 +71,7 @@ const Students = () => {
             </div>
           ))
         ) : (
-          <p className="text-gray-800">No courses or students found.</p>
+          <p className="text-white">No students found.</p>
         )}
       </div>
     </div>

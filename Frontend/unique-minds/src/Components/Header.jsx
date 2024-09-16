@@ -9,14 +9,14 @@ const Header = () => {
       <motion.div
         className="flex-1 flex justify-center"
         initial={{ opacity: 0, x: -100 }}
-        animate={{ opacity: 1, x: 0, rotate: [0, 10, -10, 0] }} // Add subtle rotation effect
+        animate={{ opacity: 1, x: 0, rotate: [0, 10, -10, 0] }}
         transition={{ duration: 1, ease: "easeInOut" }}
       >
         <motion.img
           src={img1}
           alt="E-Learning"
           className="w-3/4 max-w-md rounded-lg shadow-lg"
-          whileHover={{ scale: 1.05, rotate: 2 }} // Slight scaling and rotation on hover
+          whileHover={{ scale: 1.05, rotate: 2 }}
           transition={{ duration: 0.3 }}
         />
       </motion.div>
@@ -41,7 +41,7 @@ const Header = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
         >
-          Serving the uniques.
+          Serving the uniques!
         </motion.p>
 
         <motion.div

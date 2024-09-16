@@ -3,15 +3,7 @@ import { FaCalendarAlt, FaUser, FaGoogle } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
 
 const Schedule = () => {
-  const [schedules, setSchedules] = useState([
-    {
-      id: "",
-      educatorID: "",
-      educatorName: "",
-      googleMeetLink: "",
-      studentID: "",
-    },
-  ]);
+  const [schedules, setSchedules] = useState([]);
 
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -23,7 +15,6 @@ const Schedule = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(schedules.educatorID),
           }
         );
         if (!response.ok) {
@@ -42,15 +33,13 @@ const Schedule = () => {
   const handleCancelSchedule = async (id) => {
     try {
       const token = localStorage.getItem("access_token");
-      console.log(schedules, JSON.stringify(schedules.educatorId));
       const response = await fetch(
-        `http://localhost:8080/api/educators/schedules/${id}`,
+        `http://localhost:8080/api/students/schedules/${id}`,
         {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(schedules.educatorID),
         }
       );
 
@@ -66,12 +55,12 @@ const Schedule = () => {
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg w-full h-full">
       <h2 className="text-4xl font-bold mb-6 text-customBlue">My Schedule</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {schedules !== null && schedules.length > 0 ? (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {schedules != null && schedules.length > 0 ? (
           schedules.map((schedule) => (
             <div
               key={schedule.id}
-              className="flex flex-col justify-between bg-gray-50 p-6 rounded-lg shadow hover:shadow-md transition-shadow duration-300 w-full md:w-80 lg:w-96" // Adjusted widths
+              className="flex flex-col justify-between bg-gray-50 p-6 rounded-lg shadow hover:shadow-md transition-shadow duration-300 min-h-full"
             >
               <div className="flex items-center space-x-4">
                 <div className="bg-customBlue p-3 rounded-full">

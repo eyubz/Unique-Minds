@@ -370,8 +370,11 @@ func (uc *UserUseCase) GetStudentSchedules(student_id string) (interface{}, erro
 	return uc.UserRepo.FindStudentSchedules(student_id)
 }
 
-func (uc *UserUseCase) CancelEducatorSchedule(scheduleId string, user_id string, educatorId string) error {
-    return uc.UserRepo.DeleteSchedule(scheduleId, user_id, educatorId)
+func (uc *UserUseCase) CancelEducatorSchedule(scheduleId string, user_id string) error {
+    return uc.UserRepo.DeleteSchedule(scheduleId, user_id)
+}
+func (uc *UserUseCase) CancelSchedule(scheduleId string, user_id string) error {
+    return uc.UserRepo.DeleteEducatorSchedule(scheduleId, user_id)
 }
 
 func (uc *UserUseCase) FetchStudentsByCourses(educatorID string) ([]domain.CourseWithStudents, error) {

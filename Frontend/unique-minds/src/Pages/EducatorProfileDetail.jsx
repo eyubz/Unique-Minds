@@ -256,7 +256,7 @@ const EducatorProfileDetail = () => {
             </h2>
             <p className="text-gray-600 text-center lg:text-left mt-2">
               <span className="flex items-center">
-                <FaPhoneAlt className=" mr-2" />
+                <FaPhoneAlt className=" mr-2 text-customBlue" />
                 {phone}
               </span>
             </p>
