@@ -27,6 +27,7 @@ func (uc *UserControllers) RegisterUser(c *gin.Context){
 
 	err := c.BindJSON(&signUp)
 	if err != nil {
+		fmt.Println(err)
 		c.JSON(400, domain.ErrorResponse{
 			Message: "Invalid request",
 			Status:  400,
