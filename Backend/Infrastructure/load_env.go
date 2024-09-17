@@ -28,10 +28,11 @@ type Config struct {
 }
 
 func LoadEnv() (*Config, error) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-		return nil, err
+	if os.Getenv("RENDER_ENV") == "" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Println("Error loading .env file, assuming production environment")
+		}
 	}
 
 	dbURL := os.Getenv("DATABASE_URL")
