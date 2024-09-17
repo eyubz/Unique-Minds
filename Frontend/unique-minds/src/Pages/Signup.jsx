@@ -40,6 +40,7 @@ function Signup() {
       user_type: accountType,
     };
 
+    console.log("Data:", data);
     try {
       const response = await fetch(
         "https://unique-minds.onrender.com/api/auth/signup",
