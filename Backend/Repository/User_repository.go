@@ -493,55 +493,42 @@ func (ur *UserRepository) DeleteEducatorSchedule(scheduleId string, userId strin
     return nil
 }
 
-func (ur *UserRepository) GetStudentsFromEducatorProfile(educatorID string) ([]domain.CourseWithStudents, error) {
+func (ur *UserRepository) GetStudentsFromEducatorProfile(educatorID string) (map[string][]domain.StudentProfile, error) {
     educatorObjID, err := primitive.ObjectIDFromHex(educatorID)
     if err != nil {
         return nil, err
     }
 
-    var educatorProfile domain.EducatorProfile
-    err = ur.educatorProfileCollection.FindOne(context.TODO(), bson.M{"_id": educatorObjID}).Decode(&educatorProfile)
-    if err != nil {
-        return nil, err
-    }
+	var courses []domain.Course
 
-    var result []domain.CourseWithStudents
+	cursor, err := ur.courseCollection.Find(context.TODO(), bson.M{"user_id": educatorObjID})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.TODO())
 
-    for _, studentEntry := range educatorProfile.Students {
-        var student domain.StudentProfile
-        studentObjID := studentEntry.Student_id
+	for cursor.Next(context.TODO()) {
+		var c domain.Course
+		if err := cursor.Decode(&c); err != nil {
+			return nil, err
+		}
+		courses = append(courses, c)
+	}
 
-        err := ur.studentProfileCollection.FindOne(context.TODO(), bson.M{"_id": studentObjID}).Decode(&student)
-        if err != nil {
-            continue
-        }
+	result := make(map[string][]domain.StudentProfile)
 
-        var course domain.Course
-        courseObjID := studentEntry.Course_id
+	for _, course := range courses {
+		for _, id := range course.Students {
+			var student domain.StudentProfile
+			err := ur.studentProfileCollection.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&student)
+			if err != nil {
+				continue
+			}
+			result[course.Name] = append(result[course.Name], student)
+		}
+	}
 
-        err = ur.courseCollection.FindOne(context.TODO(), bson.M{"_id": courseObjID}).Decode(&course)
-        if err != nil {
-            continue
-        }
-
-        found := false
-        for i, courseWithStudents := range result {
-            if courseWithStudents.CourseName == course.Name {
-                result[i].Students = append(result[i].Students, student)
-                found = true
-                break
-            }
-        }
-
-        if !found {
-            result = append(result, domain.CourseWithStudents{
-                CourseName: course.Name,
-                Students:   []domain.StudentProfile{student},
-            })
-        }
-    }
-
-    return result, nil
+		return result, nil
 }
 
 func (ur *UserRepository) FindById(userID string) (*domain.UserData, error) {
@@ -644,6 +631,9 @@ func (ur *UserRepository) UpdateSchedules(user_id string, educatorID string, ava
 	_, err := ur.educatorProfileCollection.UpdateOne(context.TODO(), bson.M{"_id": educator_id}, educatorUpdate)
 	if err != nil {
 		return err
+	}
+	educatorUpdate = bson.M{
+		"$push": bson.M{"students": schedule},
 	}
 
 	studentUpdate := bson.M{

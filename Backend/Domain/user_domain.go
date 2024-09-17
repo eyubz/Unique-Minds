@@ -136,7 +136,7 @@ type UserUseCaseInterface interface {
 	SetAvailability(userID string, availability string) error
 	GetEducatorSchedules(educatorId string) (interface{}, error)
 	CancelEducatorSchedule(scheduleId string, user_id string) error
-	FetchStudentsByCourses(educatorID string) ([]CourseWithStudents, error)
+	FetchStudentsByCourses(educatorID string) (map[string][]StudentProfile, error)
 	GetUserProfile(userID string) (*UserData, error)
 	GetTopEducatorsUseCase() ([]EducatorProfile, error)
 	GetEnrolledCoursesProgress(userID string) ([]map[string]interface{}, error)
@@ -165,7 +165,7 @@ type UserRepositoryInterface interface {
 	SetAvailability(userID, availability string) error 
 	FindEducatorSchedules(educatorId string) (interface{}, error)
 	DeleteSchedule(scheduleId string, userId string) error
-	GetStudentsFromEducatorProfile(educatorID string) ([]CourseWithStudents, error)
+	GetStudentsFromEducatorProfile(educatorID string) (map[string][]StudentProfile, error)
 	FindById(userID string) (*UserData, error)
 	GetTopEducators() ([]EducatorProfile, error)
 	FetchCourseNameByID(courseID primitive.ObjectID) (string, error)

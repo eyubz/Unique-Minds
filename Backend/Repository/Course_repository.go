@@ -297,5 +297,9 @@ func (r *CourseRepository) SaveCourse(userID string, courseID string) error {
 	_, err = r.collection.UpdateOne(context.TODO(), bson.M{"_id" : courseObjID},  bson.M{
         "$inc": bson.M{"count": 1},
     })
+	if err != nil{
+		return err
+	}
+	_, err = r.collection.UpdateOne(context.TODO(), bson.M{"_id" : courseObjID},  bson.M{"$push": bson.M{"students":   studentObjID,}})
 	return err
 }

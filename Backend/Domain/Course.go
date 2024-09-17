@@ -12,13 +12,14 @@ type Course struct {
     Name        string                `json:"name" bson:"name"`
     Description string                `json:"description" bson:"description"`
     Image       string                `json:"image" bson:"image"`
-    Parts       []Part                `json:"parts" bson:"parts"`
+    Parts       []Part               `json:"parts" bson:"parts"`
     CreatedDate time.Time             `json:"created_date" bson:"created_date"`
     LastUpdated time.Time             `json:"last_updated" bson:"last_updated"`
 	IsFeatured  bool                  `json:"is_featured" bson:"is_featured"`
     Creator_id  primitive.ObjectID    `json:"user_id" bson:"user_id"`
     Tags        []string              `json:"tags" bson:"tags"`
     Count       int                   `json:"count" bson:"count"`
+    Students    []primitive.ObjectID  `json:"students" bson:"students"`
 }
 
 type Part struct {

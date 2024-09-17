@@ -377,7 +377,7 @@ func (uc *UserUseCase) CancelSchedule(scheduleId string, user_id string) error {
     return uc.UserRepo.DeleteEducatorSchedule(scheduleId, user_id)
 }
 
-func (uc *UserUseCase) FetchStudentsByCourses(educatorID string) ([]domain.CourseWithStudents, error) {
+func (uc *UserUseCase) FetchStudentsByCourses(educatorID string) (map[string][]domain.StudentProfile, error) {
     return uc.UserRepo.GetStudentsFromEducatorProfile(educatorID)
 }
 
