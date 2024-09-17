@@ -26,8 +26,8 @@ const FeaturedCourses = () => {
   //     }
   //   };
 
-    fetchCourses();
-  }, []);
+  //   fetchCourses();
+  // }, []);
 
   if (loading) return <p className="text-center py-16">Loading...</p>;
   if (error) return <p className="text-center py-16 text-red-500">{error}</p>;
