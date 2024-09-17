@@ -39,9 +39,9 @@ func (uc *UserUseCase) RegisterUser(user domain.User) error {
 	existingUser, err := uc.UserRepo.FindUserByEmail(user.Email)
 
 	if err == nil && existingUser.Email != "" && !existingUser.IsVerified{
-		return errors.New("user already exists: Verify your account")
+		return err
 	}else if err == nil{
-		return errors.New("user already exists: Try with another email")
+		return err
 	}
 
 	hashedPassword, _ := uc.PassService.HashPassword(user.Password)
@@ -49,11 +49,11 @@ func (uc *UserUseCase) RegisterUser(user domain.User) error {
 
 	token, err  := infrastructure.GenerateVerificationToken()
 	if err != nil{
-		return errors.New("error generating verification token")
+		return err
 	}
 	err = infrastructure.SendVerificationEmail(user.Email, token)
 	if err != nil {
-		return errors.New("error sending verification email")
+		return err
 	}
 
 	user.IsVerified = false
@@ -63,7 +63,7 @@ func (uc *UserUseCase) RegisterUser(user domain.User) error {
 	user.Role = "user"
 	err = uc.UserRepo.RegisterUser(user)
 	if err != nil {
-		return errors.New("error creating user")
+		return err
 	}
 	return nil
 }
