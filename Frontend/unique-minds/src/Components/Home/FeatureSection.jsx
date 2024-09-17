@@ -8,23 +8,23 @@ const FeaturedCourses = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const response = await fetch(
-          "https://unique-minds.onrender.com/api/featured-courses"
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok.");
-        }
-        const data = await response.json();
-        setCourses(data);
-      } catch (err) {
-        setError("Failed to load courses.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchCourses = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         "https://unique-minds.onrender.com/api/featured-courses"
+  //       );
+  //       if (!response.ok) {
+  //         throw new Error("Network response was not ok.");
+  //       }
+  //       const data = await response.json();
+  //       setCourses(data);
+  //     } catch (err) {
+  //       setError("Failed to load courses.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
     fetchCourses();
   }, []);
