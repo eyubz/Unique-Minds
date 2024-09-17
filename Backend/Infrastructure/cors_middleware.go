@@ -23,7 +23,7 @@ func (c *Core) CORSMiddleware() gin.HandlerFunc {
         fmt.Println("CORS middleware executed for:", ctx.Request.Method, ctx.Request.URL.Path)
 
         // Update the Access-Control-Allow-Origin header to match your frontend's URL
-        ctx.Writer.Header().Set("Access-Control-Allow-Origin", "https://unique-minds-6g6lnawle-eyubzs-projects.vercel.app")
+        ctx.Writer.Header().Set("Access-Control-Allow-Origin", "https://unique-minds.vercel.app")
         ctx.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         ctx.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
         ctx.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
