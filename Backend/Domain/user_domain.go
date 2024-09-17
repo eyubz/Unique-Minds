@@ -104,7 +104,7 @@ type Review struct {
     Name        string  `bson:"name" json:"name"`
     Text        string  `bson:"text" json:"text"`
     Rating      float64 `bson:"rating" json:"rating"`
-    EducatorID  uint    `bson:"educator_id" json:"educator_id"`
+    EducatorID  primitive.ObjectID    `bson:"educator_id" json:"educator_id"`
 }
 type Profile struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty"`
@@ -128,7 +128,7 @@ type UserUseCaseInterface interface {
 	Logout(user_id string, user_agent string) error	
 	GetEducators(pageNo string, pageSize string, search string) ([]EducatorProfile, Pagination, error)
 	GetEducatorById(id string) (EducatorProfile, error)
-	SaveReview(review Review) error
+	SaveReview(review Review, id string) error
 	UpdateStudentProfile(user_id string, updatedProfile StudentProfile) (StudentProfile, error)
 	GetStudentProfile(user_id string) (StudentProfile, error)
 	UpdateEducatorProfile(user_id string, updatedProfile EducatorProfile) (EducatorProfile, error)
@@ -158,7 +158,7 @@ type UserRepositoryInterface interface {
 	UpdateUser(id string, user User) error
 	GetEducators(pageNo int64, pageSize int64, search string) ([]EducatorProfile, Pagination, error)
 	GetEducatorsById(id string) (EducatorProfile, error)
-	SaveReview(review Review) error
+	SaveReview(review Review, id string) error
 	GetStudentById(id string) (StudentProfile, error)
 	UpdateEducatorProfile(user_id string, educator EducatorProfile)(EducatorProfile, error)
 	UpdateStudentProfile(user_id string, student StudentProfile) (StudentProfile, error)

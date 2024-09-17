@@ -51,7 +51,7 @@ func Routers(serverGroup *gin.RouterGroup, db *infrastructure.Db, config *infras
     
     serverGroup.GET("/courses", courseController.GetCourses)
 
-    serverGroup.POST("/courses/reviews", authMiddleWare, userControllers.SaveReview)
+    serverGroup.POST("/courses/reviews/:id", authMiddleWare, userControllers.SaveReview)
 
     serverGroup.GET("/courses/my", authMiddleWare, courseController.GetMyCourse)
 

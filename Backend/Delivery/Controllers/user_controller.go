@@ -328,8 +328,10 @@ func (uc *UserControllers) SaveReview(ctx *gin.Context) {
             Status: 500,
         })
 	}
+
+	edu_id := ctx.Param("id")
 	
-	err = uc.userUserCase.SaveReview(review)
+	err = uc.userUserCase.SaveReview(review, edu_id)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

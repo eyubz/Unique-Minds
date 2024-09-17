@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Navbar from "../Components/Navbar";
 
 const CourseDetail = () => {
   const { id } = useParams();
@@ -135,10 +136,12 @@ const CourseDetail = () => {
 
   const togglePartCompletion = async (partId) => {
     const updatedCompletedParts =
-      progressData.completed_parts &&
+      progressData.completed_parts != null &&
       progressData.completed_parts.includes(partId)
         ? progressData.completed_parts.filter((id) => id !== partId)
-        : [...progressData.completed_parts, partId];
+        : progressData.completed_parts != null
+        ? [...progressData.completed_parts, partId]
+        : [];
 
     setProgress({ ...progressData, completed_parts: updatedCompletedParts });
 
@@ -168,89 +171,94 @@ const CourseDetail = () => {
   };
 
   return (
-    <div className="container mx-auto my-12 px-4 mb-20 w-3/4">
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <img
-          src={course.image}
-          alt={course.name}
-          className="w-full h-64 object-cover rounded-t-lg"
-        />
+    <>
+      <Navbar />
+      <div className="container mx-auto my-12 px-4 mb-20 w-3/4">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <img
+            src={course.image}
+            alt={course.name}
+            className="w-full h-64 object-cover rounded-t-lg"
+          />
 
-        <div className="p-6">
-          <h1 className="text-4xl font-extrabold text-customBlue mb-4">
-            {course.name}
-          </h1>
+          <div className="p-6">
+            <h1 className="text-4xl font-extrabold text-customBlue mb-4">
+              {course.name}
+            </h1>
 
-          <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-            {course.description}
-          </p>
+            <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+              {course.description}
+            </p>
 
-          <h2 className="text-2xl font-semibold text-customBlue mb-4 border-b-2 border-gray-200 pb-2">
-            Course Parts
-          </h2>
+            <h2 className="text-2xl font-semibold text-customBlue mb-4 border-b-2 border-gray-200 pb-2">
+              Course Parts
+            </h2>
 
-          <div className="space-y-6">
-            {course.parts !== undefined &&
-              course.parts.map((part) => (
-                <div
-                  key={part._id}
-                  className={`p-6 rounded-lg shadow-md ${
-                    progressData.completed_parts !== null &&
-                    progressData.completed_parts.includes(part._id)
-                      ? "bg-customBlue text-white"
-                      : "bg-gray-100 text-customBlue"
-                  }`}
-                >
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={
-                        progressData.completed_parts !== null &&
-                        progressData.completed_parts.includes(part._id)
-                      }
-                      onChange={() => togglePartCompletion(part._id)}
-                      className="mr-3"
-                    />
-                    <h3 className="text-xl font-semibold mb-2">{part.name}</h3>
+            <div className="space-y-6">
+              {course.parts !== undefined &&
+                course.parts.map((part) => (
+                  <div
+                    key={part._id}
+                    className={`p-6 rounded-lg shadow-md ${
+                      progressData.completed_parts !== null &&
+                      progressData.completed_parts.includes(part._id)
+                        ? "bg-customBlue text-white"
+                        : "bg-gray-100 text-customBlue"
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={
+                          progressData.completed_parts !== null &&
+                          progressData.completed_parts.includes(part._id)
+                        }
+                        onChange={() => togglePartCompletion(part._id)}
+                        className="mr-3"
+                      />
+                      <h3 className="text-xl font-semibold mb-2">
+                        {part.name}
+                      </h3>
+                    </div>
+                    <p className="mb-4">{part.description}</p>
+
+                    <div className="mt-4">
+                      <h4 className="text-lg font-semibold mb-2">Materials</h4>
+                      <ul className="list-disc list-inside pl-5">
+                        {part.materials.map((material, index) => (
+                          <li key={index}>
+                            <a
+                              href={material.content}
+                              className="hover:underline"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {material.name} ({material.type})
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
-                  <p className="mb-4">{part.description}</p>
-
-                  <div className="mt-4">
-                    <h4 className="text-lg font-semibold mb-2">Materials</h4>
-                    <ul className="list-disc list-inside pl-5">
-                      {part.materials.map((material, index) => (
-                        <li key={index}>
-                          <a
-                            href={material.content}
-                            className="hover:underline"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {material.name} ({material.type})
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              ))}
-          </div>
-
-          <div className="flex justify-between mt-8">
-            <div className="text-lg font-semibold">
-              Progress: {progressData.progress}%
+                ))}
             </div>
 
-            <button
-              className="bg-gray-200 text-customBlue font-bold py-2 px-6 rounded-lg shadow hover:bg-gray-400 transition duration-300"
-              onClick={handleSaveCourse}
-            >
-              Save Course
-            </button>
+            <div className="flex justify-between mt-8">
+              <div className="text-lg font-semibold">
+                Progress: {progressData.progress}%
+              </div>
+
+              <button
+                className="bg-gray-200 text-customBlue font-bold py-2 px-6 rounded-lg shadow hover:bg-gray-400 transition duration-300"
+                onClick={handleSaveCourse}
+              >
+                Save Course
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

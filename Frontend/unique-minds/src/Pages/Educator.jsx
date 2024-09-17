@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
+import Navbar from "../Components/Navbar";
 
 const Educators = () => {
   const [educators, setEducators] = useState([]);
@@ -87,35 +88,38 @@ const Educators = () => {
 
   return (
     <>
+      <Navbar />
       <SearchBar />
       <div className="container mx-auto my-8 px-4 mb-16">
         <h2 className="text-4xl font-bold text-center text-customBlue mt-12 mb-10">
           Educators
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-3/4 mx-auto">
-          {educators.map((educator) => (
-            <div
-              key={educator._id}
-              className="bg-customBlue rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl"
-            >
-              <div className="p-6 text-center">
-                <img
-                  src={educator.profileImage}
-                  alt={educator.name}
-                  className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-                />
-                <h3 className="text-2xl font-bold text-white mb-2">
-                  {educator.name}
-                </h3>
-                <h4 className="text-lg text-white mb-2">{educator.title}</h4>
-                <button className="mt-4 bg-white text-customBlue font-semibold py-2 px-4 rounded-lg hover:bg-gray-500 focus:outline-none">
-                  <Link to={`/educator_detail/${educator.id}`}>
-                    View Profile
-                  </Link>
-                </button>
+          {educators != null &&
+            educators.length > 0 &&
+            educators.map((educator) => (
+              <div
+                key={educator._id}
+                className="bg-customBlue rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl"
+              >
+                <div className="p-6 text-center">
+                  <img
+                    src={educator.profileImage}
+                    alt={educator.name}
+                    className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+                  />
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    {educator.name}
+                  </h3>
+                  <h4 className="text-lg text-white mb-2">{educator.title}</h4>
+                  <button className="mt-4 bg-white text-customBlue font-semibold py-2 px-4 rounded-lg hover:bg-gray-500 focus:outline-none">
+                    <Link to={`/educator_detail/${educator.id}`}>
+                      View Profile
+                    </Link>
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
 
         {page < totalPages && (

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import logo from "../Assets/logo.png";
 import defaultImg from "../Assets/image1_0.jpg";
@@ -7,6 +7,7 @@ const Navbar = () => {
   const [accessToken, setAccessToken] = useState();
   const [profileImage, setProfileImage] = useState(defaultImg);
   const [role, setRole] = useState();
+  const location = useLocation(); // Get current location
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -16,6 +17,19 @@ const Navbar = () => {
       fetchUserProfile(token);
     }
   }, []);
+
+  useEffect(() => {
+    // If the current route is the homepage, reload the page
+    console.log(location.pathname);
+    if (location.pathname === "/") {
+      const hasReloaded = sessionStorage.getItem("hasReloadedHome");
+
+      if (!hasReloaded) {
+        sessionStorage.setItem("hasReloadedHome", "true");
+        window.location.reload();
+      }
+    }
+  }, [location]); // Run the effect whenever the route changes
 
   const fetchUserProfile = async (token) => {
     try {
@@ -28,7 +42,7 @@ const Navbar = () => {
       if (response.ok) {
         const data = await response.json();
         const profileImageUrl = data.profileImage
-          ? `https://localhost:8080${data.profileImage}`
+          ? data.profileImage
           : defaultImg;
         setProfileImage(profileImageUrl);
         setRole(data.role);
@@ -38,7 +52,6 @@ const Navbar = () => {
     }
   };
 
-  console.log(profileImage, role);
   return (
     <nav className="bg-white shadow-md p-4">
       <div className="container mx-auto flex justify-between items-center">

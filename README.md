@@ -1,1 +1,1 @@
-# Unique-Minds
+# Unique Minds

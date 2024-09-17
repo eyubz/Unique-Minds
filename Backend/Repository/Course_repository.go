@@ -90,27 +90,32 @@ func (r *CourseRepository) FetchRecentCourses() ([]domain.Course, error) {
 }
 
 func (r *CourseRepository) GetCourses(pageNo int64, pageSize int64, search string, tag string) ([]domain.Course, domain.Pagination, error) {
+	// Initialize pagination
 	pagination := utils.PaginationByPage(pageNo, pageSize)
 
+	// Count total documents
 	totalResults, err := r.collection.CountDocuments(context.TODO(), bson.M{})
 	if err != nil {
 		return []domain.Course{}, domain.Pagination{}, err
 	}
-    filter := bson.M{}
-    if search != "" {
-        filter["name"] = bson.M{"$regex": search, "$options": "i"}
-    }
-    if tag != "" {
-        filter["tags"] = bson.M{"$regex": tag, "$options": "i"}
-    }
+
+	// Construct the filter
+	filter := bson.M{}
+	if search != "" {
+		filter["name"] = bson.M{"$regex": search, "$options": "i"}
+	}
+	if tag != "" {
+		filter["tags"] = bson.M{"$elemMatch": bson.M{"$regex": tag, "$options": "i"}}
+	}
 
 	totalPages := int64(math.Ceil(float64(totalResults) / float64(pageSize)))
 
 	cursor, err := r.collection.Find(context.TODO(), filter, pagination)
-    
 	if err != nil {
 		return []domain.Course{}, domain.Pagination{}, err
 	}
+
+	// Decode results
 	var courses []domain.Course
 	for cursor.Next(context.TODO()) {
 		var course domain.Course
@@ -119,15 +124,25 @@ func (r *CourseRepository) GetCourses(pageNo int64, pageSize int64, search strin
 		}
 		courses = append(courses, course)
 	}
+
+	// Handle cursor errors
+	if err := cursor.Err(); err != nil {
+		return []domain.Course{}, domain.Pagination{}, err
+	}
+
+	// Close the cursor
+	cursor.Close(context.TODO())
+
+	// Create pagination info
 	paginationInfo := domain.Pagination{
 		CurrentPage: pageNo,
 		PageSize:    pageSize,
 		TotalPages:  totalPages,
 		TotatRecord: totalResults,
 	}
-
 	return courses, paginationInfo, nil
 }
+
 
 func (r *CourseRepository) GetMyCourse(id string) ([]domain.Course, error) {
 	var courses []domain.Course

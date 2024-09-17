@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Navbar from "./Components/Navbar";
 import Home from "./Pages/Home";
 import Courses from "./Pages/Course";
 import Login from "./Pages/Login";
@@ -16,7 +15,6 @@ import EducatorProfileDetail from "./Pages/EducatorProfileDetail.jsx";
 function App() {
   return (
     <Router>
-      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/courses" element={<Courses />} />

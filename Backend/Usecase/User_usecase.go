@@ -122,7 +122,7 @@ func (uc *UserUseCase) Login(user domain.User, user_agent string)(domain.LoginRe
 	}
 
 	activeUser:= domain.ActiveUser{
-		ID: user.ID,
+		ID: newUser.ID,
 		RefreshToken: refreshToken,
 		UserAgent: user_agent,
 	}
@@ -288,13 +288,8 @@ func (uc *UserUseCase) GetEducatorById(id string) (domain.EducatorProfile, error
 	return result, nil
 }
 
-func (uc *UserUseCase) SaveReview(review domain.Review) error{
-	err := uc.UserRepo.SaveReview(review)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (uc *UserUseCase) SaveReview(review domain.Review, id string) error{
+	return uc.UserRepo.SaveReview(review, id)
 }
 
 func (uc *UserUseCase) GetEducatorProfile(user_id string) (domain.EducatorProfile, error){

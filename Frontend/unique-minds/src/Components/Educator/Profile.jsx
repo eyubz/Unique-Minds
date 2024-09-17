@@ -74,11 +74,11 @@ const Profile = () => {
     }
   };
 
-  const handleImageUpload = () => {
-    if (!imageFile) return;
+  const handleImageUpload = (file) => {
+    if (!file) return;
     const formData = new FormData();
-    formData.append("file", imageFile);
-    console.log(imageFile);
+    formData.append("file", file);
+    console.log("File", file);
 
     fetch("http://localhost:8080/api/profile/upload", {
       method: "POST",
@@ -103,7 +103,7 @@ const Profile = () => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      handleImageUpload();
+      handleImageUpload(file);
     }
   };
 
@@ -283,10 +283,6 @@ const Profile = () => {
                         newStart,
                         newEnd
                       );
-                      // setProfile({
-                      //   ...profile,
-                      //   availability: updatedAvailability,
-                      // });
                     }}
                     className="w-full bg-white border border-gray-300 rounded p-2 mb-2 text-customBlue"
                   />

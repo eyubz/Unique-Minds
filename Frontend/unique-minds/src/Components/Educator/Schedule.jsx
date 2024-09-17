@@ -42,7 +42,6 @@ const Schedule = () => {
   const handleCancelSchedule = async (id) => {
     try {
       const token = localStorage.getItem("access_token");
-      console.log(schedules, JSON.stringify(schedules.educatorId));
       const response = await fetch(
         `http://localhost:8080/api/educators/schedules/${id}`,
         {

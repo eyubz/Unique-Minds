@@ -226,8 +226,11 @@ func (ur *UserRepository) GetEducatorsById(id string) (domain.EducatorProfile, e
 	return educator, nil
 }
 
-func (ur *UserRepository) SaveReview(review domain.Review) error {
-	filter := bson.M{"_id": review.EducatorID}
+func (ur *UserRepository) SaveReview(review domain.Review, id string) error {
+	uid, _ := primitive.ObjectIDFromHex(id)
+	filter := bson.M{"_id": uid}
+
+	review.EducatorID = uid
 
 	var educatorProfile domain.EducatorProfile
 	err := ur.educatorProfileCollection.FindOne(context.TODO(), filter).Decode(&educatorProfile)
@@ -241,10 +244,13 @@ func (ur *UserRepository) SaveReview(review domain.Review) error {
 		return err
 	}
 
-
 	totalRating := float64(educatorProfile.Rating) + (review.Rating)
 
 	newAverageRating := totalRating / float64(len(educatorProfile.Reviews))
+
+	if newAverageRating > 5 {
+		newAverageRating = 5
+	}
 
 	updateRating := bson.M{
 		"$set": bson.M{"rating": newAverageRating},

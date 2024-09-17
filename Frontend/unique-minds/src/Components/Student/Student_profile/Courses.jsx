@@ -3,26 +3,6 @@ import CourseCard from "./CourseCard";
 
 const Courses = () => {
   const [courses, setCourses] = useState();
-  //   [
-  //   {
-  //     id: 1,
-  //     title: "Introduction to AI",
-  //     description: "Learn the basics of artificial intelligence.",
-  //     imageUrl: "https://via.placeholder.com/150",
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Web Development Bootcamp",
-  //     description: "A comprehensive guide to modern web development.",
-  //     imageUrl: "https://via.placeholder.com/150",
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "Data Science Fundamentals",
-  //     description: "Understand the core concepts of data science.",
-  //     imageUrl: "https://via.placeholder.com/150",
-  //   },
-  // ]
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 

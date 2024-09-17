@@ -1,75 +1,10 @@
 import React, { useEffect, useState } from "react";
 import CourseCard from "../Components/Home/CourseCard";
 import { FaSearch } from "react-icons/fa";
-import img from "../Assets/image0_0.jpg";
+import Navbar from "../Components/Navbar";
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
-  //[
-  // {
-  //   id: 1,
-  //   title: "Introduction to AI",
-  //   description:
-  //     "Learn the basics of Artificial Intelligence, including key concepts and practical applications.",
-  //   image: img,
-  // },
-  // {
-  //   id: 2,
-  //   title: "Web Development Bootcamp",
-  //   description:
-  //     "A comprehensive bootcamp covering front-end and back-end web development techniques.",
-  //   image: img,
-  // },
-  // {
-  //   id: 3,
-  //   title: "Data Science Fundamentals",
-  //   description:
-  //     "Understand the core principles of data science, including data analysis and visualization techniques.",
-  //   image: img,
-  // },
-  // {
-  //   id: 4,
-  //   title: "Introduction to AI",
-  //   description:
-  //     "Learn the basics of Artificial Intelligence, including key concepts and practical applications.",
-  //   image: img,
-  // },
-  // {
-  //   id: 5,
-  //   title: "Web Development Bootcamp",
-  //   description:
-  //     "A comprehensive bootcamp covering front-end and back-end web development techniques.",
-  //   image: img,
-  // },
-  // {
-  //   id: 6,
-  //   title: "Data Science Fundamentals",
-  //   description:
-  //     "Understand the core principles of data science, including data analysis and visualization techniques.",
-  //   image: img,
-  // },
-  // {
-  //   id: 7,
-  //   title: "Introduction to AI",
-  //   description:
-  //     "Learn the basics of Artificial Intelligence, including key concepts and practical applications.",
-  //   image: img,
-  // },
-  // {
-  //   id: 8,
-  //   title: "Web Development Bootcamp",
-  //   description:
-  //     "A comprehensive bootcamp covering front-end and back-end web development techniques.",
-  //   image: img,
-  // },
-  // {
-  //   id: 9,
-  //   title: "Data Science Fundamentals",
-  //   description:
-  //     "Understand the core principles of data science, including data analysis and visualization techniques.",
-  //   image: img,
-  // },
-  //  ]
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,7 +13,7 @@ const Courses = () => {
   const fetchCourses = async (query = "", tag = "", page = 1) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/courses?search=${query}&category=${tag}&page=${page}&limit=10`
+        `http://localhost:8080/api/courses?search=${query}&tag=${tag}&page=${page}&limit=10`
       );
       const data = await response.json();
 
@@ -157,7 +92,12 @@ const Courses = () => {
   };
 
   const FilterTags = () => {
-    const tags = ["Music", "Science", "Mathematics", "Arts"];
+    const tags = [
+      "Speech",
+      "Intelligence",
+      "Physical Exercise",
+      "Mental growth",
+    ];
 
     return (
       <div className="flex flex-wrap justify-around gap-6 p-4 bg-white rounded-lg shadow-md mt-10">
@@ -177,6 +117,7 @@ const Courses = () => {
 
   return (
     <>
+      <Navbar />
       <SearchBar />
       <FilterTags />
       <div className="container mx-auto my-8 px-4 mb-16">
@@ -184,14 +125,15 @@ const Courses = () => {
           Courses
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {courses.map((course) => (
-            <div
-              key={course._id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl"
-            >
-              <CourseCard course={course} key={course._id} />
-            </div>
-          ))}
+          {courses != null &&
+            courses.map((course) => (
+              <div
+                key={course._id}
+                className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl"
+              >
+                <CourseCard course={course} key={course._id} />
+              </div>
+            ))}
         </div>
         {page < totalPages && (
           <div className="flex justify-center mt-8">
