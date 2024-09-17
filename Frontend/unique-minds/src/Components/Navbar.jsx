@@ -33,11 +33,14 @@ const Navbar = () => {
 
   const fetchUserProfile = async (token) => {
     try {
-      const response = await fetch("/api/auth/user-profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://unique-minds.onrender.com/auth/user-profile",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();

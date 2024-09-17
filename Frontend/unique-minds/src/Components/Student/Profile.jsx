@@ -11,11 +11,14 @@ const StudentDashboard = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch("/api/profile", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        });
+        const response = await fetch(
+          "https://unique-minds.onrender.com/profile",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch profile");
         }
@@ -37,7 +40,7 @@ const StudentDashboard = () => {
 
         try {
           const response = await fetch(
-            "http://localhost:8080/api/profile/upload",
+            "https://unique-minds.onrender.com/profile/upload",
             {
               method: "POST",
               body: formData,
@@ -69,7 +72,7 @@ const StudentDashboard = () => {
 
   const handleEditClick = () => {
     if (isEditing) {
-      fetch("/api/profile", {
+      fetch("https://unique-minds.onrender.com/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

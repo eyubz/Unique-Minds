@@ -47,7 +47,7 @@ const EducatorProfileDetail = () => {
       try {
         console.log("fetching educator details");
         const response = await fetch(
-          `http://localhost:8080/api/educators/${id}`,
+          `https://unique-minds.onrender.com/educators/${id}`,
           {
             method: "GET",
             headers: {
@@ -96,7 +96,7 @@ const EducatorProfileDetail = () => {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        `http://localhost:8080/api/courses/reviews/${id}`,
+        `https://unique-minds.onrender.com/courses/reviews/${id}`,
         {
           method: "POST",
           headers: {
@@ -147,17 +147,20 @@ const EducatorProfileDetail = () => {
 
     try {
       const token = localStorage.getItem("access_token");
-      const response = await fetch(`http://localhost:8080/api/schedule`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          educatorId: id,
-          availability: selectedAvailability,
-        }),
-      });
+      const response = await fetch(
+        `https://unique-minds.onrender.com/schedule`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            educatorId: id,
+            availability: selectedAvailability,
+          }),
+        }
+      );
 
       if (response.ok) {
         alert("Scheduled successfully!");

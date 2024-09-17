@@ -10,7 +10,7 @@ const Schedule = () => {
       const token = localStorage.getItem("access_token");
       try {
         const response = await fetch(
-          "http://localhost:8080/api/student/schedules",
+          "https://unique-minds.onrender.com/student/schedules",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -34,7 +34,7 @@ const Schedule = () => {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        `http://localhost:8080/api/students/schedules/${id}`,
+        `https://unique-minds.onrender.com/students/schedules/${id}`,
         {
           method: "DELETE",
           headers: {
