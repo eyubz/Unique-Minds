@@ -51,7 +51,7 @@ const Profile = () => {
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (token) {
-      fetch("http://localhost:8080/api/profile", {
+      fetch("https://unique-minds.onrender.com/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -80,7 +80,7 @@ const Profile = () => {
     formData.append("file", file);
     console.log("File", file);
 
-    fetch("http://localhost:8080/api/profile/upload", {
+    fetch("https://unique-minds.onrender.com/profile/upload", {
       method: "POST",
       body: formData,
       headers: {
@@ -109,7 +109,7 @@ const Profile = () => {
 
   const handleEditClick = () => {
     if (isEditing) {
-      fetch("http://localhost:8080/api/profile", {
+      fetch("https://unique-minds.onrender.com/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -165,7 +165,7 @@ const Profile = () => {
       availability: updatedAvailability,
     });
     console.log(profile.availability);
-    fetch("http://localhost:8080/api/availability", {
+    fetch("https://unique-minds.onrender.com/availability", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

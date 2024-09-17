@@ -7,13 +7,16 @@ const LogoutContent = () => {
   useEffect(() => {
     const logout = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/auth/logout", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        });
+        const response = await fetch(
+          "https://unique-minds.onrender.com/auth/logout",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to log out");

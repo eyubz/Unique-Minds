@@ -93,7 +93,7 @@ const UploadCourse = () => {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://localhost:8080/api/upload", {
+      const response = await fetch("https://unique-minds.onrender.com/upload", {
         method: "POST",
         body: formData,
         headers: {
@@ -158,14 +158,17 @@ const UploadCourse = () => {
     };
     try {
       console.log("Uploading course:", courseData);
-      const response = await fetch("http://localhost:8080/api/courses/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-        body: JSON.stringify(courseData),
-      });
+      const response = await fetch(
+        "https://unique-minds.onrender.com/courses/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+          body: JSON.stringify(courseData),
+        }
+      );
 
       if (response.ok) {
         const result = await response.json();
