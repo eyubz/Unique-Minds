@@ -20,7 +20,7 @@ const StudentDashboard = () => {
     const fetchProfile = async () => {
       try {
         const response = await fetch(
-          "https://unique-minds.onrender.com/profile",
+          "https://unique-minds.onrender.com/api/profile",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -42,7 +42,7 @@ const StudentDashboard = () => {
 
   const handleEditClick = () => {
     if (isEditing) {
-      fetch("https://unique-minds.onrender.com/studentProfile", {
+      fetch("https://unique-minds.onrender.com/api/studentProfile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

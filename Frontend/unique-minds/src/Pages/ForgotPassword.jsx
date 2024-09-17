@@ -8,7 +8,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await fetch(
-      "https://unique-minds.onrender.com/auth/forgot-password",
+      "https://unique-minds.onrender.com/api/auth/forgot-password",
       {
         method: "POST",
         headers: {

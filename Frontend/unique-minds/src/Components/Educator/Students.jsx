@@ -15,7 +15,7 @@ const Students = () => {
       try {
         const token = localStorage.getItem("access_token");
         const response = await fetch(
-          "https://unique-minds.onrender.com/educator/students",
+          "https://unique-minds.onrender.com/api/educator/students",
           {
             headers: {
               Authorization: `Bearer ${token}`,

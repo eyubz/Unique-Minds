@@ -18,7 +18,7 @@ const Schedule = () => {
       const token = localStorage.getItem("access_token");
       try {
         const response = await fetch(
-          "https://unique-minds.onrender.com/educator/schedules",
+          "https://unique-minds.onrender.com/api/educator/schedules",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -43,7 +43,7 @@ const Schedule = () => {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        `https://unique-minds.onrender.com/educators/schedules/${id}`,
+        `https://unique-minds.onrender.com/api/educators/schedules/${id}`,
         {
           method: "DELETE",
           headers: {

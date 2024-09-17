@@ -13,7 +13,7 @@ const Educators = () => {
   const fetchEducators = async (query = "", page = 1) => {
     try {
       const response = await fetch(
-        `https://unique-minds.onrender.com/educators?search=${query}&page=${page}&limit=6`
+        `https://unique-minds.onrender.com/api/educators?search=${query}&page=${page}&limit=6`
       );
       const data = await response.json();
       if (response.ok) {

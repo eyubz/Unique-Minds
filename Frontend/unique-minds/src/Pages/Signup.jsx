@@ -42,7 +42,7 @@ function Signup() {
 
     try {
       const response = await fetch(
-        "https://unique-minds.onrender.com/auth/signup",
+        "https://unique-minds.onrender.com/api/auth/signup",
         {
           method: "POST",
           headers: {
@@ -51,6 +51,8 @@ function Signup() {
           body: JSON.stringify(data),
         }
       );
+
+      console.log("Response Text:", response);
 
       if (response.ok) {
         setFormData({

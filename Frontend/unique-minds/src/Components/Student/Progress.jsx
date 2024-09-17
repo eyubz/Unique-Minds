@@ -17,7 +17,7 @@ const ProgressBarChart = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://unique-minds.onrender.com/courses/progress", {
+    fetch("https://unique-minds.onrender.com/api/courses/progress", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,

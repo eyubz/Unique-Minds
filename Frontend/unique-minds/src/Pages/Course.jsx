@@ -13,7 +13,7 @@ const Courses = () => {
   const fetchCourses = async (query = "", tag = "", page = 1) => {
     try {
       const response = await fetch(
-        `https://unique-minds.onrender.com/courses?search=${query}&tag=${tag}&page=${page}&limit=10`
+        `https://unique-minds.onrender.com/api/courses?search=${query}&tag=${tag}&page=${page}&limit=10`
       );
       const data = await response.json();
 

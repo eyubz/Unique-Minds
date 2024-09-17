@@ -10,7 +10,7 @@ const Courses = () => {
     const fetchCourses = async () => {
       try {
         const response = await fetch(
-          "https://unique-minds.onrender.com/courses/my",
+          "https://unique-minds.onrender.com/api/courses/my",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,

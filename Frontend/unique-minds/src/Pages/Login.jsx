@@ -11,7 +11,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await fetch(
-      "https://unique-minds.onrender.com/auth/login",
+      "https://unique-minds.onrender.com/api/auth/login",
       {
         method: "POST",
         headers: {

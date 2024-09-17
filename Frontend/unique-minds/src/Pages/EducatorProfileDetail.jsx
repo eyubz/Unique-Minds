@@ -47,7 +47,7 @@ const EducatorProfileDetail = () => {
       try {
         console.log("fetching educator details");
         const response = await fetch(
-          `https://unique-minds.onrender.com/educators/${id}`,
+          `https://unique-minds.onrender.com/api/educators/${id}`,
           {
             method: "GET",
             headers: {
@@ -96,7 +96,7 @@ const EducatorProfileDetail = () => {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        `https://unique-minds.onrender.com/courses/reviews/${id}`,
+        `https://unique-minds.onrender.com/api/courses/reviews/${id}`,
         {
           method: "POST",
           headers: {
@@ -148,7 +148,7 @@ const EducatorProfileDetail = () => {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        `https://unique-minds.onrender.com/schedule`,
+        `https://unique-minds.onrender.com/api/schedule`,
         {
           method: "POST",
           headers: {

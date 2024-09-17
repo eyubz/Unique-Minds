@@ -8,7 +8,7 @@ const LogoutContent = () => {
     const logout = async () => {
       try {
         const response = await fetch(
-          "https://unique-minds.onrender.com/auth/logout",
+          "https://unique-minds.onrender.com/api/auth/logout",
           {
             method: "POST",
             headers: {

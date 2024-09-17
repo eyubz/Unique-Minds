@@ -83,7 +83,7 @@ const CourseDetail = () => {
     }
 
     try {
-      await fetch(`https://unique-minds.onrender.com/courses/${id}`, {
+      await fetch(`https://unique-minds.onrender.com/api/courses/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -108,7 +108,7 @@ const CourseDetail = () => {
 
       try {
         const response = await fetch(
-          `https://unique-minds.onrender.com/courses/${id}`,
+          `https://unique-minds.onrender.com/api/courses/${id}`,
           {
             method: "GET",
             headers: {
@@ -148,7 +148,7 @@ const CourseDetail = () => {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        `https://unique-minds.onrender.com/courses/progress/${id}`,
+        `https://unique-minds.onrender.com/api/courses/progress/${id}`,
         {
           method: "POST",
           headers: {

@@ -12,7 +12,7 @@ const FeaturedCourses = () => {
     const fetchCourses = async () => {
       try {
         const response = await fetch(
-          "https://unique-minds.onrender.com/featured-courses"
+          "https://unique-minds.onrender.com/api/featured-courses"
         );
         if (!response.ok) {
           throw new Error("Network response was not ok.");
