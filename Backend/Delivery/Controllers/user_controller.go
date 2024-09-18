@@ -29,7 +29,7 @@ func (uc *UserControllers) RegisterUser(c *gin.Context){
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(400, domain.ErrorResponse{
-			Message: "Invalid request",
+			Message: err.Error(),
 			Status:  400,
 		})
 		return
@@ -39,7 +39,7 @@ func (uc *UserControllers) RegisterUser(c *gin.Context){
 	if err := validate.Struct(signUp); err != nil {
 		fmt.Println(err)
 		c.JSON(400, domain.ErrorResponse{
-			Message: "Invalid request",
+			Message: err.Error(),
 			Status:  400,
 		})
 		return
