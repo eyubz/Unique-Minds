@@ -43,6 +43,6 @@ func (db *Db)ConnectToDatabase(dbHost string)*mongo.Client{
 
 func (db *Db)CreateDb(dbHost string, dbName string, collectionName string)*mongo.Collection{
 	connection := db.ConnectToDatabase(dbHost)
-	collection := connection.Database(dbName).Collection(collectionName)
+	collection := connection.Database("ELEARNING").Collection(collectionName)
 	return collection
 } 
