@@ -15,11 +15,12 @@ func NewCourseUseCase(cr domain.CourseRepository) *courseUseCase  {
         courseRepo: cr,
     }
 }
-
+// UploadCourse function uploads a course 
 func (u *courseUseCase) UploadCourse(course *domain.Course, user_id string) error {
     return u.courseRepo.Save(course, user_id)
 }
 
+// UpdateCourse function updates a course
 func (u *courseUseCase) GetRecentCourses() ([]domain.Course, error) {
     result, err := u.courseRepo.FetchRecentCourses()
     if err != nil{
@@ -28,6 +29,7 @@ func (u *courseUseCase) GetRecentCourses() ([]domain.Course, error) {
     return result, nil
 }
 
+// GetCourses function gets all courses
 func (u *courseUseCase) GetCourses(pageNo string, pageSize string, search string, filter string) ([]domain.Course, domain.Pagination, error) {
 	PageNo, err := strconv.ParseInt(pageNo, 10, 64)
 	if err != nil {
@@ -49,6 +51,7 @@ func (u *courseUseCase) GetCourses(pageNo string, pageSize string, search string
 	}
 }
 
+// GetCourse function gets a course
 func (u *courseUseCase) GetMyCourses(id string) ([]domain.Course, error) {
 	result, err := u.courseRepo.GetMyCourse(id)
 	if err != nil {
@@ -57,6 +60,7 @@ func (u *courseUseCase) GetMyCourses(id string) ([]domain.Course, error) {
 	return result, nil
 }
 
+// GetEducatorCourses function gets all courses by an educator
 func (u *courseUseCase) GetEducatorCourses(id string) ([]domain.Course, error) {
 	result, err := u.courseRepo.GetCoursesByEducator(id)
 	if err != nil {
@@ -65,6 +69,7 @@ func (u *courseUseCase) GetEducatorCourses(id string) ([]domain.Course, error) {
 	return result, nil
 }
 
+// DeleteCourse function deletes a course
 func (u *courseUseCase) DeleteCourse(id string) error {
 	err := u.courseRepo.DeleteCourse(id)
 	if err != nil {
@@ -73,6 +78,7 @@ func (u *courseUseCase) DeleteCourse(id string) error {
 	return nil
 }
 
+// GetCourseByID function gets a course by ID
 func (u *courseUseCase) GetCourseByID(courseID, userID string) (*domain.CourseDetailResponse, error) {
     course, err := u.courseRepo.GerCourseById(courseID)
     if err != nil {
@@ -89,11 +95,12 @@ func (u *courseUseCase) GetCourseByID(courseID, userID string) (*domain.CourseDe
     return &courseDetail, nil
 }
 
+// UpdateProgress function updates the progress of a course
 func  (u *courseUseCase) UpdateProgress(courseID, userID string, completedParts []string) (domain.CourseProgress, error) {
     return u.courseRepo.UpdateCourseProgress(courseID, userID, completedParts)
 }
 
-
+// SaveCourse function saves a course
 func  (u *courseUseCase) SaveCourse(courseID, userID string) error {
     return u.courseRepo.SaveCourse(courseID, userID)
 }

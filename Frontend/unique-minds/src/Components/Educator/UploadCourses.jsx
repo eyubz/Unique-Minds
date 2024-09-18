@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+// Function to upload a new course
 const UploadCourse = () => {
   const [course, setCourse] = useState({
     name: "",

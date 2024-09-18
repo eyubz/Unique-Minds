@@ -1,6 +1,7 @@
 import Navbar from "../Navbar";
 import SideBar from "./Student_profile/Sidebar";
 
+// Student Profile Component
 const StudentProfile = () => {
   return (
     <>

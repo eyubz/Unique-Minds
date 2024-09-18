@@ -5,6 +5,7 @@ import (
 	"regexp"
 )
 
+// ValidateEmail function validates an email address
 func ValidateEmail(email string) error {
 	regex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	if !regex.MatchString(email) {
@@ -13,6 +14,7 @@ func ValidateEmail(email string) error {
 	return nil
 }
 
+// ValidatePassword function validates a password
 func ValidatePassword(password string) error {
 	if len(password) < 8 || len(password) > 30 {
 		return errors.New("password must be between 8 and 30 characters long")

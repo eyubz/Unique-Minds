@@ -33,7 +33,6 @@ func (c *CourseController) UploadFile(ctx *gin.Context) {
     file, err := ctx.FormFile("file")
     if err != nil {
         ctx.JSON(http.StatusBadRequest, gin.H{"error": "No file uploaded"})
-        fmt.Println(err.Error())
         return
     }
 
@@ -42,7 +41,6 @@ func (c *CourseController) UploadFile(ctx *gin.Context) {
 
     if err := ctx.SaveUploadedFile(file, savePath); err != nil {
         ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to save file"})
-        fmt.Println(err)
         return
     }
 
@@ -208,6 +206,12 @@ func (uc *CourseController) DeleteCourse(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"message": "Course deleted successfully"})
 }
 
+
+// GetCourseById handles the HTTP GET request to retrieve a course by its ID.
+// It expects the course ID to be provided as a URL parameter and the user ID to be available in the context.
+// If the user ID is not present, it responds with an HTTP 401 Unauthorized status.
+// If the course retrieval fails, it responds with an HTTP 500 Internal Server Error status and the error message.
+// On success, it responds with an HTTP 200 OK status and the course data in JSON format.
 func (c *CourseController) GetCourseById(ctx *gin.Context) {
     id := ctx.Param("id")
     user_id := ctx.GetString("user_id")
@@ -224,6 +228,9 @@ func (c *CourseController) GetCourseById(ctx *gin.Context) {
     ctx.JSON(http.StatusOK, course)
 }
 
+// UpdateProgress handles the HTTP request to update the progress of a course for a user.
+// It expects a JSON body containing the progress data and requires the course ID as a URL parameter
+// and the user ID to be set in the context.
 func (c *CourseController) UpdateProgress(ctx *gin.Context) {
     var progressRequest []string
     if err := ctx.ShouldBindJSON(&progressRequest); err != nil {
@@ -244,6 +251,14 @@ func (c *CourseController) UpdateProgress(ctx *gin.Context) {
     ctx.JSON(http.StatusOK, progress)
 }
 
+// SaveCourse handles the request to save a course for a student.
+// It retrieves the student ID from the context and the course ID from the URL parameter.
+// If the student ID is not present, it responds with an unauthorized error.
+// Otherwise, it calls the SaveCourse method of the course use case to save the course.
+// If an error occurs during this process, it responds with an internal server error.
+// On success, it responds with a message indicating that the course ID was appended successfully.
+//
+// @param ctx *gin.Context - the context of the request
 func (c *CourseController) SaveCourse(ctx *gin.Context) {
 	studentID := ctx.GetString("user_id")
 	courseID := ctx.Param("id")

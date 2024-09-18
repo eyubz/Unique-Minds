@@ -5,6 +5,7 @@ import Schedule from "../Components/Student/Schedule";
 import Progress from "../Components/Student/Progress";
 import Navbar from "../Components/Navbar";
 
+// StudentProfile component
 function StudentProfile() {
   const [currentTab, setCurrentTab] = useState(0);
 

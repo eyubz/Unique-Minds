@@ -31,7 +31,7 @@ func NewCourseRepository(collection *mongo.Collection, eduColl *mongo.Collection
     }
 }
 
-
+// Save function saves a course to the database
 func (r *CourseRepository) Save(course *domain.Course, user_id string) error {
 	uid, _ := primitive.ObjectIDFromHex(user_id)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -66,6 +66,7 @@ func (r *CourseRepository) Save(course *domain.Course, user_id string) error {
 	return nil
 }
 
+// FetchRecentCourses function fetches the most recent courses
 func (r *CourseRepository) FetchRecentCourses() ([]domain.Course, error) {
     var courses []domain.Course
 
@@ -89,6 +90,7 @@ func (r *CourseRepository) FetchRecentCourses() ([]domain.Course, error) {
 	return courses, nil
 }
 
+// GetCourses function fetches courses from the database
 func (r *CourseRepository) GetCourses(pageNo int64, pageSize int64, search string, tag string) ([]domain.Course, domain.Pagination, error) {
 	// Initialize pagination
 	pagination := utils.PaginationByPage(pageNo, pageSize)
@@ -143,7 +145,7 @@ func (r *CourseRepository) GetCourses(pageNo int64, pageSize int64, search strin
 	return courses, paginationInfo, nil
 }
 
-
+// GetMyCourse function fetches courses for a student
 func (r *CourseRepository) GetMyCourse(id string) ([]domain.Course, error) {
 	var courses []domain.Course
 	var student domain.StudentProfile
@@ -168,6 +170,7 @@ func (r *CourseRepository) GetMyCourse(id string) ([]domain.Course, error) {
 	return courses, nil
 }
 
+// GetCoursesByEducator function fetches courses by educator
 func (r *CourseRepository) GetCoursesByEducator(userID string) ([]domain.Course, error) {
 	uid, _ := primitive.ObjectIDFromHex(userID)
     var courses []domain.Course
@@ -185,6 +188,8 @@ func (r *CourseRepository) GetCoursesByEducator(userID string) ([]domain.Course,
     return courses, nil
 }
 
+
+// DeleteCourse function deletes a course from the database
 func (r *CourseRepository) DeleteCourse(courseID string) error {
 	cid, _ := primitive.ObjectIDFromHex(courseID)
     filter := bson.M{"_id": cid, "count": 0}
@@ -200,6 +205,7 @@ func (r *CourseRepository) DeleteCourse(courseID string) error {
     return nil
 }
 
+// GerCourseById function fetches a course by ID
 func (r *CourseRepository) GerCourseById(id string) (domain.Course, error) {
 	var course domain.Course
 
@@ -217,6 +223,7 @@ func (r *CourseRepository) GerCourseById(id string) (domain.Course, error) {
 	return course, nil
 }
 
+// GetCourseProgress function fetches course progress
 func (r *CourseRepository) GetCourseProgress(courseID, userID string) (*domain.CourseProgress, error) {
 	var user domain.StudentProfile
 
@@ -241,6 +248,7 @@ func (r *CourseRepository) GetCourseProgress(courseID, userID string) (*domain.C
 	return nil, errors.New("course progress not found")
 }
 
+// UpdateCourseProgress function updates course progress
 func (r *CourseRepository) UpdateCourseProgress(courseID, userID string, completedParts []string) (domain.CourseProgress, error) {
 	cid, err := primitive.ObjectIDFromHex(courseID)
 	if err != nil {
@@ -280,6 +288,7 @@ func (r *CourseRepository) UpdateCourseProgress(courseID, userID string, complet
 	return domain.CourseProgress{}, errors.New("Progress not found")
 }
 
+// SaveCourse function saves a course to a student's profile
 func (r *CourseRepository) SaveCourse(userID string, courseID string) error {
 	studentObjID, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {

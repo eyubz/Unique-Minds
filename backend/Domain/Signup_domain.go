@@ -1,5 +1,6 @@
 package domain
 
+// SignUpRequest struct
 type SignUpRequest struct {
 	UserName        string `bson:"username" json:"username" validate:"required,min=5,max=255"`
 	Email           string `bson:"email" json:"email" validate:"required"`

@@ -3,6 +3,7 @@ import { FaUser } from "react-icons/fa";
 
 const sampleCoursesWithStudents = {};
 
+// Function to display the students of the educator
 const Students = () => {
   const [coursesWithStudents, setCoursesWithStudents] = useState(
     sampleCoursesWithStudents

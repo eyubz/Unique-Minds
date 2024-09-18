@@ -8,6 +8,7 @@ import BenefitsSection from "../Components/Home/BenifitSection";
 import HowItWorks from "../Components/Home/HowItWorkSection";
 import Navbar from "../Components/Navbar";
 
+// Home component
 const Home = () => {
   return (
     <>

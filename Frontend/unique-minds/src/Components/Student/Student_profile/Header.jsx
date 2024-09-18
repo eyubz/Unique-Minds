@@ -1,6 +1,7 @@
 import React from "react";
 import { FaBell, FaSearch } from "react-icons/fa";
 
+// Header component
 const Header = () => {
   return (
     <header className="bg-white shadow p-4 flex justify-between items-center">

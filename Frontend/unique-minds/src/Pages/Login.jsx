@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import Navbar from "../Components/Navbar";
 
+// Login component
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

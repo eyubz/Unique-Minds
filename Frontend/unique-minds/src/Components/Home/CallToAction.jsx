@@ -1,6 +1,7 @@
 import React from "react";
 import donateImage from "../../Assets/herosecrtion.jpg";
 
+// CallToAction component
 const CallToAction = () => {
   return (
     <div className="flex flex-col md:flex-row-reverse items-center p-8 bg-customBlue rounded-lg shadow-md mt-20 mb-20">

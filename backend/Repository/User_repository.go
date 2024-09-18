@@ -36,6 +36,7 @@ func NewUserRepository(collection *mongo.Collection, activeUserColl *mongo.Colle
 	}
 }
 
+// FindUserByEmail function finds a user by email
 func (ur *UserRepository) FindUserByEmail(email string) (domain.User, error) {
 	var user domain.User
 	context, _ := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
@@ -46,7 +47,7 @@ func (ur *UserRepository) FindUserByEmail(email string) (domain.User, error) {
 	}
 	return user, nil
 }
-
+// FindUserByUserName function finds a user by username
 func (ur *UserRepository) FindUserByUserName(username string) (domain.User, error) {
 	var user domain.User
 	context, _ := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
@@ -58,6 +59,7 @@ func (ur *UserRepository) FindUserByUserName(username string) (domain.User, erro
 	return user, nil
 }
 
+// RegisterUser function registers a user
 func (ur *UserRepository) RegisterUser(user domain.User) error {
 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
 	defer cancel()
@@ -110,6 +112,7 @@ func (ur *UserRepository) RegisterUser(user domain.User) error {
 	return err
 }
 
+// UpdateUser function updates a user
 func (ur *UserRepository) UpdateUser(id string, user domain.User) error {
 	context, _ := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
 	user_id, _ := primitive.ObjectIDFromHex(id)
@@ -121,6 +124,7 @@ func (ur *UserRepository) UpdateUser(id string, user domain.User) error {
 	return nil
 }
 
+// FindUserByID function finds a user by ID
 func (ur *UserRepository) FindUserByID(id string)(domain.User, error){
 	var user domain.User
 	context, _ := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
@@ -133,6 +137,7 @@ func (ur *UserRepository) FindUserByID(id string)(domain.User, error){
 	return user, nil
 }
 
+// SaveAsActiveUser function saves a user as active
 func (ur *UserRepository) SaveAsActiveUser(user domain.ActiveUser, refreshToken string) error {
 	_, err := ur.FindActiveUser(user.ID.Hex(), user.UserAgent)
 	if err == nil {
@@ -141,6 +146,7 @@ func (ur *UserRepository) SaveAsActiveUser(user domain.ActiveUser, refreshToken 
 	return ur.CreateActiveUser(user)
 }
 
+// CreateActiveUser function creates an active user
 func (ur *UserRepository) CreateActiveUser(au domain.ActiveUser) error {
 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
 	defer cancel()
@@ -149,6 +155,7 @@ func (ur *UserRepository) CreateActiveUser(au domain.ActiveUser) error {
 	return err
 }
 
+// DeleteActiveUser function deletes an active user
 func (ur *UserRepository) DeleteActiveUser(ids string, user_agent string) error {
 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
 	defer cancel()
@@ -160,6 +167,7 @@ func (ur *UserRepository) DeleteActiveUser(ids string, user_agent string) error 
 	return err
 }
 
+// FindActiveUser function finds an active user
 func (ur *UserRepository) FindActiveUser(ids string, user_agent string) (domain.ActiveUser, error) {
 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
 	defer cancel()
@@ -172,6 +180,7 @@ func (ur *UserRepository) FindActiveUser(ids string, user_agent string) (domain.
 	return au, err
 }
 
+// GetEducators function fetches educators
 func (ur *UserRepository) GetEducators(pageNo int64, pageSize int64, search string) ([]domain.EducatorProfile, domain.Pagination, error) {
 	pagination := utils.PaginationByPage(pageNo, pageSize)
 
@@ -209,6 +218,7 @@ func (ur *UserRepository) GetEducators(pageNo int64, pageSize int64, search stri
 	return educators, paginationInfo, nil
 }
 
+// GetEducatorById function fetches an educator by ID
 func (ur *UserRepository) GetEducatorsById(id string) (domain.EducatorProfile, error) {
 	var educator domain.EducatorProfile
 
@@ -226,6 +236,7 @@ func (ur *UserRepository) GetEducatorsById(id string) (domain.EducatorProfile, e
 	return educator, nil
 }
 
+// SaveReview function saves a review
 func (ur *UserRepository) SaveReview(review domain.Review, id string) error {
 	uid, _ := primitive.ObjectIDFromHex(id)
 	filter := bson.M{"_id": uid}
@@ -263,6 +274,7 @@ func (ur *UserRepository) SaveReview(review domain.Review, id string) error {
 	return nil
 }
 
+// GetStudentById function fetches a student by ID
 func (ur *UserRepository) GetStudentById(id string) (domain.StudentProfile, error){
 	var student domain.StudentProfile
 	objID, err := primitive.ObjectIDFromHex(id)
@@ -277,6 +289,7 @@ func (ur *UserRepository) GetStudentById(id string) (domain.StudentProfile, erro
 	return student, nil
 }
 
+// UpdateEducatorProfile function updates an educator profile
 func (ur *UserRepository) UpdateEducatorProfile(user_id string, educator domain.EducatorProfile) (domain.EducatorProfile, error){
 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
 	defer cancel()
@@ -289,6 +302,7 @@ func (ur *UserRepository) UpdateEducatorProfile(user_id string, educator domain.
 	return educator, nil
 }
 
+// UpdateStudentProfile function updates a student profile
 func (ur *UserRepository) UpdateStudentProfile(user_id string, student domain.StudentProfile) (domain.StudentProfile, error){
 	context, cancel := context.WithTimeout(context.Background(), time.Duration(ur.config.ContextTimeout) * time.Second)
 	defer cancel()
@@ -301,6 +315,7 @@ func (ur *UserRepository) UpdateStudentProfile(user_id string, student domain.St
 	return student, nil
 }
 
+// GetStudentProfile function fetches a student profile
 func (ur *UserRepository) SetAvailability(userID, availability string) error {
 	uid, _ := primitive.ObjectIDFromHex(userID)
 	filter := bson.M{"_id": uid}
@@ -318,6 +333,7 @@ func (ur *UserRepository) SetAvailability(userID, availability string) error {
     return nil
 }
 
+// GetEducatorSchedules function fetches educator schedules
 func (ur *UserRepository) FindEducatorSchedules(educatorId string) (interface{}, error) {
     user_id, err := primitive.ObjectIDFromHex(educatorId)
     if err != nil {
@@ -360,6 +376,7 @@ func (ur *UserRepository) FindEducatorSchedules(educatorId string) (interface{},
     return schedulesWithStudent, nil
 }
 
+// GetStudentSchedules function fetches student schedules
 func (ur *UserRepository) FindStudentSchedules(studentId string) (interface{}, error) {
     user_id, err := primitive.ObjectIDFromHex(studentId)
     if err != nil {
@@ -406,6 +423,7 @@ func (ur *UserRepository) FindStudentSchedules(studentId string) (interface{}, e
     return schedulesWithStudent, nil
 }
 
+// DeleteSchedule function deletes a schedule
 func (ur *UserRepository) DeleteSchedule(scheduleId string, userId string) error {
     scheduleObjID, _ := primitive.ObjectIDFromHex(scheduleId)
     userObjID, _ := primitive.ObjectIDFromHex(userId)
@@ -452,7 +470,7 @@ func (ur *UserRepository) DeleteSchedule(scheduleId string, userId string) error
     return nil
 }
 
-
+// DeleteEducatorSchedule function deletes an educator schedule
 func (ur *UserRepository) DeleteEducatorSchedule(scheduleId string, userId string) error {
     scheduleObjID, _ := primitive.ObjectIDFromHex(scheduleId)
     userObjID, _ := primitive.ObjectIDFromHex(userId)
@@ -499,6 +517,7 @@ func (ur *UserRepository) DeleteEducatorSchedule(scheduleId string, userId strin
     return nil
 }
 
+// GetStudentsFromEducatorProfile function fetches students from an educator profile
 func (ur *UserRepository) GetStudentsFromEducatorProfile(educatorID string) (map[string][]domain.StudentProfile, error) {
     educatorObjID, err := primitive.ObjectIDFromHex(educatorID)
     if err != nil {
@@ -537,6 +556,7 @@ func (ur *UserRepository) GetStudentsFromEducatorProfile(educatorID string) (map
 		return result, nil
 }
 
+// FindById function finds a user by ID
 func (ur *UserRepository) FindById(userID string) (*domain.UserData, error) {
     var student domain.StudentProfile
     var educator domain.EducatorProfile
@@ -560,6 +580,7 @@ func (ur *UserRepository) FindById(userID string) (*domain.UserData, error) {
     return nil, err
 }
 
+// GetTopEducators function fetches top educators
 func (ur *UserRepository) GetTopEducators() ([]domain.EducatorProfile, error) {
     var topEducators []domain.EducatorProfile
 
@@ -580,6 +601,7 @@ func (ur *UserRepository) GetTopEducators() ([]domain.EducatorProfile, error) {
     return topEducators, nil
 }
 
+// FetchUserEnrolledCourses function fetches user enrolled courses
 func (ur *UserRepository) FetchUserEnrolledCourses(userID string) ([]domain.CourseProgress, error) {
 	userObjID, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
@@ -600,7 +622,7 @@ func (ur *UserRepository) FetchUserEnrolledCourses(userID string) ([]domain.Cour
 	return user.EnrolledCourses, nil
 }
 
-
+// FetchCourseNameByID function fetches course name by ID
 func (ur *UserRepository) FetchCourseNameByID(courseID primitive.ObjectID) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -616,7 +638,7 @@ func (ur *UserRepository) FetchCourseNameByID(courseID primitive.ObjectID) (stri
 	return course.Name, nil
 }
 
-
+// UpdateSchedule function updates a schedule
 func (ur *UserRepository) UpdateSchedules(user_id string, educatorID string, availability string) error {
 	uid, _ := primitive.ObjectIDFromHex(user_id)
 	educator_id, _ := primitive.ObjectIDFromHex(educatorID)
@@ -652,6 +674,7 @@ func (ur *UserRepository) UpdateSchedules(user_id string, educatorID string, ava
 	return nil
 }
 
+// UpdateProfileImage function updates a profile image
 func (ur *UserRepository) UpdateProfileImage(user_id string, user_type, profileImage string) error {
 	uid, _ := primitive.ObjectIDFromHex(user_id)
 	filter := bson.M{"_id": uid}

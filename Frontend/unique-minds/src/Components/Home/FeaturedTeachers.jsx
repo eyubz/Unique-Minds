@@ -4,6 +4,7 @@ import person1 from "../../Assets/person1.jpg";
 import person2 from "../../Assets/person2.jpg";
 import person3 from "../../Assets/person3.jpg";
 
+// TopEducators component
 const TopEducators = () => {
   const [educators, setEducators] = useState([
     {

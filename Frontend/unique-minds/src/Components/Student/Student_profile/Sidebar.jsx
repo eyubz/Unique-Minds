@@ -12,6 +12,7 @@ import ProgressSection from "../Progress";
 import Schedule from "./Schedule";
 import LogoutContent from "../../Educator/Logout";
 
+// Function to display the sidebar of the student
 const Sidebar = () => {
   const [activeSection, setActiveSection] = useState("Dashboard");
 

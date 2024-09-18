@@ -25,6 +25,7 @@ const StarRating = ({ rating }) => {
   );
 };
 
+// Function to display the profile of the educator
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({

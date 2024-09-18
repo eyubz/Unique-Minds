@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 
+// Function to display the student dashboard
 const StudentDashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({});

@@ -1,5 +1,6 @@
 package domain
 
+// Config struct
 type Config struct {
 	DatabaseUrl    string
 	DBName         string

@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// Course struct
 
 type Course struct {
     ID          primitive.ObjectID    `json:"_id" bson:"_id"`
@@ -22,6 +23,7 @@ type Course struct {
     Students    []primitive.ObjectID  `json:"students" bson:"students"`
 }
 
+// Part struct
 type Part struct {
     ID          primitive.ObjectID    `json:"_id" bson:"_id"`
     Name        string    `json:"name" bson:"name"`
@@ -32,6 +34,7 @@ type Part struct {
     LastUpdated time.Time `json:"last_updated" bson:"last_updated"`
 }
 
+// Material struct
 type Material struct {
     ID          primitive.ObjectID    `json:"_id" bson:"_id"`
     Name        string    `json:"name" bson:"name"`
@@ -42,6 +45,7 @@ type Material struct {
     LastUpdated time.Time `json:"last_updated" bson:"last_updated"`
 }
 
+// CourseRepository interface
 type CourseRepository interface {
     FetchRecentCourses() ([]Course, error)
     GetCourses(pageNo int64, pageSize int64, search string, tag string) ([]Course, Pagination, error)
@@ -54,6 +58,7 @@ type CourseRepository interface {
     UpdateCourseProgress(courseID, userID string, completedParts []string) (CourseProgress, error)
     GetCourseProgress(courseID, userID string) (*CourseProgress, error) 
 }
+// CourseUseCaseInterface interface
 type CourseUseCaseInterface interface {
     GetRecentCourses() ([]Course, error)
     GetCourses(pageNo string, pageSize string, search string, filter string) ([]Course, Pagination, error)

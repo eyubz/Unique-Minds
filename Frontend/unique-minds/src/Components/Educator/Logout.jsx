@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+// Function to log out the educator
 const LogoutContent = () => {
   const navigate = useNavigate();
 

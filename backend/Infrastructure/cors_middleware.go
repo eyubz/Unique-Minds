@@ -1,3 +1,12 @@
+// Core represents the core structure for the CORS middleware.
+//
+// CoreInterface defines the interface for the CORS middleware.
+//
+// NewCorsMiddleware creates a new instance of Core.
+//
+// CORSMiddleware returns a gin.HandlerFunc that handles CORS (Cross-Origin Resource Sharing) requests.
+// It sets the appropriate headers to allow cross-origin requests from the specified frontend URL.
+// It also handles preflight requests by responding with a 204 status code.
 package infrastructure
 
 import (
@@ -16,6 +25,7 @@ type CoreInterface interface {
 func NewCorsMiddleware() *Core {
     return &Core{}
 }
+
 
 func (c *Core) CORSMiddleware() gin.HandlerFunc {
     return func(ctx *gin.Context) {

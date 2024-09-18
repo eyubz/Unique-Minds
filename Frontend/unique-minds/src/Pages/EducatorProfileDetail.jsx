@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FaEnvelope, FaPhoneAlt } from "react-icons/fa";
 import Navbar from "../Components/Navbar";
 
+// EducatorProfileDetail component
 const EducatorProfileDetail = () => {
   const { id } = useParams();
   const [educator, setEducator] = useState({

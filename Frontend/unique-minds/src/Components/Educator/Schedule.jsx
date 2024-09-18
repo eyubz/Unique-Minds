@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaCalendarAlt, FaUser, FaGoogle } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
 
+// Function to display the schedule of the educator
 const Schedule = () => {
   const [schedules, setSchedules] = useState([
     {

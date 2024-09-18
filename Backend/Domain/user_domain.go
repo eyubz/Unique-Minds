@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// User struct
 type User struct {
 	ID                   primitive.ObjectID   `bson:"_id,omitempity" json:"id" `
 	UserName            string                `bson:"username"  json:"username"`
@@ -21,12 +22,14 @@ type User struct {
 	UserType        	 string 			  `bson:"user_type" json:"user_type" validate:"required"`
 }
 
+// UserData struct
 type UserData struct {
     ProfileImage string
     Role         string
 }
 
 
+// StudentProfile struct
 type StudentProfile struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	FullName      string             `bson:"name" json:"name"`
@@ -46,6 +49,7 @@ type StudentProfile struct {
 
 }
 
+// CourseProgress struct
 type CourseProgress struct{
 	CourseID     primitive.ObjectID `json:"id" bson:"_id,omitempty"`
     Progress	 int64      `json:"progress" bson:"progress"`
@@ -54,15 +58,18 @@ type CourseProgress struct{
 
 }
 
+// CourseDetailResponse struct
 type CourseDetailResponse struct{
 	Course  Course `json:"course"`
 	Progress CourseProgress `json:"progress"`
 }
 
+// ProgressRequest struct
 type ProgressRequest struct {
     CompletedParts []string `json:"completed_parts"`
 }
 
+// EducatorProfile struct
 type EducatorProfile struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	FullName      string       		 `bson:"name" json:"name"`
@@ -82,11 +89,13 @@ type EducatorProfile struct {
 	
 }
 
+// Student struct
 type Student struct{
 	Student_id primitive.ObjectID `json:"student_id" bson:"student_id"`
 	Course_id  primitive.ObjectID `json:"course_id" bson:"course_id"`
 }
 
+// Schedule struct
 type Schedule struct {
 	ID 		  primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	StudentID primitive.ObjectID `json:"student_id" bson:"student_id"`
@@ -94,28 +103,36 @@ type Schedule struct {
 	Date 	  string          `json:"date" bson:"date"`
 	GoogleMeetLink string       `json:"googleMeetLink" bson:"googleMeetLink"`
 }
+
+// Address struct
 type Address struct {
 	Street     string `bson:"street" json:"street"`
 	City       string `bson:"city" json:"city"`
 	PostalCode string `bson:"postalCode" json:"postalCode"`
 }
 
+// Review struct
 type Review struct {
     Name        string  `bson:"name" json:"name"`
     Text        string  `bson:"text" json:"text"`
     Rating      float64 `bson:"rating" json:"rating"`
     EducatorID  primitive.ObjectID    `bson:"educator_id" json:"educator_id"`
 }
+
+// Profile struct
 type Profile struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty"`
 	Name        string             `bson:"name"`
 	Description string             `bson:"description"`
 }
+
+// CourseWithStudents struct
 type CourseWithStudents struct {
 	CourseName string           `json:"courseName"`
 	Students   []StudentProfile `json:"students"`
 }
 
+// UserUseCaseInterface Interface
 type UserUseCaseInterface interface {
 	RegisterUser(user User) error
 	VerifyEmail(email string, token string) error
@@ -146,6 +163,7 @@ type UserUseCaseInterface interface {
 	CancelSchedule(scheduleId string, user_id string) error
 }
 
+// UserRepositoryInterface interface
 type UserRepositoryInterface interface {
 	RegisterUser(user User) error
 	FindUserByEmail(email string) (User, error)
@@ -174,14 +192,4 @@ type UserRepositoryInterface interface {
 	FindStudentSchedules(studentId string) (interface{}, error)
 	UpdateProfileImage(user_id string, user_type, profileImage string) error 
 	DeleteEducatorSchedule(scheduleId string, userId string) error
-}
-
-type AdminUseCaseInterface interface {
-	GetAllUsers(pageNo, pageSize string, user_id string) ([]User, error)
-	DeleteUser(id string, user_id string) (bool, error)
-}
-
-type AdminRepositoryInterface interface {
-	GetAllUsers(pageNo, pageSize int64) ([]User, error)
-	DeleteUser(id string) error
 }

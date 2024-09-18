@@ -52,6 +52,7 @@ const ProgressBarChart = () => {
   );
 };
 
+// ProgressSection component
 const ProgressSection = () => {
   return (
     <div className="w-full p-6">

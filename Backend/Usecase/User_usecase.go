@@ -25,6 +25,7 @@ func NewUserUseCase(userRepo domain.UserRepositoryInterface, passwordService inf
 	}
 }
 
+// RegisterUser function registers a new user
 func (uc *UserUseCase) RegisterUser(user domain.User) error {
 	if user.Email == "" || user.UserName== "" || user.Password == "" {
 		return errors.New("all fields are required")
@@ -68,6 +69,7 @@ func (uc *UserUseCase) RegisterUser(user domain.User) error {
 	return nil
 }
 
+// VerifyEmail function verifies a user's email
 func (uc *UserUseCase) VerifyEmail(email string, token string)error{
 	user, err := uc.UserRepo.FindUserByEmail(email)
 	if err != nil {
@@ -91,6 +93,7 @@ func (uc *UserUseCase) VerifyEmail(email string, token string)error{
 	return nil
 }
 
+// Login function logs in a user
 func (uc *UserUseCase) Login(user domain.User, user_agent string)(domain.LoginResponse, error){
 	var newUser domain.User
 	var err error
@@ -137,6 +140,7 @@ func (uc *UserUseCase) Login(user domain.User, user_agent string)(domain.LoginRe
 	}, nil
 }
 
+// CreateAccessToken function creates an access token
 func (uc *UserUseCase) CreateAccessToken(user *domain.User, secret string, expiry int) (accessToken string, err error) {
 	exp := time.Now().Add(5 * time.Hour * time.Duration(expiry))
 	claims := &domain.JwtCustomClaims{
@@ -149,6 +153,7 @@ func (uc *UserUseCase) CreateAccessToken(user *domain.User, secret string, expir
 	return infrastructure.CreateToken(claims, secret)
 }
 
+// CreateRefreshToken function creates a refresh token
 func (uc *UserUseCase) CreateRefreshToken(user *domain.User, secret string, expiry int) (refreshToken string, err error) {
 	exp := time.Now().Add(time.Hour * time.Duration(expiry))
 
@@ -162,6 +167,7 @@ func (uc *UserUseCase) CreateRefreshToken(user *domain.User, secret string, expi
 	return infrastructure.CreateToken(claims, secret)
 }
 
+// RefreshToken function refreshes a user's token
 func (uc *UserUseCase) RefreshToken(request domain.RefreshTokenRequest, user_id string) (domain.RefreshTokenResponse, error) {
 	id, err := infrastructure.ExtractID(request.RefreshToken, uc.Config.RefreshTokenSecret)
 	if err != nil {
@@ -189,6 +195,7 @@ func (uc *UserUseCase) RefreshToken(request domain.RefreshTokenRequest, user_id 
 	}, nil
 }
 
+// ResetPassword function resets a user's password
 func (uc *UserUseCase) ResetPassword(email string, user_id string) error{
 	user, err := uc.UserRepo.FindUserByEmail(email)
 	if err != nil {
@@ -216,6 +223,7 @@ func (uc *UserUseCase) ResetPassword(email string, user_id string) error{
 	return nil
 }
 
+// ResetPasswordVerify function verifies a user's password reset
 func (uc *UserUseCase) ResetPasswordVerify(email string, token string, user_id string, password string) error{
 	user, err := uc.UserRepo.FindUserByEmail(email)
 	if err != nil {
@@ -250,6 +258,7 @@ func (uc *UserUseCase) ResetPasswordVerify(email string, token string, user_id s
 	return nil
 }
 
+// Logout function logs out a user
 func (uc *UserUseCase) Logout(user_id string, user_agent string) error {
 	_, err := uc.UserRepo.FindActiveUser(user_id, user_agent)
 	if err != nil {
@@ -259,6 +268,7 @@ func (uc *UserUseCase) Logout(user_id string, user_agent string) error {
 	return uc.UserRepo.DeleteActiveUser(user_id, user_agent)
 }
 
+// GetEducators function gets all educators
 func (uc *UserUseCase) GetEducators(pageNo string, pageSize string, search string) ([]domain.EducatorProfile, domain.Pagination, error) {
 	PageNo, err := strconv.ParseInt(pageNo, 10, 64)
 	if err != nil {
@@ -280,6 +290,7 @@ func (uc *UserUseCase) GetEducators(pageNo string, pageSize string, search strin
 	}
 }
 
+// GetEducatorById function gets an educator by ID
 func (uc *UserUseCase) GetEducatorById(id string) (domain.EducatorProfile, error) {
 	result, err := uc.UserRepo.GetEducatorsById(id)
 	if err != nil {
@@ -288,10 +299,12 @@ func (uc *UserUseCase) GetEducatorById(id string) (domain.EducatorProfile, error
 	return result, nil
 }
 
+// SaveReview function saves a review
 func (uc *UserUseCase) SaveReview(review domain.Review, id string) error{
 	return uc.UserRepo.SaveReview(review, id)
 }
 
+// GetEducatorReviews function gets all reviews for an educator
 func (uc *UserUseCase) GetEducatorProfile(user_id string) (domain.EducatorProfile, error){
 	educator, err := uc.UserRepo.GetEducatorsById(user_id)
 	if err != nil {
@@ -300,6 +313,7 @@ func (uc *UserUseCase) GetEducatorProfile(user_id string) (domain.EducatorProfil
 	return educator, nil
 }
 
+// GetStudentProfile function gets a student's profile
 func (uc *UserUseCase) GetStudentProfile(user_id string) (domain.StudentProfile, error){
 	student, err := uc.UserRepo.GetStudentById(user_id)
 	if err != nil {
@@ -308,6 +322,7 @@ func (uc *UserUseCase) GetStudentProfile(user_id string) (domain.StudentProfile,
 	return student, nil
 }
 
+// UpdateEducatorProfile function updates an educator's profile
 func (uc *UserUseCase) UpdateEducatorProfile(user_id string, updatedProfile domain.EducatorProfile) (domain.EducatorProfile, error){
 	educator, err := uc.UserRepo.GetEducatorsById(user_id)
 	if err != nil {
@@ -330,6 +345,7 @@ func (uc *UserUseCase) UpdateEducatorProfile(user_id string, updatedProfile doma
 	return result, err
 }
 
+// UpdateStudentProfile function updates a student's profile
 func (uc *UserUseCase) UpdateStudentProfile(user_id string, updatedProfile domain.StudentProfile)(domain.StudentProfile, error){
 	student, err := uc.UserRepo.GetStudentById(user_id)
 	if err != nil {
@@ -348,6 +364,7 @@ func (uc *UserUseCase) UpdateStudentProfile(user_id string, updatedProfile domai
 	return result, err
 }
 
+// SetAvailability function sets an educator's availability
 func (uc *UserUseCase) SetAvailability(userID string, availability string) error {
     err := uc.UserRepo.SetAvailability(userID, availability)
     if err != nil {
@@ -357,33 +374,42 @@ func (uc *UserUseCase) SetAvailability(userID string, availability string) error
     return nil
 }
 
+// GetEducatorSchedules function gets an educator's schedules
 func (uc *UserUseCase) GetEducatorSchedules(educatorId string) (interface{}, error) {
 	return uc.UserRepo.FindEducatorSchedules(educatorId)
 }
 
+// GetStudentSchedules function gets a student's schedules
 func (uc *UserUseCase) GetStudentSchedules(student_id string) (interface{}, error) {
 	return uc.UserRepo.FindStudentSchedules(student_id)
 }
 
+// CancelEducatorSchedule function cancels an educator's schedule
 func (uc *UserUseCase) CancelEducatorSchedule(scheduleId string, user_id string) error {
     return uc.UserRepo.DeleteSchedule(scheduleId, user_id)
 }
+
+// CancelSchedule function cancels a schedule
 func (uc *UserUseCase) CancelSchedule(scheduleId string, user_id string) error {
     return uc.UserRepo.DeleteEducatorSchedule(scheduleId, user_id)
 }
 
+// FetchStudentsByCourses function fetches students by courses
 func (uc *UserUseCase) FetchStudentsByCourses(educatorID string) (map[string][]domain.StudentProfile, error) {
     return uc.UserRepo.GetStudentsFromEducatorProfile(educatorID)
 }
 
+// GetUserProfile function gets a user's profile
 func (uc *UserUseCase) GetUserProfile(userID string) (*domain.UserData, error) {
     return uc.UserRepo.FindById(userID)
 }
 
+// GetTopEducatorsUseCase function gets top educators
 func (uc *UserUseCase) GetTopEducatorsUseCase() ([]domain.EducatorProfile, error) {
 	return uc.UserRepo.GetTopEducators()
 }
 
+// GetEnrolledCoursesProgress function gets a user's enrolled courses progress
 func (uc *UserUseCase) GetEnrolledCoursesProgress(userID string) ([]map[string]interface{}, error) {
 	enrolledCourses, err := uc.UserRepo.FetchUserEnrolledCourses(userID)
 	if err != nil {
@@ -407,12 +433,12 @@ func (uc *UserUseCase) GetEnrolledCoursesProgress(userID string) ([]map[string]i
 	return courseProgressList, nil
 }
 
-
+// ScheduleSession function schedules a session
 func (uc *UserUseCase) ScheduleSession(user_id string, educatorID string , availability string) error {
 	return uc.UserRepo.UpdateSchedules(user_id, educatorID, availability)
 }
 
-
+// SaveProfileImage function saves a user's profile image
 func (uc *UserUseCase) SaveProfileImage(user_id string, user_type string, profileImage string) error {
 	return uc.UserRepo.UpdateProfileImage(user_id, user_type, profileImage)
 }

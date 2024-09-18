@@ -50,6 +50,7 @@ const cardVariants = {
   },
 };
 
+// HowItWorks component
 const HowItWorks = () => {
   return (
     <div className="py-16 bg-gray-100">

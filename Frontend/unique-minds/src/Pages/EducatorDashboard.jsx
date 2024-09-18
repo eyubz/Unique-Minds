@@ -15,6 +15,7 @@ import Students from "../Components/Educator/Students";
 import LogoutContent from "../Components/Educator/Logout";
 import Navbar from "../Components/Navbar";
 
+// EducatorDashboard component
 const EducatorDashboard = () => {
   const [activeSection, setActiveSection] = useState("profile");
 

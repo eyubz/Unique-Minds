@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 
+// CourseDetail component
 const CourseDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();

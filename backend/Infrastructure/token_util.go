@@ -6,6 +6,7 @@ import (
 	jwt "github.com/golang-jwt/jwt/v4"
 )
 
+// CreateToken creates a new JWT token with the provided claims and secret.
 func CreateToken(claims jwt.Claims, secret string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	t, err := token.SignedString([]byte(secret))
@@ -15,6 +16,7 @@ func CreateToken(claims jwt.Claims, secret string) (string, error) {
 	return t, err
 }
 
+// IsAuthorized checks if the provided token is valid and authorized.
 func IsAuthorized(requestToken string, secret string) (bool, error) {
 	_, err := jwt.Parse(requestToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -28,6 +30,8 @@ func IsAuthorized(requestToken string, secret string) (bool, error) {
 	return true, nil
 }
 
+
+// ExtractIDFromToken extracts the ID from the provided token.
 func ExtractIDFromToken(requestToken string, secret string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(requestToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -48,6 +52,8 @@ func ExtractIDFromToken(requestToken string, secret string) (jwt.MapClaims, erro
 	return claims, nil
 }
 
+
+// ExtractID extracts the ID from the provided token.
 func ExtractID(requestToken string, secret string) (string, error) {
 	token, err := jwt.Parse(requestToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

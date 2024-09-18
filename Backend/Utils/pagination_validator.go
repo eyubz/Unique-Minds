@@ -5,6 +5,7 @@ import (
 	"strconv"
 )
 
+// PagePaginationValidator is used to validate the pageNo and pageSize
 func PagePaginationValidator(pageNo, pageSize string) (int64, int64, error) {
 	if pageNo == "" || pageSize == "" {
 		return 0, 0, errors.New("invalid pageNo or pageSize")

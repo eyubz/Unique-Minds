@@ -1,3 +1,10 @@
+// LoadEnv loads environment variables from a .env file if the RENDER_ENV environment variable is not set.
+// It then parses these environment variables and populates a Config struct with the values.
+// If any required environment variables are missing or invalid, it logs an error and returns an error.
+//
+// Returns:
+//   - *Config: A pointer to a Config struct populated with the environment variable values.
+//   - error: An error if any required environment variables are missing or invalid.
 package infrastructure
 
 import (
@@ -26,6 +33,8 @@ type Config struct {
 	ClientSecret			 string
 	RedirectURL				 string
 }
+
+
 
 func LoadEnv() (*Config, error) {
 	if os.Getenv("RENDER_ENV") == "" {

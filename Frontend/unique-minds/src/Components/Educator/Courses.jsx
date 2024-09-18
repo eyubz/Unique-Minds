@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import img from "../../Assets/herosecrtion.jpg";
 
+// Function to display the courses of the educator
 const Courses = () => {
   const [courses, setCourses] = useState([]);
   const [editingCourseId, setEditingCourseId] = useState(null);

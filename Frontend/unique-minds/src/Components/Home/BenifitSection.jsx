@@ -38,6 +38,7 @@ const benefits = [
   },
 ];
 
+// BenefitsSection component
 const BenefitsSection = () => {
   return (
     <div className="py-16 bg-white">

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+// CourseCard component
 const CourseCard = ({ course }) => {
   return (
     <div className="border border-gray-200 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 max-w-sm mx-auto">

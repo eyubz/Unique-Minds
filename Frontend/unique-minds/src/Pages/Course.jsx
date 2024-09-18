@@ -3,6 +3,7 @@ import CourseCard from "../Components/Home/CourseCard";
 import { FaSearch } from "react-icons/fa";
 import Navbar from "../Components/Navbar";
 
+// Courses component
 const Courses = () => {
   const [courses, setCourses] = useState([]);
   const [page, setPage] = useState(1);

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaEnvelope } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
+// ForgotPassword component
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
 

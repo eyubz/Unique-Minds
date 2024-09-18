@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import Navbar from "../Components/Navbar";
 
+//
 const Educators = () => {
   const [educators, setEducators] = useState([]);
 

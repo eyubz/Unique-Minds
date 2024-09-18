@@ -21,6 +21,7 @@ func NewDatabase()*Db{
 	return &Db{}
 }
 
+// Connection function establishes a connection to the database
 func (db *Db)Connection(URI string) *mongo.Client {
 	// ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(dbTimeout)*time.Second)
 	// defer cancelCtx()
@@ -36,11 +37,14 @@ func (db *Db)Connection(URI string) *mongo.Client {
 	return connection
 }
 
+// ConnectToDatabase function connects to the database
 func (db *Db)ConnectToDatabase(dbHost string)*mongo.Client{
 	connection := db.Connection(dbHost)
 	return connection
 } 
 
+
+// CreateDb function creates a database
 func (db *Db)CreateDb(dbHost string, dbName string, collectionName string)*mongo.Collection{
 	connection := db.ConnectToDatabase(dbHost)
 	collection := connection.Database("ELEARNING").Collection(collectionName)

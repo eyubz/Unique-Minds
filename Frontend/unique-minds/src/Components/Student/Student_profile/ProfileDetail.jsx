@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+// Function to log out the student
 const StudentDashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({

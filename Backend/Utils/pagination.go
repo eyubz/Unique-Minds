@@ -5,6 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// PaginationByPage is a function to return the pagination options for the mongoDB query
 func PaginationByPage(pageNo int64, pageSize int64) *options.FindOptions {
 	skip := (int64(pageNo) - 1) * pageSize
 	findOptions := options.Find()
