@@ -94,5 +94,5 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 ## **Screenshot**
 
-![Screenshot](https://github.com/eyubz/Unique-Minds/docs/img.png)
-![Screenshot](https://github.com/eyubz/Unique-Minds/docs/img1.png)
+![Screenshot](https://github.com/eyubz/Unique-Minds/blob/main/docs/img.png)
+![Screenshot](https://github.com/eyubz/Unique-Minds/blob/main/docs/img1.png)
